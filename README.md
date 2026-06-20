@@ -28,15 +28,20 @@ Built for people who want a clean garage dashboard without handing their data to
 
 | | |
 |---|---|
-| 🚗 **Vehicles** | Profiles, photos, specs, odometer sync |
+| 🚗 **Vehicles** | Profiles, photos, specs, manual entry, odometer quick-update, QR codes |
 | 🔧 **Maintenance** | Schedules, service log, overdue/due-soon dashboard |
+| 🛡️ **TÜV / HU & AU** | Inspection due dates with reminders |
 | ⛽ **Fuel** | Quick fill-up, consumption analytics, projected annual usage, charts |
-| 💶 **Expenses** | Track costs across vehicles, linked to maintenance |
+| 💶 **Expenses & costs** | Track costs, monthly overview dashboard, category breakdown |
+| 📋 **Insurance** | Policies, SF class, premiums, renewal tracking |
 | 📄 **Documents** | Store invoices and PDFs per vehicle |
-| 🔔 **Reminders** | Upcoming and overdue maintenance at a glance |
-| 🎨 **Personal** | Dark/light mode, accent color, custom background |
+| 🔔 **Reminders** | Maintenance, TÜV, and overdue items at a glance |
+| 👨‍👩‍👧 **Family garage** | Share vehicles with other users (view or edit) |
+| 📝 **Wishlist** | Planned purchases and dream cars |
+| 💾 **Export** | JSON backup and CSV export from the UI |
+| 🎨 **Personal** | Dark/light mode, 6 design presets, custom background with adjustable blur |
 | 🌍 **Languages** | English & German |
-| 👤 **Multi-user** | Open local registration, per-user data isolation |
+| 👤 **Multi-user** | Open local registration, per-user data + sharing |
 | 📦 **Simple ops** | Single Docker image, SQLite on `/data`, no extra database container |
 
 ## 🖥️ Install on Unraid
@@ -89,7 +94,7 @@ Image: `ghcr.io/flizzy27/smart-garage:latest`
 
 | Channel | Image tag | When updated |
 |---------|-----------|--------------|
-| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.3.1`, …) — CI must pass first |
+| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.4.0`, …) — CI must pass first |
 | **Development** | `ghcr.io/flizzy27/smart-garage:development` | Every push to `main` after CI passes |
 
 | Platform | Stable update | Dev preview |
@@ -99,11 +104,13 @@ Image: `ghcr.io/flizzy27/smart-garage:latest`
 
 **Promote to stable:** when a dev build is approved, tag a release (`git tag v0.3.1 && git push origin v0.3.1`). That publishes `:latest`.
 
-Pin a version: `ghcr.io/flizzy27/smart-garage:v0.3.2`
+Pin a version: `ghcr.io/flizzy27/smart-garage:v0.4.0`
 
 ## 💾 Backup
 
-Archive your AppData / volume:
+**In-app export:** Settings → **Data & export** — download JSON (full backup) or CSV (expenses).
+
+**Manual backup** — archive your AppData / volume:
 
 ```
 /data/

@@ -21,6 +21,8 @@ export function readSettings(): UserSettings {
       locale: parsed.locale ?? DEFAULT_SETTINGS.locale,
       timezone: parsed.timezone ?? DEFAULT_SETTINGS.timezone,
       currency: parsed.currency ?? DEFAULT_SETTINGS.currency,
+      designPreset: parsed.designPreset ?? DEFAULT_SETTINGS.designPreset,
+      backgroundBlurPx: parsed.backgroundBlurPx ?? DEFAULT_SETTINGS.backgroundBlurPx,
     };
   } catch {
     return DEFAULT_SETTINGS;

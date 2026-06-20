@@ -12,7 +12,9 @@
     "history": "Verlauf",
     "documents": "Dokumente",
     "expenses": "Ausgaben",
+    "costs": "Kostenübersicht",
     "fuel": "Kraftstoff",
+    "wishlist": "Wunschliste",
     "reminders": "Erinnerungen",
     "settings": "Einstellungen",
     "openMenu": "Menü öffnen",
@@ -121,6 +123,7 @@
         "general": "Allgemein",
         "notifications": "Benachrichtigungen",
         "regional": "Regional",
+        "data": "Daten & Export",
         "catalog": "Katalog"
       },
       "general": {
@@ -130,6 +133,32 @@
       "appearance": {
         "title": "Darstellung",
         "description": "Design und Anzeigeoptionen"
+      },
+      "design": {
+        "title": "Design-Vorlage",
+        "description": "Farbthemen für Sidebar und Akzente",
+        "presets": {
+          "default": "Klassisch",
+          "defaultDesc": "Standard Smart-Garage-Blau",
+          "space": "Space",
+          "spaceDesc": "Hellblauer Verlauf — Weltraum-Feeling",
+          "forest": "Forest",
+          "forestDesc": "Frische Grüntöne",
+          "sunset": "Sunset",
+          "sunsetDesc": "Warmes Orange und Amber",
+          "midnight": "Midnight",
+          "midnightDesc": "Tiefes Indigo und Violett",
+          "rose": "Rose",
+          "roseDesc": "Pink- und Magenta-Akzente"
+        }
+      },
+      "export": {
+        "title": "Export & Backup",
+        "description": "Garage-Daten als JSON oder Ausgaben als CSV herunterladen",
+        "sectionTitle": "Download",
+        "sectionDescription": "Export enthält Fahrzeuge, Ausgaben, Tankvorgänge und Wunschliste.",
+        "downloadJson": "JSON-Backup laden",
+        "downloadCsv": "Ausgaben-CSV laden"
       },
       "background": {
         "title": "Hintergrundbild",
@@ -143,6 +172,10 @@
         "remove": "Hintergrund entfernen",
         "removing": "Entfernen…",
         "removed": "Hintergrundbild entfernt",
+        "blurLabel": "Hintergrund-Unschärfe",
+        "blurHint": "Stärke der Unschärfe über dem Hintergrundbild (0 = aus).",
+        "saveBlur": "Unschärfe speichern",
+        "savingBlur": "Speichern…",
         "errors": {
           "uploadFailed": "Upload fehlgeschlagen",
           "noFile": "Bitte eine Datei wählen",
@@ -502,6 +535,17 @@
         "technical": "Technische Daten",
         "image": "Foto"
       },
+      "entryMode": "Fahrzeug erfassen",
+      "entryModeCatalog": "Aus Katalog",
+      "entryModeManual": "Manuell eingeben",
+      "entryModeHint": "Manuell, wenn dein Fahrzeug nicht im Katalog steht.",
+      "make": "Marke / Hersteller",
+      "model": "Modell",
+      "makePlaceholder": "z. B. Volkswagen",
+      "modelPlaceholder": "z. B. Golf",
+      "variantName": "Variante / Ausstattung (optional)",
+      "variantNamePlaceholder": "z. B. GTI, 320d",
+      "manualTechnicalHint": "Technische Daten selbst eintragen. Außer Kilometerstand sind alle Felder optional.",
       "manufacturer": "Hersteller",
       "series": "Baureihe / Modell",
       "generation": "Generation",
@@ -568,6 +612,94 @@
       "CNG": "Erdgas (CNG)",
       "OTHER": "Sonstige"
     },
+    "odometer": {
+      "label": "Kilometerstand (km)",
+      "update": "Aktualisieren",
+      "save": "Speichern",
+      "saving": "Speichern…",
+      "saved": "Kilometerstand aktualisiert",
+      "cancel": "Abbrechen",
+      "errors": {
+        "mileageInvalid": "Bitte gültigen Kilometerstand eingeben.",
+        "notFound": "Fahrzeug nicht gefunden.",
+        "unknown": "Kilometerstand konnte nicht gespeichert werden."
+      }
+    },
+    "qr": {
+      "title": "QR-Code",
+      "hint": "Scannen, um dieses Fahrzeug auf dem Handy zu öffnen",
+      "alt": "QR-Code für {name}",
+      "openLink": "Fahrzeugseite öffnen"
+    },
+    "inspections": {
+      "title": "TÜV / HU & AU",
+      "subtitle": "Fälligkeiten für Erinnerungen hinterlegen",
+      "type": "Art",
+      "nextDue": "Nächste Fälligkeit",
+      "lastDone": "Letzte Prüfung",
+      "reminderWeeks": "Erinnern (Wochen vorher)",
+      "sticker": "Plakette (optional)",
+      "due": "Fällig",
+      "save": "Speichern",
+      "saving": "Speichern…",
+      "saved": "Prüfung gespeichert",
+      "remove": "Entfernen",
+      "types": { "HU": "Hauptuntersuchung (HU/TÜV)", "AU": "Abgasuntersuchung (AU)" },
+      "errors": {
+        "invalidType": "Ungültige Prüfungsart.",
+        "invalidDate": "Bitte gültiges Datum eingeben.",
+        "notAllowed": "Nicht erlaubt.",
+        "unknown": "Etwas ist schiefgelaufen."
+      }
+    },
+    "insurance": {
+      "title": "Versicherung",
+      "subtitle": "Policen, SF-Klasse und Laufzeiten verwalten",
+      "empty": "Noch keine Policen erfasst.",
+      "provider": "Versicherer",
+      "coverageLabel": "Deckung",
+      "sfClass": "SF-Klasse",
+      "premium": "Jahresbeitrag (€)",
+      "policyNumber": "Policennummer",
+      "startDate": "Beginn",
+      "endDate": "Ende",
+      "autoRenew": "Automatische Verlängerung",
+      "year": "Jahr",
+      "until": "bis",
+      "add": "Police hinzufügen",
+      "saving": "Speichern…",
+      "remove": "Entfernen",
+      "coverage": {
+        "LIABILITY": "Haftpflicht",
+        "PARTIAL": "Teilkasko",
+        "FULL": "Vollkasko"
+      },
+      "errors": {
+        "providerRequired": "Bitte Versicherer eingeben.",
+        "premiumInvalid": "Bitte gültigen Beitrag eingeben.",
+        "dateInvalid": "Bitte gültige Daten eingeben.",
+        "notAllowed": "Nicht erlaubt.",
+        "unknown": "Etwas ist schiefgelaufen."
+      }
+    },
+    "sharing": {
+      "title": "Familien-Garage",
+      "subtitle": "Fahrzeug mit anderen Nutzern auf diesem Server teilen",
+      "empty": "Noch mit niemandem geteilt.",
+      "username": "Benutzername",
+      "usernamePlaceholder": "anderer-nutzer",
+      "role": "Zugriff",
+      "share": "Teilen",
+      "sharing": "Teilen…",
+      "remove": "Entfernen",
+      "roles": { "VIEWER": "Nur ansehen", "EDITOR": "Darf bearbeiten" },
+      "errors": {
+        "vehicleNotFound": "Fahrzeug nicht gefunden.",
+        "userNotFound": "Benutzer nicht gefunden.",
+        "selfShare": "Sie sind bereits Eigentümer.",
+        "unknown": "Teilen fehlgeschlagen."
+      }
+    },
     "delete": {
       "button": "Löschen",
       "title": "Fahrzeug löschen?",
@@ -580,6 +712,10 @@
       "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "notFound": "Fahrzeug nicht gefunden.",
       "manufacturerRequired": "Bitte wählen Sie einen Hersteller.",
+      "makeRequired": "Bitte geben Sie Marke / Hersteller ein.",
+      "modelRequired": "Bitte geben Sie das Modell ein.",
+      "makeInvalid": "Marke ist zu lang.",
+      "modelInvalid": "Modell ist zu lang.",
       "seriesRequired": "Bitte wählen Sie eine Baureihe.",
       "generationRequired": "Bitte wählen Sie eine Generation.",
       "variantRequired": "Bitte wählen Sie eine Variante.",
@@ -705,7 +841,63 @@
     "overdue": "Überfällig",
     "dueSoon": "Bald fällig",
     "dueInDays": "in {days} Tagen",
-    "dueInKm": "in {km} km"
+    "dueInKm": "in {km} km",
+    "inspectionsTitle": "TÜV / Prüfungen",
+    "inspectionDue": "Fällig {date}"
+  },
+  "costs": {
+    "title": "Kostenübersicht",
+    "subtitle": "Monatliche Trends und Aufschlüsselung Ihrer Garage",
+    "thisMonth": "Dieser Monat",
+    "twelveMonths": "Letzte 12 Monate",
+    "vehiclesTracked": "Fahrzeuge mit Kosten",
+    "monthlyTrend": "Monatliche Ausgaben",
+    "byCategory": "Nach Kategorie",
+    "byVehicle": "Nach Fahrzeug",
+    "noData": "Noch keine Kostendaten.",
+    "categories": {
+      "MAINTENANCE": "Wartung",
+      "FUEL": "Kraftstoff",
+      "INSURANCE": "Versicherung",
+      "TAX": "Steuer",
+      "REGISTRATION": "Zulassung",
+      "REPAIR": "Reparatur",
+      "ACCESSORY": "Zubehör",
+      "OTHER": "Sonstige"
+    }
+  },
+  "wishlist": {
+    "title": "Wunschliste",
+    "subtitle": "Geplante Käufe, Traumautos und Teile",
+    "addTitle": "Eintrag hinzufügen",
+    "itemTitle": "Titel",
+    "category": "Kategorie",
+    "status": "Status",
+    "plannedMake": "Marke (geplantes Fahrzeug)",
+    "plannedModel": "Modell",
+    "budget": "Budget",
+    "targetDate": "Zieldatum",
+    "description": "Beschreibung",
+    "add": "Zur Wunschliste",
+    "saving": "Speichern…",
+    "empty": "Ihre Wunschliste ist leer.",
+    "delete": "Löschen",
+    "categories": {
+      "VEHICLE": "Fahrzeug",
+      "PART": "Teil",
+      "ACCESSORY": "Zubehör",
+      "OTHER": "Sonstige"
+    },
+    "statuses": {
+      "IDEA": "Idee",
+      "PLANNED": "Geplant",
+      "ORDERED": "Bestellt",
+      "DONE": "Erledigt"
+    },
+    "errors": {
+      "titleRequired": "Bitte Titel eingeben.",
+      "unknown": "Etwas ist schiefgelaufen."
+    }
   },
   "admin": {
     "title": "Benutzerverwaltung",

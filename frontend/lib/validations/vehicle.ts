@@ -9,13 +9,7 @@ const optionalInt = z
   .optional()
   .nullable();
 
-export const vehicleFormSchema = z.object({
-  manufacturerId: z.string().min(1, "manufacturerRequired"),
-  seriesId: z.string().min(1, "seriesRequired"),
-  generationId: z.string().min(1, "generationRequired"),
-  variantId: z.string().min(1, "variantRequired"),
-  engineId: z.string().min(1, "engineRequired"),
-  catalogModelYearId: z.string().min(1, "yearRequired"),
+const sharedVehicleFields = {
   productionYear: z
     .number({ error: "yearInvalid" })
     .int("yearInvalid")
@@ -61,7 +55,49 @@ export const vehicleFormSchema = z.object({
     .min(0, "mileageInvalid"),
   color: z.string().trim().max(50, "colorInvalid").optional().nullable(),
   notes: z.string().trim().max(5000, "notesInvalid").optional().nullable(),
-});
+};
+
+export const vehicleFormSchema = z
+  .object({
+    entryMode: z.enum(["catalog", "manual"]),
+    manufacturerId: z.string().optional(),
+    seriesId: z.string().optional(),
+    generationId: z.string().optional(),
+    variantId: z.string().optional(),
+    engineId: z.string().optional(),
+    catalogModelYearId: z.string().optional(),
+    make: z.string().trim().max(80, "makeInvalid").optional(),
+    model: z.string().trim().max(80, "modelInvalid").optional(),
+    variantName: z.string().trim().max(80, "modelInvalid").optional().nullable(),
+    manualEngineName: z.string().trim().max(120, "engineInvalid").optional().nullable(),
+    ...sharedVehicleFields,
+  })
+  .superRefine((data, ctx) => {
+    if (data.entryMode === "catalog") {
+      const required: Array<[keyof typeof data, string]> = [
+        ["manufacturerId", "manufacturerRequired"],
+        ["seriesId", "seriesRequired"],
+        ["generationId", "generationRequired"],
+        ["variantId", "variantRequired"],
+        ["engineId", "engineRequired"],
+        ["catalogModelYearId", "yearRequired"],
+      ];
+      for (const [field, message] of required) {
+        const value = data[field];
+        if (!value || (typeof value === "string" && value.trim().length === 0)) {
+          ctx.addIssue({ code: "custom", path: [field], message });
+        }
+      }
+      return;
+    }
+
+    if (!data.make?.trim()) {
+      ctx.addIssue({ code: "custom", path: ["make"], message: "makeRequired" });
+    }
+    if (!data.model?.trim()) {
+      ctx.addIssue({ code: "custom", path: ["model"], message: "modelRequired" });
+    }
+  });
 
 export type VehicleFormInput = z.infer<typeof vehicleFormSchema>;
 
@@ -87,13 +123,21 @@ export function parseVehicleFormData(formData: FormData): VehicleFormInput {
     return raw in enumObj ? (raw as T[keyof T]) : null;
   };
 
+  const entryModeRaw = String(formData.get("entryMode") ?? "catalog");
+  const entryMode = entryModeRaw === "manual" ? "manual" : "catalog";
+
   return vehicleFormSchema.parse({
+    entryMode,
     manufacturerId: String(formData.get("manufacturerId") ?? ""),
     seriesId: String(formData.get("seriesId") ?? ""),
     generationId: String(formData.get("generationId") ?? ""),
     variantId: String(formData.get("variantId") ?? ""),
     engineId: String(formData.get("engineId") ?? ""),
     catalogModelYearId: String(formData.get("catalogModelYearId") ?? ""),
+    make: String(formData.get("make") ?? ""),
+    model: String(formData.get("model") ?? ""),
+    variantName: String(formData.get("variantName") ?? "") || null,
+    manualEngineName: String(formData.get("manualEngineName") ?? "") || null,
     productionYear: toRequiredInt("productionYear"),
     vin: String(formData.get("vin") ?? ""),
     hsn: String(formData.get("hsn") ?? ""),

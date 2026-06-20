@@ -6,7 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { DeleteVehicleButton } from "@/components/vehicles/DeleteVehicleButton";
 import { VehicleDetailOverview } from "@/components/vehicles/VehicleDetailOverview";
 import { VehicleHubModules } from "@/components/vehicles/VehicleHubModules";
+import { VehicleDetailPanels } from "@/components/vehicles/VehicleDetailPanels";
+import { VehicleQrCode } from "@/components/vehicles/VehicleExtras";
+import { OdometerQuickUpdate } from "@/components/vehicles/OdometerQuickUpdate";
 import { getVehicleForCurrentUser } from "@/lib/services/vehicles";
+import { getCurrentUserId } from "@/lib/auth/current-user";
+import { resolveVehicleAccess } from "@/lib/vehicles/access";
+import { listInspectionsForVehicle } from "@/lib/repositories/inspections";
+import { listInsurancePoliciesForVehicle } from "@/lib/repositories/insurance";
+import { listSharesForVehicle } from "@/lib/repositories/vehicle-shares";
 import {
   getVehicleDisplayName,
   serializeVehicle,
@@ -28,8 +36,18 @@ export default async function VehicleDetailPage({ params }: Props) {
     notFound();
   }
 
+  const userId = await getCurrentUserId();
+  const access = await resolveVehicleAccess(userId, id);
   const vehicle = serializeVehicle(record);
   const title = getVehicleDisplayName(vehicle);
+  const isOwner = access?.role === "OWNER";
+  const canEdit = access?.canEdit ?? false;
+
+  const [inspections, insurancePolicies, shares] = await Promise.all([
+    listInspectionsForVehicle(id, userId),
+    listInsurancePoliciesForVehicle(id, userId),
+    isOwner ? listSharesForVehicle(id, userId) : Promise.resolve([]),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8">
@@ -37,12 +55,14 @@ export default async function VehicleDetailPage({ params }: Props) {
         title={title}
         subtitle={t("detail.subtitle")}
         action={
-          <div className="flex flex-wrap gap-2">
-            <Link href={`/vehicles/${vehicle.id}/edit`}>
-              <Button variant="secondary">{t("editVehicle")}</Button>
-            </Link>
-            <DeleteVehicleButton vehicle={vehicle} />
-          </div>
+          canEdit ? (
+            <div className="flex flex-wrap gap-2">
+              <Link href={`/vehicles/${vehicle.id}/edit`}>
+                <Button variant="secondary">{t("editVehicle")}</Button>
+              </Link>
+              {isOwner ? <DeleteVehicleButton vehicle={vehicle} /> : null}
+            </div>
+          ) : null
         }
       />
 
@@ -50,8 +70,56 @@ export default async function VehicleDetailPage({ params }: Props) {
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           {t("detail.overview")}
         </h2>
-        <VehicleDetailOverview vehicle={vehicle} locale={locale} />
+        <div className="grid gap-6 lg:grid-cols-[1fr_auto]">
+          <VehicleDetailOverview vehicle={vehicle} locale={locale} />
+          <div className="space-y-4">
+            <VehicleQrCode vehicleId={vehicle.id} vehicleName={title} />
+            {canEdit ? (
+              <div className="rounded-xl border border-border bg-card p-4">
+                <OdometerQuickUpdate
+                  vehicleId={vehicle.id}
+                  currentKm={vehicle.currentOdometerKm}
+                  locale={locale}
+                />
+              </div>
+            ) : null}
+          </div>
+        </div>
       </section>
+
+      <VehicleDetailPanels
+        vehicleId={vehicle.id}
+        isOwner={isOwner}
+        canEdit={canEdit}
+        inspections={inspections.map((i) => ({
+          id: i.id,
+          type: i.type,
+          nextDueAt: i.nextDueAt.toISOString(),
+          lastPerformedAt: i.lastPerformedAt?.toISOString() ?? null,
+          reminderWeeksBefore: i.reminderWeeksBefore,
+          stickerNumber: i.stickerNumber,
+          notes: i.notes,
+        }))}
+        insurancePolicies={insurancePolicies.map((p) => ({
+          id: p.id,
+          provider: p.provider,
+          policyNumber: p.policyNumber,
+          premiumCents: Number(p.premiumCents),
+          currency: p.currency,
+          sfClass: p.sfClass,
+          coverageType: p.coverageType,
+          startDate: p.startDate.toISOString(),
+          endDate: p.endDate.toISOString(),
+          autoRenew: p.autoRenew,
+          notes: p.notes,
+        }))}
+        shares={shares.map((s) => ({
+          id: s.id,
+          role: s.role,
+          username: s.user.username,
+          displayName: s.user.displayName,
+        }))}
+      />
 
       <section className="space-y-4">
         <div>

@@ -7,11 +7,12 @@ import { geistMono, geistSans } from "@/lib/fonts";
 import { THEME_INIT_SCRIPT } from "@/lib/theme/init-script";
 import { routing } from "@/lib/i18n/routing";
 import { UserSettingsProvider } from "@/providers/UserSettingsProvider";
+import { AppearanceProvider } from "@/providers/AppearanceProvider";
 import { LocaleSync } from "@/components/settings/LocaleSync";
 import { ShellGate } from "@/components/layout/ShellGate";
 import { AuthSessionProvider } from "@/providers/AuthSessionProvider";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { userHasBackgroundImage } from "@/lib/services/appearance";
+import { findAppearanceForUser } from "@/lib/repositories/preferences";
 
 export const dynamic = "force-dynamic";
 
@@ -49,15 +50,16 @@ export default async function LocaleLayout({ children, params }: Props) {
           .findPreferencesForUser(user.id)
           .catch(() => undefined)
       : undefined;
-  const hasBackground =
+  const appearance =
     user != null
-      ? await userHasBackgroundImage(user.id).catch(() => false)
-      : false;
+      ? await findAppearanceForUser(user.id).catch(() => undefined)
+      : undefined;
 
   return (
     <html
       lang={locale}
       suppressHydrationWarning
+      data-design={appearance?.designPreset ?? "default"}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
@@ -70,8 +72,10 @@ export default async function LocaleLayout({ children, params }: Props) {
         <NextIntlClientProvider messages={messages}>
           <AuthSessionProvider user={user}>
             <UserSettingsProvider initialSettings={initialSettings}>
-              <LocaleSync />
-              <ShellGate hasBackground={hasBackground}>{children}</ShellGate>
+              <AppearanceProvider initial={appearance}>
+                <LocaleSync />
+                <ShellGate>{children}</ShellGate>
+              </AppearanceProvider>
             </UserSettingsProvider>
           </AuthSessionProvider>
         </NextIntlClientProvider>

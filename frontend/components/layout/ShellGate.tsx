@@ -3,17 +3,13 @@
 import { usePathname } from "@/lib/i18n/navigation";
 import { AppShell } from "./AppShell";
 import { AuthLocaleSwitcher } from "@/components/auth/AuthLocaleSwitcher";
+import { useAppearance } from "@/providers/AppearanceProvider";
 
 const AUTH_ROUTES = ["/login", "/register"];
 
-export function ShellGate({
-  children,
-  hasBackground = false,
-}: {
-  children: React.ReactNode;
-  hasBackground?: boolean;
-}) {
+export function ShellGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { hasBackground } = useAppearance();
   const isAuth = AUTH_ROUTES.some(
     (route) => pathname === route || pathname.endsWith(route),
   );

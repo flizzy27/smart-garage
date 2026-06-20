@@ -1,6 +1,7 @@
 import type { BodyType, DriveType, FuelType, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { buildVehicleMetadata } from "@/lib/domain/vehicle-metadata";
+import { vehicleAccessWhere } from "@/lib/vehicles/access";
 
 const vehicleInclude = {
   manufacturer: true,
@@ -59,6 +60,16 @@ export async function listVehiclesByOwner(
   });
 }
 
+export async function listAccessibleVehicles(
+  userId: string,
+): Promise<VehicleWithRelations[]> {
+  return prisma.vehicle.findMany({
+    where: vehicleAccessWhere(userId),
+    include: vehicleInclude,
+    orderBy: [{ updatedAt: "desc" }],
+  });
+}
+
 export async function findVehicleById(
   id: string,
   ownerUserId: string,
@@ -66,6 +77,35 @@ export async function findVehicleById(
   return prisma.vehicle.findFirst({
     where: { id, ownerUserId, deletedAt: null },
     include: vehicleInclude,
+  });
+}
+
+export async function findAccessibleVehicle(
+  id: string,
+  userId: string,
+): Promise<VehicleWithRelations | null> {
+  return prisma.vehicle.findFirst({
+    where: { id, ...vehicleAccessWhere(userId) },
+    include: vehicleInclude,
+  });
+}
+
+export async function updateVehicleOdometer(
+  id: string,
+  userId: string,
+  currentOdometerKm: number,
+) {
+  const vehicle = await findAccessibleVehicle(id, userId);
+  if (!vehicle) return { count: 0 };
+
+  const access = await import("@/lib/vehicles/access").then((m) =>
+    m.resolveVehicleAccess(userId, id),
+  );
+  if (!access?.canEdit) return { count: 0 };
+
+  return prisma.vehicle.updateMany({
+    where: { id, deletedAt: null },
+    data: { currentOdometerKm },
   });
 }
 
@@ -87,8 +127,8 @@ export type VehicleSpecInput = {
 
 export type CreateVehicleData = {
   ownerUserId: string;
-  manufacturerId: string;
-  catalogModelYearId: string;
+  manufacturerId: string | null;
+  catalogModelYearId: string | null;
   make: string;
   model: string;
   productionYear: number;
@@ -185,6 +225,12 @@ export async function softDeleteVehicle(id: string, ownerUserId: string) {
 export async function countVehiclesByOwner(ownerUserId: string) {
   return prisma.vehicle.count({
     where: { ownerUserId, deletedAt: null },
+  });
+}
+
+export async function countAccessibleVehicles(userId: string) {
+  return prisma.vehicle.count({
+    where: vehicleAccessWhere(userId),
   });
 }
 
