@@ -40,7 +40,7 @@ coverage/
 Thumbs.db
 Desktop.ini
 
-# IDE (optional local settings)
+# IDE / local AI agent config (not published to GitHub)
 .idea/
 *.swp
 *.swo
