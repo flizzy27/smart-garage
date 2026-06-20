@@ -39,6 +39,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/ensure-catalog.mjs ./docker/ensure-catalog.mjs
 RUN chmod +x /entrypoint.sh && mkdir -p /data/uploads && chown -R nextjs:nodejs /data
 
 USER nextjs

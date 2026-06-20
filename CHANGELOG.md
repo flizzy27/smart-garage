@@ -9,6 +9,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.3.6] - 2026-06-20
+
+### Fixed
+
+- **Empty vehicle catalog on Unraid/Docker** — seed bundled manufacturer catalog on first container start; manufacturer search no longer requires CARDATA_WIKI-only data
+
 ## [0.3.5] - 2026-06-20
 
 ### Fixed
@@ -88,7 +94,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.5...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.6...HEAD
+[0.3.6]: https://github.com/flizzy27/smart-garage/compare/v0.3.5...v0.3.6
 [0.3.5]: https://github.com/flizzy27/smart-garage/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/flizzy27/smart-garage/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/flizzy27/smart-garage/compare/v0.3.2...v0.3.3

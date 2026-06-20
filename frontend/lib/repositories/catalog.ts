@@ -38,7 +38,7 @@ export async function searchCatalogManufacturers(query: string, limit?: number) 
             { slug: { contains: trimmed.toLowerCase().replace(/\s+/g, "-") } },
           ],
         }
-      : { source: "CARDATA_WIKI" },
+      : undefined,
     orderBy: { name: "asc" },
     take: trimmed ? take * 3 : take,
     select: { id: true, name: true, country: true, source: true },
