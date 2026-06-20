@@ -44,8 +44,10 @@ Desktop.ini
 .idea/
 .cursor/*
 !.cursor/hooks.json
+!.cursor/hooks/
 !.cursor/hooks/**
 .cursor/hooks/state/
+!.cursor/rules/
 !.cursor/rules/**
 *.swp
 *.swo

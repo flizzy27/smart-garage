@@ -1,0 +1,45 @@
+---
+description: Smart Garage core conventions — stack, code rules, scope
+alwaysApply: true
+---
+
+# Smart Garage
+
+Self-hosted vehicle management (Next.js, **SQLite**, Docker, Unraid).
+
+**New chat:** read `AGENTS.md` at repo root before non-trivial work.
+
+## Stack
+
+- **App:** `frontend/` — Next.js 16 App Router, TypeScript strict, React 19
+- **i18n:** next-intl — English default, German; **no hardcoded UI text**
+- **Data:** SQLite + Prisma 6 (`frontend/prisma/`)
+- **Deploy:** single Docker image → GHCR; data on `/data` volume
+
+## Docs (current)
+
+| Doc | Purpose |
+|-----|---------|
+| `AGENTS.md` | **Agent onboarding + pitfalls** |
+| `README.md` | User-facing overview |
+| `docs/UNRAID.md` | Unraid install |
+| `docs/INSTALL.md` | Backup, updates |
+| `CHANGELOG.md` | Releases |
+
+Do **not** reference removed files: `ARCHITECTURE.md`, `ROADMAP.md`, `DATABASE.md`, `DEVELOPMENT.md`, `PROJECT.md`.
+
+## Code rules
+
+- TypeScript in `frontend/` — no `.js` source files
+- UI strings in `messages/en.json` + `messages/de.json` only
+- Business logic in `lib/domain/` and `lib/services/` — no React imports
+- Data access in `lib/repositories/` — Prisma only
+- Authorization in services — never UI-only checks
+- Validate with Zod at boundaries
+- Do not commit `.env`, secrets, or `data/`
+
+## Out of scope unless requested
+
+- New features without explicit task
+- PostgreSQL (project uses SQLite)
+- Restoring deleted internal docs

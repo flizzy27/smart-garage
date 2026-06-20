@@ -1,0 +1,27 @@
+---
+description: Prevent silent terminal hangs and lost exit codes during agent shell work
+alwaysApply: true
+---
+
+# Terminal safety (Windows + Docker)
+
+## After every Shell command
+
+1. **Never assume success** if the tool result shows `exit_code: unknown`, no `exit_code`, or the command was backgrounded.
+2. **Read the full terminal file** (path is in the system reminder under `Terminals folder`) before continuing.
+3. Run `node scripts/terminal-status.mjs` when multiple shells ran or anything looks stuck.
+
+## Long-running commands
+
+- **Docker / npm ci / build**: use `powershell -NoProfile -File scripts/ci-linux-docker.ps1` — not raw `docker run` one-liners.
+- Set `block_until_ms` high enough (≥ 300000 for CI; ≥ 600000 for full catalog import).
+- For background shells (`block_until_ms: 0`), **always** set `notify_on_output` with a regex like `CI_STEP:|exit_code|npm error|FATAL`.
+- Poll with `Await` until `exit_code` appears in the terminal file, or timeout and report to the user.
+
+## Known noise (ignore)
+
+PowerShell profile errors (`PredictionViewStyle`) at the start of terminal output are harmless on this machine.
+
+## CI on this project
+
+GitHub Actions uses `npm ci` on Linux. Regenerate `frontend/package-lock.json` in Linux Docker if `npm ci` fails with missing `@emnapi/*` or `@swc/helpers`.
