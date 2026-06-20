@@ -11,8 +11,8 @@ frontend/build/
 .env.*
 !.env.example
 
-# Local data (database files, uploads)
-data/
+# Local data (database files, uploads) — root /data volume only, not app routes
+/data/
 frontend/data/
 *.db
 *.db-journal
