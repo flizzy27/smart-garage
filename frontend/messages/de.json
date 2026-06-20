@@ -843,7 +843,36 @@
     "dueInDays": "in {days} Tagen",
     "dueInKm": "in {km} km",
     "inspectionsTitle": "TÜV / Prüfungen",
-    "inspectionDue": "Fällig {date}"
+    "inspectionDue": "Fällig {date}",
+    "setup": {
+      "prompt": "Schnell einrichten",
+      "promptHint": "{count, plural, one {# Eintrag braucht deine Angabe} other {# Einträge brauchen deine Angabe}}",
+      "start": "Schnell-Setup starten",
+      "title": "Warnungen schnell einrichten",
+      "progress": "Eintrag {current} von {total}",
+      "complete": "Alles durchgearbeitet — fertig!",
+      "close": "Schließen",
+      "exactDate": "Letzter Service an diesem Datum",
+      "done": "Datum speichern",
+      "circaTitle": "Ungefähr (Erinnerungen bleiben aktiv)",
+      "circaMonths": {
+        "3": "~vor 3 Monaten",
+        "6": "~vor 6 Monaten",
+        "12": "~vor 1 Jahr",
+        "24": "~vor 2 Jahren"
+      },
+      "unknown": "Weiß nicht — schätzen",
+      "unknownHint": "„Weiß nicht“ nimmt an, der Service war etwa zur Hälfte des Intervalls — du bekommst trotzdem Erinnerungen, wenn es fällig ist.",
+      "later": "Später",
+      "skipService": "Nicht mehr verfolgen",
+      "editIntervals": "Intervalle bearbeiten",
+      "hideIntervals": "Intervalle ausblenden",
+      "logService": "Service eintragen",
+      "statusOverdue": "Überfällig",
+      "statusDueSoon": "Bald fällig",
+      "statusUnset": "Noch nicht eingerichtet",
+      "error": "Speichern fehlgeschlagen — bitte erneut versuchen"
+    }
   },
   "costs": {
     "title": "Kostenübersicht",

@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
+import { ScheduleIntervalForm } from "@/components/maintenance/ScheduleIntervalForm";
 
 type Template = {
   id: string;
@@ -259,6 +260,7 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
 function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
   const t = useTranslations("maintenance");
   const locale = useLocale();
+  const [editing, setEditing] = useState(false);
   const tone = schedule.dueStatus as keyof typeof statusStyles;
 
   return (
@@ -303,6 +305,14 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
+        <Button
+          type="button"
+          variant="secondary"
+          className="px-3 py-1.5 text-xs"
+          onClick={() => setEditing((v) => !v)}
+        >
+          {editing ? t("hideDetails") : t("editIntervals")}
+        </Button>
         <Link href={`/maintenance/${schedule.id}#log-service`}>
           <Button type="button" variant="secondary" className="px-3 py-1.5 text-xs">
             {t("logOrHistory")}
@@ -324,6 +334,14 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
           {t("remove")}
         </Button>
       </div>
+
+      {editing ? (
+        <ScheduleIntervalForm
+          schedule={schedule}
+          locale={locale as "en" | "de"}
+          onSaved={() => setEditing(false)}
+        />
+      ) : null}
     </article>
   );
 }

@@ -11,6 +11,7 @@ import {
   serializeSchedule,
   getUpcomingSchedulesForOwner,
   countDueSchedulesForOwner,
+  refreshAllScheduleDueStatuses,
 } from "@/lib/repositories/maintenance";
 import {
   listAllRecordsForOwner,
@@ -20,12 +21,18 @@ import type { Locale } from "@/lib/i18n/routing";
 import type {
   CreateScheduleInput,
   LogMaintenanceInput,
+  SetupWarningInput,
   UpdateScheduleInput,
 } from "@/lib/validations/maintenance";
+import {
+  circaLastPerformedDate,
+  estimateLastService,
+} from "@/lib/maintenance/setup-estimate";
 import { prisma } from "@/lib/prisma";
 
 export async function getMaintenancePageData(locale: Locale) {
   const ownerUserId = await getCurrentUserId();
+  await refreshAllScheduleDueStatuses(ownerUserId);
   const [templates, schedules] = await Promise.all([
     listMaintenanceTemplates(),
     listSchedulesForOwner(ownerUserId),
@@ -328,6 +335,66 @@ export async function deleteMaintenanceSchedule(scheduleId: string) {
     where: { id: scheduleId },
     data: { isActive: false },
   });
+}
+
+export async function applyWarningSetup(input: SetupWarningInput) {
+  const ownerUserId = await getCurrentUserId();
+  const schedule = await findScheduleById(input.scheduleId, ownerUserId);
+  if (!schedule) throw new Error("Schedule not found");
+
+  if (input.action === "skip") {
+    await deleteMaintenanceSchedule(input.scheduleId);
+    return;
+  }
+
+  const odometerKm = schedule.vehicle.currentOdometerKm;
+  const interval = {
+    intervalKm: schedule.intervalKm,
+    intervalMonths: schedule.intervalMonths,
+  };
+
+  if (input.action === "done") {
+    if (!input.performedAt) throw new Error("Date required");
+    await logMaintenanceService({
+      scheduleId: input.scheduleId,
+      performedAt: input.performedAt,
+      odometerKm,
+      costCents: 0,
+      currency: schedule.currency,
+      note: "Quick setup",
+    });
+    return;
+  }
+
+  if (input.action === "circa") {
+    if (!input.circaMonthsAgo) throw new Error("Approximate period required");
+    const lastPerformedAt = circaLastPerformedDate(input.circaMonthsAgo);
+    await updateMaintenanceSchedule({
+      scheduleId: input.scheduleId,
+      estimatedCostCents: undefined,
+      lastPerformedAt: lastPerformedAt.toISOString().slice(0, 10),
+      lastOdometerKm: odometerKm,
+      notes: schedule.notes
+        ? `${schedule.notes}\n(~${input.circaMonthsAgo} mo. ago, approximate)`
+        : `(~${input.circaMonthsAgo} mo. ago, approximate)`,
+    });
+    return;
+  }
+
+  if (input.action === "unknown") {
+    const estimate = estimateLastService(interval, odometerKm);
+    await updateMaintenanceSchedule({
+      scheduleId: input.scheduleId,
+      estimatedCostCents: undefined,
+      lastPerformedAt: estimate.lastPerformedAt
+        ? estimate.lastPerformedAt.toISOString().slice(0, 10)
+        : undefined,
+      lastOdometerKm: estimate.lastOdometerKm ?? undefined,
+      notes: schedule.notes
+        ? `${schedule.notes}\n(Estimated — unsure of last service)`
+        : "(Estimated — unsure of last service)",
+    });
+  }
 }
 
 export async function bootstrapSchedulesForOwner(ownerUserId: string) {

@@ -9,6 +9,13 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.5] - 2026-06-20
+
+### Added
+
+- **Reminders quick setup** — wizard to walk through warnings with exact date, circa (~3/6/12/24 months), estimate, later, or skip
+- **Inline interval editing** on Reminders and Maintenance pages (km, months, last service)
+
 ## [0.4.4] - 2026-06-20
 
 ### Fixed
@@ -151,7 +158,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.4...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.5...HEAD
+[0.4.5]: https://github.com/flizzy27/smart-garage/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/flizzy27/smart-garage/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/flizzy27/smart-garage/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/flizzy27/smart-garage/compare/v0.4.1...v0.4.2

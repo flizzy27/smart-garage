@@ -124,6 +124,7 @@ export type SerializedSchedule = {
   notes: string | null;
   isCustom: boolean;
   templateSlug: string | null;
+  vehicleOdometerKm: number;
 };
 
 export function serializeSchedule(
@@ -168,6 +169,7 @@ export function serializeSchedule(
     notes: schedule.notes,
     isCustom: !schedule.templateId,
     templateSlug: schedule.template?.slug ?? null,
+    vehicleOdometerKm: schedule.vehicle.currentOdometerKm,
   };
 }
 
