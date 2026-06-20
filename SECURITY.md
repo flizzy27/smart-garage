@@ -4,53 +4,47 @@
 
 | Version | Supported |
 |---------|-----------|
-| latest release | yes |
-| older releases | security fixes at maintainer discretion |
+| Latest release (`latest` / newest tag) | Yes |
+| Older tags | Security fixes at maintainer discretion |
 
 ## Reporting a vulnerability
 
-**Please do not report security vulnerabilities through public GitHub issues.**
+**Do not report security vulnerabilities through public GitHub issues.**
 
-Instead, report them by opening a **private security advisory** on GitHub:
+Use **GitHub Private Security Advisory**:
 
-1. Go to the repository Security tab
-2. Click **Report a vulnerability**
-3. Describe the issue, impact, and steps to reproduce
+1. Repository → **Security** → **Report a vulnerability**
+2. Describe impact and reproduction steps
 
-If GitHub private reporting is unavailable, open a minimal public issue asking for a private contact channel — do not include exploit details.
-
-We aim to acknowledge reports within **7 days** and provide a fix timeline when possible.
+We aim to acknowledge within **7 days**.
 
 ## Scope
 
-In scope:
+**In scope**
 
 - Authentication and session handling
-- Authorization bypass (accessing another user's vehicles or files)
+- Authorization bypass (another user's data)
 - SQL injection, XSS, CSRF
-- Path traversal via file upload or download
-- Remote code execution via dependencies or misconfiguration
+- Path traversal via uploads/downloads
+- Remote code execution via application code
 
-Out of scope:
+**Out of scope**
 
-- Denial of service against a self-hosted instance without a demonstrated flaw in Smart Garage code
-- Issues in third-party services (PostgreSQL, reverse proxy) not caused by Smart Garage configuration defaults
-- Social engineering
+- Generic DoS against a self-hosted instance
+- Misconfigured reverse proxy / TLS (operator responsibility)
+- Issues in Docker/Unraid themselves
 
 ## Self-hosting responsibilities
 
-Smart Garage users are responsible for:
+- Keep the container updated (`Force Update` / pull `latest`)
+- Use HTTPS when exposing to the internet (reverse proxy)
+- Back up `/data` regularly ([docs/INSTALL.md](docs/INSTALL.md))
+- Do not expose the container port directly to the public internet without TLS
 
-- Keeping instances updated
-- Using HTTPS via a reverse proxy when exposed to the internet
-- Setting strong `AUTH_SECRET` and database passwords
-- Regular backups (see [DEPLOYMENT.md](./DEPLOYMENT.md))
+## Application security
 
-## Secure defaults
-
-The project aims to:
-
-- Require authentication for all application routes except login/register
-- Never expose upload directories as public static files
-- Store passwords with Argon2id (when auth is implemented)
-- Document required environment variables in `.env.example`
+- Open registration is intentional (local/trusted networks); restrict network access if needed
+- Passwords stored with **scrypt** + per-user salt
+- Sessions stored server-side; HTTP-only cookie
+- Upload MIME types and sizes validated server-side
+- No secrets committed to the repository

@@ -1,7 +1,10 @@
-# Smart Garage — single all-in-one container (SQLite + uploads on volume)
+# Smart Garage — production container (SQLite + uploads on /data)
 FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
+
+ARG APP_VERSION=dev
+ENV APP_VERSION=${APP_VERSION}
 
 FROM base AS deps
 COPY frontend/package.json frontend/package-lock.json* ./

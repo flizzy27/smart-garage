@@ -1,48 +1,19 @@
 # Docker
 
-Smart Garage ships as **one production container**: Next.js app + SQLite + uploads on a single `/data` volume.
-
-## Production (recommended)
-
-From the repository root:
-
-```bash
-mkdir -p data
-docker compose up -d --build
-```
+Production image for Smart Garage.
 
 | File | Purpose |
 |------|---------|
-| [../Dockerfile](../Dockerfile) | Multi-stage build (deps → build → slim runtime) |
-| [../docker-compose.yml](../docker-compose.yml) | Production service on port 3000 |
-| [entrypoint.sh](./entrypoint.sh) | Runs `prisma migrate deploy`, then `node server.js` |
+| [../Dockerfile](../Dockerfile) | Multi-stage build → `ghcr.io/flizzy27/smart-garage` |
+| [entrypoint.sh](./entrypoint.sh) | `prisma migrate deploy` → `node server.js` |
+| [../docker-compose.yml](../docker-compose.yml) | Pull and run `latest` |
 
-### Volume layout
+## Data volume
 
 ```
-data/                    # host bind mount → /data in container
-├── smart-garage.db      # SQLite database
-└── uploads/             # vehicle images & documents
+/data/
+├── smart-garage.db
+└── uploads/
 ```
 
-## Unraid
-
-See [../docs/UNRAID.md](../docs/UNRAID.md).
-
-## Development database (legacy / optional)
-
-[docker-compose.dev.yml](./docker-compose.dev.yml) starts PostgreSQL for older dev workflows.  
-**Current V1 app uses SQLite** — local dev typically uses `frontend/.env` with `file:../data/smart-garage.db`.
-
-```bash
-cd frontend
-npm install
-npm run db:repair
-npm run dev
-```
-
-## Build image only
-
-```bash
-docker build -t smart-garage:0.2.0 .
-```
+Published automatically by GitHub Actions on push to `main` and version tags.

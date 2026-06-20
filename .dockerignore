@@ -1,0 +1,17 @@
+.git
+.github
+data
+frontend/data
+frontend/.next
+frontend/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+**/*.db
+**/*.db-journal
+**/*.db-wal
+**/*.db-shm
+**/coverage
+**/.vercel
+Thumbs.db
+.DS_Store

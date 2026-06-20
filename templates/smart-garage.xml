@@ -4,51 +4,44 @@
   <Repository>ghcr.io/flizzy27/smart-garage:latest</Repository>
   <Registry>https://ghcr.io</Registry>
   <Network>bridge</Network>
-  <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
   <Support>https://github.com/flizzy27/smart-garage/issues</Support>
   <Project>https://github.com/flizzy27/smart-garage</Project>
-  <Overview>Smart Garage — self-hosted vehicle management. Maintenance schedules, fuel tracking with analytics, expenses, documents, and reminders. Single container, SQLite database, no compose required.</Overview>
+  <Overview>Smart Garage — self-hosted vehicle management for Unraid. Maintenance, fuel analytics, expenses, documents, and reminders. One container, SQLite database, automatic updates via :latest image.</Overview>
   <Description>
-Smart Garage is a self-hosted vehicle management app for homelab and NAS users.
-
-**Features**
-- Open registration — create as many local accounts as you need
-- Vehicle profiles with images and odometer tracking
-- Maintenance schedules and service history
-- Fuel log with consumption charts and projected annual usage
-- Expenses and document storage
-- English and German UI
-
-**First run**
-1. Install the container
-2. Open the WebUI
-3. Register your account (first user becomes admin)
-4. Add a vehicle
-
-**Data** is stored in the AppData path (SQLite database + uploads).
-
-Documentation: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
+&#xA;&#xA;**Smart Garage** helps you manage your cars from your own NAS — no cloud, no subscription.&#xA;&#xA;
+**Features**&#xA;
+- Vehicle profiles with photos and odometer tracking&#xA;
+- Maintenance schedules, service log, due/overdue dashboard&#xA;
+- Fuel log with consumption charts and projected annual usage&#xA;
+- Expenses, document storage (PDF/receipts), reminders&#xA;
+- Dark/light theme, English and German UI&#xA;
+- Open local registration (first user becomes admin)&#xA;&#xA;
+**First run**&#xA;
+1. Install and start the container&#xA;
+2. Open the WebUI&#xA;
+3. Register your account&#xA;
+4. Add your first vehicle&#xA;&#xA;
+**Updates:** Docker → smart-garage → **Force Update** (pulls `latest` from GHCR).&#xA;&#xA;
+**Backup:** archive the AppData folder (`smart-garage.db` + `uploads/`).&#xA;&#xA;
+Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   </Description>
   <Category>Productivity:Utilities</Category>
   <WebUI>http://[IP]:[PORT:3000]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
-  <ExtraParams/>
-  <PostArgs/>
-  <CPUset/>
-  <Requires/>
   <Changes>
-### 2026.06.19
-- Initial Community Applications template
-- Configurable web port and upload size limit
+### 2026-06-19 — v0.3.0
+- Production release for Community Applications
+- Configurable web port and upload limits
+- Auto-updates via ghcr.io/flizzy27/smart-garage:latest
   </Changes>
 
   <Config Name="Web UI" Target="3000" Default="3000" Mode="tcp" Description="Web interface port." Type="Port" Display="always" Required="true" Mask="false">3000</Config>
-  <Config Name="AppData" Target="/data" Default="/mnt/user/appdata/smart-garage" Mode="rw" Description="SQLite database and uploaded files (images, PDFs). Created automatically by Unraid." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/smart-garage</Config>
-  <Config Name="Max upload size (MB)" Target="MAX_UPLOAD_SIZE_MB" Default="25" Mode="" Description="Maximum document upload size in megabytes (PDF, receipts)." Type="Variable" Display="always" Required="false" Mask="false">25</Config>
-  <Config Name="Max image size (MB)" Target="MAX_IMAGE_SIZE_MB" Default="10" Mode="" Description="Maximum vehicle image upload size in megabytes." Type="Variable" Display="always" Required="false" Mask="false">10</Config>
+  <Config Name="AppData" Target="/data" Default="/mnt/user/appdata/smart-garage" Mode="rw" Description="SQLite database and uploads. Created automatically by Unraid." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/smart-garage</Config>
+  <Config Name="Max upload size (MB)" Target="MAX_UPLOAD_SIZE_MB" Default="25" Mode="" Description="Maximum document upload size (PDF, receipts)." Type="Variable" Display="always" Required="false" Mask="false">25</Config>
+  <Config Name="Max image size (MB)" Target="MAX_IMAGE_SIZE_MB" Default="10" Mode="" Description="Maximum vehicle image upload size." Type="Variable" Display="always" Required="false" Mask="false">10</Config>
   <Config Name="Database URL" Target="DATABASE_URL" Default="file:/data/smart-garage.db" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">file:/data/smart-garage.db</Config>
   <Config Name="Upload directory" Target="UPLOAD_DIR" Default="/data/uploads" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">/data/uploads</Config>
   <Config Name="Node environment" Target="NODE_ENV" Default="production" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">production</Config>
