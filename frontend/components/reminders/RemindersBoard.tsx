@@ -11,10 +11,9 @@ const statusStyles = {
 
 type Props = {
   schedules: SerializedSchedule[];
-  locale: "en" | "de";
 };
 
-export async function RemindersBoard({ schedules, locale }: Props) {
+export async function RemindersBoard({ schedules }: Props) {
   const t = await getTranslations("reminders");
 
   const dueItems = schedules.filter((s) => s.dueStatus !== "OK");

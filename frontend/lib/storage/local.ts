@@ -6,7 +6,6 @@ import {
   ALLOWED_IMAGE_MIME_TYPES,
   getMaxImageSizeBytes,
   getMaxUploadSizeBytes,
-  getUploadRoot,
   resolveStoredFilePath,
 } from "./paths";
 
@@ -48,7 +47,6 @@ async function saveFileToStorage(
     throw new Error("FILE_TOO_LARGE");
   }
 
-  const ext = extensionForMime(file.type) || path.extname(file.name) || "";
   const absolutePath = resolveStoredFilePath(storageKey);
 
   await mkdir(path.dirname(absolutePath), { recursive: true });

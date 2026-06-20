@@ -22,8 +22,6 @@ import {
   type CurrencyCode,
   type ThemeMode,
   type UserSettings,
-  TIMEZONE_OPTIONS,
-  CURRENCY_OPTIONS,
 } from "@/lib/settings/types";
 
 type UserSettingsContextValue = {
@@ -70,6 +68,8 @@ export function UserSettingsProvider({
     };
     media.addEventListener("change", onSystemThemeChange);
     return () => media.removeEventListener("change", onSystemThemeChange);
+    // Mount-only: merge server initialSettings with localStorage once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
   }, []);
 
   const persist = useCallback((next: UserSettings) => {

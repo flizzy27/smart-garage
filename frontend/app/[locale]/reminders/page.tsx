@@ -19,7 +19,7 @@ export default async function RemindersPage({ params }: Props) {
     <div className="mx-auto w-full max-w-3xl space-y-6">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
       <InspectionReminders locale={locale} />
-      <RemindersBoard schedules={schedules} locale={locale as "en" | "de"} />
+      <RemindersBoard schedules={schedules} />
     </div>
   );
 }

@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin("./lib/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  outputFileTracingExcludes: {
+    "*": ["./prisma.config.ts"],
+  },
   experimental: {
     serverActions: {
       // Hard cap at build time; actual limit enforced at runtime via MAX_UPLOAD_SIZE_MB in upload handlers.

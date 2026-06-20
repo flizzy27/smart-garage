@@ -35,6 +35,8 @@ RUN npm install -g prisma@6.19.3
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Standalone trace can include prisma.config.ts; Prisma CLI then requires prisma/config (not in image).
+RUN rm -f ./prisma.config.ts
 COPY --from=builder /app/prisma ./prisma
 # prisma.config.ts imports "prisma/config" (dev-only seed config). Production uses --schema in entrypoint.
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
@@ -45,5 +47,7 @@ RUN chmod +x /entrypoint.sh && mkdir -p /data/uploads && chown -R nextjs:nodejs 
 
 USER nextjs
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:3000/api/health || exit 1
 VOLUME ["/data"]
 ENTRYPOINT ["/entrypoint.sh"]

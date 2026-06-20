@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { DocumentCategory } from "@prisma/client";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
@@ -33,7 +33,7 @@ type Props = {
   defaultVehicleId?: string;
 };
 
-function formatFileSize(bytes: number, locale: string): string {
+function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) {
     return `${(bytes / 1024).toFixed(1)} KB`;
@@ -48,7 +48,6 @@ export function DocumentsLibrary({
 }: Props) {
   const t = useTranslations("documents");
   const tCat = useTranslations("documents.categories");
-  const locale = useLocale();
   const [preview, setPreview] = useState<SerializedDocument | null>(null);
   const [uploadState, uploadAction, uploading] = useActionState<
     DocumentActionResult | null,
@@ -151,7 +150,7 @@ export function DocumentsLibrary({
                 <p className="mt-1 text-xs text-muted-foreground">
                   {new Date(doc.createdAt).toLocaleDateString()}
                   {" · "}
-                  {formatFileSize(doc.sizeBytes, locale)}
+                  {formatFileSize(doc.sizeBytes)}
                   {" · "}
                   {doc.originalFilename}
                 </p>

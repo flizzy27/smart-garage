@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useCallback, useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { BodyType, DriveType, FuelType } from "@prisma/client";
 import { Alert } from "@/components/ui/Alert";
