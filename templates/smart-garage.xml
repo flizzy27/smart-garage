@@ -32,16 +32,20 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
   <Changes>
+### 2026-06-20 — v0.4.2
+- Fix CI and republish `:latest` stable image (v0.4.0/v0.4.1 tags never built)
+- Includes all v0.4.x features below
+
+### 2026-06-19 — v0.4.0
+- Family garage sharing, cost dashboard, TÜV/HU tracking, wishlist, insurance tracker
+- Odometer quick-update, QR codes, export/backup, design presets, background blur
+- Manual vehicle entry when not in catalog
+
+### 2026-06-20 — v0.3.6
+- Bundled vehicle catalog seeds automatically on first container start
+
 ### 2026-06-20 — v0.3.4
 - Fix login session on HTTP (Unraid LAN) — no more redirect loop after login
-
-### 2026-06-20 — v0.3.3
-- Fix container startup: Prisma migrations run correctly on first boot (Unraid CA)
-
-### 2026-06-19 — v0.3.0
-- Production release for Community Applications
-- Configurable web port and upload limits
-- Auto-updates via ghcr.io/flizzy27/smart-garage:latest
   </Changes>
 
   <Config Name="Web UI" Target="3000" Default="3000" Mode="tcp" Description="Web interface port." Type="Port" Display="always" Required="true" Mask="false">3000</Config>
