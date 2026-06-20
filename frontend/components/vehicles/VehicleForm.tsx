@@ -204,7 +204,7 @@ export function VehicleForm({
   );
 
   const [spec, setSpec] = useState<ResolvedSpec | null>(null);
-  const [specLoading, setSpecLoading] = useState(false);
+  const [loadedSpecYearId, setLoadedSpecYearId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     getVehicleImageUrl(initialVehicle?.imageDocumentId ?? null),
   );
@@ -212,15 +212,26 @@ export function VehicleForm({
   const current = initialVehicle?.currentSpecs;
 
   useEffect(() => {
-    if (!catalogModelYearId) {
-      setSpec(null);
-      return;
-    }
-    setSpecLoading(true);
+    if (!catalogModelYearId) return;
+
+    let cancelled = false;
     void fetchResolvedSpec(catalogModelYearId)
-      .then(setSpec)
-      .finally(() => setSpecLoading(false));
+      .then((resolved) => {
+        if (!cancelled) {
+          setSpec(resolved);
+          setLoadedSpecYearId(catalogModelYearId);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [catalogModelYearId]);
+
+  const displaySpec = catalogModelYearId ? spec : null;
+  const specLoading = Boolean(
+    catalogModelYearId && loadedSpecYearId !== catalogModelYearId,
+  );
 
   const errorCode =
     state && "success" in state && !state.success ? state.error.code : null;
@@ -393,7 +404,7 @@ export function VehicleForm({
         </div>
         {specLoading ? (
           <p className="text-sm text-muted-foreground">{t("loadingSpecs")}</p>
-        ) : spec ? (
+        ) : displaySpec ? (
           <p className="text-sm text-muted-foreground">{t("specsLoaded")}</p>
         ) : null}
       </section>

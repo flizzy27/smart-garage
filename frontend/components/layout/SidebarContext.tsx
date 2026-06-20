@@ -4,12 +4,20 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
   type ReactNode,
 } from "react";
 
 const STORAGE_KEY = "sg-sidebar-collapsed";
+
+function readCollapsedPreference(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
 
 type SidebarContextValue = {
   collapsed: boolean;
@@ -19,15 +27,7 @@ type SidebarContextValue = {
 const SidebarContext = createContext<SidebarContextValue | null>(null);
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false);
-
-  useEffect(() => {
-    try {
-      setCollapsed(localStorage.getItem(STORAGE_KEY) === "1");
-    } catch {
-      setCollapsed(false);
-    }
-  }, []);
+  const [collapsed, setCollapsed] = useState(readCollapsedPreference);
 
   const toggleCollapsed = useCallback(() => {
     setCollapsed((prev) => {

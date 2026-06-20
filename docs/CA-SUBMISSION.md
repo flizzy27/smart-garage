@@ -67,10 +67,14 @@ Hidden (auto-set): `DATABASE_URL`, `UPLOAD_DIR`, `NODE_ENV`
 
 ## How updates work
 
-- Template uses `:latest` image tag
-- Users update via Unraid **Force Update**
-- CI rebuilds and pushes `latest` on every `main` push and version tag
-- Entrypoint runs `prisma migrate deploy` before starting the app
+| Channel | Tag | Published when |
+|---------|-----|--------------|
+| **Stable** | `:latest` (+ `vX.Y.Z`) | Git tag `v*` pushed — **after CI passes** |
+| **Development** | `:development` | Every push to `main` — **after CI passes** |
+
+Unraid template uses **`:latest`** (stable). To test dev builds, change the repository tag to `:development` in container settings.
+
+Promote development → stable: tag a release (e.g. `v0.3.2`).
 
 ## Security notes for review
 
