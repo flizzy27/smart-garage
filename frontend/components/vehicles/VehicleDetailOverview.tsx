@@ -182,25 +182,28 @@ export async function VehicleDetailOverview({
               <SpecRow
                 label={t("form.fuelType")}
                 value={
-                  (current?.fuelType ?? factory?.fuelType)
-                    ? tFuel(current?.fuelType ?? factory?.fuelType!)
-                    : null
+                  (() => {
+                    const fuelType = current?.fuelType ?? factory?.fuelType;
+                    return fuelType ? tFuel(fuelType) : null;
+                  })()
                 }
               />
               <SpecRow
                 label={t("form.bodyType")}
                 value={
-                  (current?.bodyType ?? factory?.bodyType)
-                    ? tBody(current?.bodyType ?? factory?.bodyType!)
-                    : null
+                  (() => {
+                    const bodyType = current?.bodyType ?? factory?.bodyType;
+                    return bodyType ? tBody(bodyType) : null;
+                  })()
                 }
               />
               <SpecRow
                 label={t("form.driveType")}
                 value={
-                  (current?.driveType ?? factory?.driveType)
-                    ? tDrive(current?.driveType ?? factory?.driveType!)
-                    : null
+                  (() => {
+                    const driveType = current?.driveType ?? factory?.driveType;
+                    return driveType ? tDrive(driveType) : null;
+                  })()
                 }
               />
             </dl>
