@@ -40,11 +40,13 @@ coverage/
 Thumbs.db
 Desktop.ini
 
-# IDE / local AI agent config (not published to GitHub)
+# Local editor settings (not published)
 .idea/
 AGENTS.md
 frontend/AGENTS.md
 .cursor/
+scripts/terminal-status.mjs
+scripts/clean-commit-msg.mjs
 *.swp
 *.swo
 

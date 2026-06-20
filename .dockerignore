@@ -1,6 +1,5 @@
 .git
 .github
-.cursor
 data
 frontend/data
 frontend/.next
