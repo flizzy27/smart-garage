@@ -9,6 +9,28 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.0] - 2026-06-19
+
+### Added
+
+- **Manual vehicle entry** — add make/model manually when a vehicle is not in the catalog
+- **Odometer quick-update** — update mileage from the dashboard and vehicle detail page
+- **TÜV / HU & AU tracking** — inspection due dates with reminders
+- **Cost overview** — new `/costs` page with monthly trends, category and vehicle breakdown
+- **QR code per vehicle** — scannable link to the vehicle detail page
+- **Family garage** — share vehicles with other users (viewer or editor access)
+- **Insurance tracker** — policies, SF class, premiums, and renewal dates per vehicle
+- **Wishlist** — planned purchases, dream cars, and parts with status workflow
+- **Export & backup** — JSON full backup and expenses CSV from Settings → Data & export
+- **Design presets** — Classic, Space, Forest, Sunset, Midnight, Rose color themes
+- **Configurable background blur** — adjustable blur strength (0–24 px) when using a custom background
+
+### Changed
+
+- Vehicle lists and dashboard now include shared family-garage vehicles
+- Settings navigation adds **Data & export** section
+- Sidebar navigation adds **Cost overview** and **Wishlist**
+
 ## [0.3.6] - 2026-06-20
 
 ### Fixed

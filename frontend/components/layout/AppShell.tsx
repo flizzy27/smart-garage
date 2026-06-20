@@ -5,6 +5,7 @@ import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { SidebarProvider } from "./SidebarContext";
 import { PageBackground } from "@/components/theme/PageBackground";
+import { useAppearance } from "@/providers/AppearanceProvider";
 
 export function AppShell({
   children,
@@ -14,6 +15,7 @@ export function AppShell({
   hasBackground?: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { blurStyle } = useAppearance();
 
   return (
     <SidebarProvider>
@@ -24,11 +26,13 @@ export function AppShell({
             mobileOpen={mobileOpen}
             onMobileClose={() => setMobileOpen(false)}
             translucent={hasBackground}
+            blurStyle={blurStyle}
           />
           <div
-            className={`flex min-w-0 flex-1 flex-col ${hasBackground ? "bg-surface/88 backdrop-blur-sm" : "bg-surface"}`}
+            className={`flex min-w-0 flex-1 flex-col ${hasBackground ? "bg-surface/88" : "bg-surface"}`}
+            style={hasBackground ? blurStyle : undefined}
           >
-            <Header onMenuOpen={() => setMobileOpen(true)} />
+            <Header onMenuOpen={() => setMobileOpen(true)} blurStyle={hasBackground ? blurStyle : undefined} />
             <main className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
               {children}
             </main>

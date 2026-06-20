@@ -6,21 +6,23 @@ import { IconChevronLeft, IconChevronRight, IconClose } from "./NavIcons";
 import { UserSessionBar } from "@/components/auth/UserSessionBar";
 import { AppLogo } from "@/components/brand/AppLogo";
 import { useSidebar } from "./SidebarContext";
+import { useAppearance } from "@/providers/AppearanceProvider";
 
 type SidebarProps = {
   mobileOpen: boolean;
   onMobileClose: () => void;
   translucent?: boolean;
+  blurStyle?: React.CSSProperties;
 };
 
-export function Sidebar({ mobileOpen, onMobileClose, translucent = false }: SidebarProps) {
+export function Sidebar({ mobileOpen, onMobileClose, translucent = false, blurStyle }: SidebarProps) {
   const t = useTranslations("app");
   const tNav = useTranslations("nav");
   const { collapsed, toggleCollapsed } = useSidebar();
+  const { designPreset } = useAppearance();
 
-  const sidebarBg = translucent
-    ? "bg-sidebar/92 backdrop-blur-md"
-    : "bg-sidebar";
+  const sidebarBg = translucent ? "bg-sidebar/92" : "bg-sidebar";
+  const hasGradient = designPreset !== "default";
 
   return (
     <>
@@ -40,11 +42,27 @@ export function Sidebar({ mobileOpen, onMobileClose, translucent = false }: Side
             ? "translate-x-0 pointer-events-auto"
             : "-translate-x-full pointer-events-none lg:pointer-events-auto lg:translate-x-0"
         }`}
+        style={translucent ? blurStyle : undefined}
       >
+        {hasGradient ? (
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-1"
+            style={{ background: "var(--sidebar-gradient, linear-gradient(90deg, var(--accent), transparent))" }}
+            aria-hidden
+          />
+        ) : null}
         <div
           className={`relative flex h-14 shrink-0 items-center border-b border-sidebar-border ${
             collapsed ? "justify-center px-2" : "justify-between gap-3 px-4"
           }`}
+          style={
+            hasGradient
+              ? {
+                  background:
+                    "linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent)",
+                }
+              : undefined
+          }
         >
           <AppLogo
             name={t("name")}

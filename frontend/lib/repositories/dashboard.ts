@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { vehicleAccessWhere } from "@/lib/vehicles/access";
 
 function monthBounds(offsetMonths = 0) {
   const start = new Date();
@@ -14,7 +15,7 @@ function monthBounds(offsetMonths = 0) {
 
 export async function getPrimaryVehicleForOwner(ownerUserId: string) {
   return prisma.vehicle.findFirst({
-    where: { ownerUserId, deletedAt: null },
+    where: vehicleAccessWhere(ownerUserId),
     orderBy: [{ updatedAt: "desc" }],
     include: {
       factorySpecs: true,
@@ -51,14 +52,14 @@ export async function getMonthlyExpenseSummary(ownerUserId: string) {
   const [currentSum, previousSum] = await Promise.all([
     prisma.expense.aggregate({
       where: {
-        vehicle: { ownerUserId, deletedAt: null },
+        vehicle: vehicleAccessWhere(ownerUserId),
         occurredAt: { gte: current.start, lt: current.end },
       },
       _sum: { amountCents: true },
     }),
     prisma.expense.aggregate({
       where: {
-        vehicle: { ownerUserId, deletedAt: null },
+        vehicle: vehicleAccessWhere(ownerUserId),
         occurredAt: { gte: previous.start, lt: previous.end },
       },
       _sum: { amountCents: true },

@@ -122,6 +122,36 @@ enum MaintenanceDueStatus {
   OVERDUE
 }
 
+enum VehicleShareRole {
+  VIEWER
+  EDITOR
+}
+
+enum InspectionType {
+  HU
+  AU
+}
+
+enum WishlistStatus {
+  IDEA
+  PLANNED
+  ORDERED
+  DONE
+}
+
+enum WishlistCategory {
+  VEHICLE
+  PART
+  ACCESSORY
+  OTHER
+}
+
+enum InsuranceCoverageType {
+  LIABILITY
+  PARTIAL
+  FULL
+}
+
 model User {
   id              String    @id @default(cuid())
   username        String    @unique
@@ -136,6 +166,8 @@ model User {
   lastLoginAt     DateTime?
 
   vehicles             Vehicle[]
+  vehicleShares        VehicleShare[]
+  wishlistItems        WishlistItem[]
   sessions             Session[]
   preferences          UserPreferences?
   maintenanceRecords   MaintenanceRecord[]       @relation("MaintenanceRecordCreatedBy")
@@ -164,6 +196,8 @@ model UserPreferences {
   locale              String   @default("de")
   timezone            String   @default("Europe/Berlin")
   currency            String   @default("EUR")
+  designPreset        String   @default("default")
+  backgroundBlurPx    Int      @default(8)
   backgroundImageKey  String?
   backgroundMimeType  String?
   updatedAt           DateTime @updatedAt
@@ -372,6 +406,9 @@ model Vehicle {
   expenses         Expense[]
   documents        Document[]
   fuelEntries      FuelEntry[]
+  shares           VehicleShare[]
+  inspections      VehicleInspection[]
+  insurancePolicies InsurancePolicy[]
 
   @@index([ownerUserId])
   @@index([catalogModelYearId])
@@ -586,4 +623,87 @@ model Document {
 
   @@index([vehicleId])
   @@index([uploadedByUserId])
+}
+
+model VehicleShare {
+  id        String           @id @default(cuid())
+  vehicleId String
+  userId    String
+  role      VehicleShareRole @default(VIEWER)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([vehicleId, userId])
+  @@index([userId])
+  @@index([vehicleId])
+}
+
+model VehicleInspection {
+  id                  String         @id @default(cuid())
+  vehicleId           String
+  type                InspectionType
+  nextDueAt           DateTime
+  lastPerformedAt     DateTime?
+  reminderWeeksBefore Int            @default(4)
+  stickerNumber       String?
+  notes               String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@unique([vehicleId, type])
+  @@index([vehicleId])
+  @@index([nextDueAt])
+}
+
+model InsurancePolicy {
+  id            String                 @id @default(cuid())
+  vehicleId     String
+  provider      String
+  policyNumber  String?
+  premiumCents  BigInt
+  currency      String                 @default("EUR")
+  sfClass       String?
+  coverageType  InsuranceCoverageType  @default(LIABILITY)
+  startDate     DateTime
+  endDate       DateTime
+  autoRenew     Boolean                @default(true)
+  notes         String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([endDate])
+}
+
+model WishlistItem {
+  id                 String           @id @default(cuid())
+  userId             String
+  vehicleId          String?
+  title              String
+  description        String?
+  category           WishlistCategory @default(OTHER)
+  status             WishlistStatus   @default(IDEA)
+  priority           Int              @default(0)
+  targetDate         DateTime?
+  url                String?
+  estimatedCostCents BigInt?
+  currency           String           @default("EUR")
+  plannedMake        String?
+  plannedModel       String?
+  plannedYear        Int?
+  plannedBudgetCents BigInt?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
 }

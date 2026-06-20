@@ -5,15 +5,17 @@ import {
   softDeleteVehicleImages,
 } from "@/lib/repositories/documents";
 import {
-  countVehiclesByOwner,
+  countAccessibleVehicles,
   createVehicle,
-  findVehicleById,
-  listVehiclesByOwner,
+  findAccessibleVehicle,
+  listAccessibleVehicles,
   softDeleteVehicle,
   updateVehicle,
+  updateVehicleOdometer,
   upsertVehicleCurrentSpec,
   type CreateVehicleData,
 } from "@/lib/repositories/vehicles";
+import { resolveVehicleAccess } from "@/lib/vehicles/access";
 import { saveVehicleImage } from "@/lib/storage/local";
 import {
   parseVehicleFormData,
@@ -52,7 +54,65 @@ async function buildVehiclePayload(
   input: VehicleFormInput,
   ownerUserId: string,
 ): Promise<CreateVehicleData> {
-  const catalog = await resolveCatalogModelYear(input.catalogModelYearId);
+  if (input.entryMode === "manual") {
+    const modelLabel = [input.model, input.variantName]
+      .map((part) => part?.trim())
+      .filter(Boolean)
+      .join(" ");
+
+    const engineDescription =
+      input.engineDescription?.trim() ||
+      input.manualEngineName?.trim() ||
+      null;
+
+    const spec = {
+      engineCode: input.engineCode ?? null,
+      engineDescription,
+      powerKw: input.powerKw ?? null,
+      powerPs: input.powerPs ?? null,
+      torqueNm: input.torqueNm ?? null,
+      fuelType: input.fuelType ?? null,
+      displacementCc: input.displacementCc ?? null,
+      bodyType: input.bodyType ?? null,
+      driveType: input.driveType ?? null,
+      transmissionTypes: null,
+      productionYearFrom: input.productionYear,
+      productionYearTo: input.productionYear,
+      rawCatalog: null,
+    };
+
+    return {
+      ownerUserId,
+      manufacturerId: null,
+      catalogModelYearId: null,
+      make: input.make!.trim(),
+      model: modelLabel,
+      productionYear: input.productionYear,
+      year: input.productionYear,
+      vin: input.vin || null,
+      hsn: input.hsn || null,
+      tsn: input.tsn || null,
+      licensePlate: input.licensePlate,
+      currentOdometerKm: input.currentOdometerKm,
+      color: input.color,
+      notes: input.notes,
+      factorySpec: spec,
+      currentSpec: {
+        engineCode: spec.engineCode,
+        engineDescription: spec.engineDescription,
+        powerKw: spec.powerKw,
+        powerPs: spec.powerPs,
+        torqueNm: spec.torqueNm,
+        fuelType: spec.fuelType,
+        displacementCc: spec.displacementCc,
+        bodyType: spec.bodyType,
+        driveType: spec.driveType,
+        transmissionTypes: null,
+      },
+    };
+  }
+
+  const catalog = await resolveCatalogModelYear(input.catalogModelYearId!);
   if (!catalog || catalog.manufacturerId !== input.manufacturerId) {
     throw new Error("CATALOG_NOT_FOUND");
   }
@@ -89,7 +149,7 @@ async function buildVehiclePayload(
   return {
     ownerUserId,
     manufacturerId: input.manufacturerId,
-    catalogModelYearId: input.catalogModelYearId,
+    catalogModelYearId: input.catalogModelYearId ?? null,
     make: catalog.make,
     model: catalog.model,
     productionYear: input.productionYear,
@@ -107,18 +167,37 @@ async function buildVehiclePayload(
 }
 
 export async function getVehiclesForCurrentUser() {
-  const ownerUserId = await getCurrentUserId();
-  return listVehiclesByOwner(ownerUserId);
+  const userId = await getCurrentUserId();
+  return listAccessibleVehicles(userId);
 }
 
 export async function getVehicleForCurrentUser(id: string) {
-  const ownerUserId = await getCurrentUserId();
-  return findVehicleById(id, ownerUserId);
+  const userId = await getCurrentUserId();
+  return findAccessibleVehicle(id, userId);
 }
 
 export async function getVehicleCountForCurrentUser() {
-  const ownerUserId = await getCurrentUserId();
-  return countVehiclesByOwner(ownerUserId);
+  const userId = await getCurrentUserId();
+  return countAccessibleVehicles(userId);
+}
+
+export async function updateOdometerForCurrentUser(
+  vehicleId: string,
+  currentOdometerKm: number,
+): Promise<{ success: boolean; error?: VehicleActionError }> {
+  try {
+    if (!Number.isInteger(currentOdometerKm) || currentOdometerKm < 0) {
+      return { success: false, error: { code: "mileageInvalid" } };
+    }
+    const userId = await getCurrentUserId();
+    const result = await updateVehicleOdometer(vehicleId, userId, currentOdometerKm);
+    if (result.count === 0) {
+      return { success: false, error: { code: "notFound" } };
+    }
+    return { success: true };
+  } catch {
+    return { success: false, error: { code: "unknown" } };
+  }
 }
 
 export async function createVehicleForCurrentUser(
@@ -152,20 +231,25 @@ export async function updateVehicleForCurrentUser(
   formData: FormData,
 ): Promise<VehicleActionResult> {
   try {
-    const ownerUserId = await getCurrentUserId();
-    const existing = await findVehicleById(vehicleId, ownerUserId);
+    const userId = await getCurrentUserId();
+    const access = await resolveVehicleAccess(userId, vehicleId);
+    if (!access?.canEdit) {
+      return { success: false, error: { code: "notFound" } };
+    }
+
+    const existing = await findAccessibleVehicle(vehicleId, userId);
     if (!existing) {
       return { success: false, error: { code: "notFound" } };
     }
 
     const input = parseVehicleFormData(formData);
-    const payload = await buildVehiclePayload(input, ownerUserId);
+    const payload = await buildVehiclePayload(input, existing.ownerUserId);
     const { ownerUserId: ownerId, factorySpec: _factory, ...updateData } =
       payload;
     void ownerId;
     void _factory;
 
-    const result = await updateVehicle(vehicleId, ownerUserId, updateData);
+    const result = await updateVehicle(vehicleId, existing.ownerUserId, updateData);
     if (result.count === 0) {
       return { success: false, error: { code: "notFound" } };
     }
@@ -176,7 +260,7 @@ export async function updateVehicleForCurrentUser(
     if (image instanceof File && image.size > 0) {
       await softDeleteVehicleImages(vehicleId);
       const saved = await saveVehicleImage(vehicleId, image);
-      await createVehicleImageDocument(vehicleId, ownerUserId, saved);
+      await createVehicleImageDocument(vehicleId, userId, saved);
     }
 
     return { success: true, vehicleId };

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { IconExpenses, IconMaintenance, IconVehicles } from "@/components/layout/NavIcons";
 import { Card, CardContent, CardHeader, StatCard } from "@/components/ui/Card";
+import { DashboardOdometerUpdate } from "@/components/vehicles/VehicleExtras";
 import { formatCurrency } from "@/lib/regional/format";
 import { getVehicleImageUrl } from "@/lib/vehicles/serialize";
 import { getDashboardStats } from "@/lib/services/dashboard";
@@ -109,12 +110,11 @@ export async function PrimaryVehicleCard({ locale }: { locale: string }) {
               <p className="mt-0.5 text-sm text-muted-foreground">{year}</p>
             ) : null}
             <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt className="text-muted-foreground">{t("odometer")}</dt>
-                <dd className="font-semibold tabular-nums text-foreground">
-                  {primaryVehicle.currentOdometerKm.toLocaleString(locale)} km
-                </dd>
-              </div>
+              <DashboardOdometerUpdate
+                vehicleId={primaryVehicle.id}
+                currentKm={primaryVehicle.currentOdometerKm}
+                locale={locale}
+              />
               {power ? (
                 <div>
                   <dt className="text-muted-foreground">{t("power")}</dt>

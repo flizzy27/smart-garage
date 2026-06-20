@@ -7,6 +7,7 @@ const sections = [
   { href: "/settings", key: "general" as const, exact: true },
   { href: "/settings/notifications", key: "notifications" as const },
   { href: "/settings/regional", key: "regional" as const },
+  { href: "/settings/data", key: "data" as const },
   { href: "/settings/catalog", key: "catalog" as const },
 ];
 

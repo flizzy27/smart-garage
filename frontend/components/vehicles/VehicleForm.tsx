@@ -184,6 +184,13 @@ export function VehicleForm({
     FormData
   >(action, null);
 
+  const isManualVehicle = Boolean(
+    initialVehicle && !initialVehicle.catalogModelYearId && initialVehicle.make,
+  );
+  const [entryMode, setEntryMode] = useState<"catalog" | "manual">(
+    isManualVehicle ? "manual" : "catalog",
+  );
+
   const [manufacturerId, setManufacturerId] = useState<string | null>(
     initialSelections.manufacturer?.id ?? initialVehicle?.manufacturerId ?? null,
   );
@@ -268,6 +275,8 @@ export function VehicleForm({
 
   return (
     <form action={formAction} className="space-y-8">
+      <input type="hidden" name="entryMode" value={entryMode} />
+
       {errorCode ? (
         <Alert>
           {tErrors.has(errorCode as never)
@@ -280,7 +289,39 @@ export function VehicleForm({
         <h2 className="text-sm font-semibold text-foreground">
           {t("sections.identity")}
         </h2>
+
+        <div className="space-y-2">
+          <Label>{t("entryMode")}</Label>
+          <div className="inline-flex rounded-lg border border-border p-1">
+            <button
+              type="button"
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                entryMode === "catalog"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => setEntryMode("catalog")}
+            >
+              {t("entryModeCatalog")}
+            </button>
+            <button
+              type="button"
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                entryMode === "manual"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => setEntryMode("manual")}
+            >
+              {t("entryModeManual")}
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground">{t("entryModeHint")}</p>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2">
+          {entryMode === "catalog" ? (
+            <>
           <SearchCombobox
             name="manufacturerId"
             label={t("manufacturer")}
@@ -392,6 +433,60 @@ export function VehicleForm({
               setCatalogModelYearId(option?.id ?? null);
             }}
           />
+            </>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="make" required>
+                  {t("make")}
+                </Label>
+                <Input
+                  id="make"
+                  name="make"
+                  required
+                  defaultValue={initialVehicle?.make ?? ""}
+                  placeholder={t("makePlaceholder")}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="model" required>
+                  {t("model")}
+                </Label>
+                <Input
+                  id="model"
+                  name="model"
+                  required
+                  defaultValue={initialVehicle?.model ?? ""}
+                  placeholder={t("modelPlaceholder")}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="variantName">{t("variantName")}</Label>
+                <Input
+                  id="variantName"
+                  name="variantName"
+                  placeholder={t("variantNamePlaceholder")}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manualProductionYear" required>
+                  {t("productionYear")}
+                </Label>
+                <Input
+                  id="manualProductionYear"
+                  name="productionYear"
+                  type="number"
+                  min={1900}
+                  max={new Date().getFullYear() + 1}
+                  required
+                  defaultValue={
+                    initialVehicle?.productionYear ??
+                    new Date().getFullYear()
+                  }
+                />
+              </div>
+            </>
+          )}
           <div className="space-y-2">
             <Label htmlFor="color">{t("color")}</Label>
             <Input
@@ -457,12 +552,16 @@ export function VehicleForm({
         <h2 className="text-sm font-semibold text-foreground">
           {t("sections.technical")}
         </h2>
-        <p className="text-xs text-muted-foreground">{t("technicalHint")}</p>
-        <input
-          type="hidden"
-          name="productionYear"
-          value={spec?.productionYear ?? initialVehicle?.productionYear ?? ""}
-        />
+        <p className="text-xs text-muted-foreground">
+          {entryMode === "catalog" ? t("technicalHint") : t("manualTechnicalHint")}
+        </p>
+        {entryMode === "catalog" ? (
+          <input
+            type="hidden"
+            name="productionYear"
+            value={spec?.productionYear ?? initialVehicle?.productionYear ?? ""}
+          />
+        ) : null}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="engineCode">{t("engineCode")}</Label>

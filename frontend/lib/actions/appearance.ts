@@ -1,6 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getCurrentUserId } from "@/lib/auth/current-user";
+import { updateAppearanceForUser } from "@/lib/repositories/preferences";
+import type { DesignPresetId } from "@/lib/theme/presets";
+import { clampBackgroundBlur } from "@/lib/theme/presets";
 import {
   removeBackgroundImage,
   uploadBackgroundImage,
@@ -10,6 +14,21 @@ export type BackgroundActionResult = {
   ok: boolean;
   error?: string;
 };
+
+export async function saveAppearanceSettings(data: {
+  designPreset?: DesignPresetId;
+  backgroundBlurPx?: number;
+}) {
+  const userId = await getCurrentUserId();
+  await updateAppearanceForUser(userId, {
+    ...(data.designPreset != null ? { designPreset: data.designPreset } : {}),
+    ...(data.backgroundBlurPx != null
+      ? { backgroundBlurPx: clampBackgroundBlur(data.backgroundBlurPx) }
+      : {}),
+  });
+  revalidatePath("/", "layout");
+  revalidatePath("/settings");
+}
 
 function mapError(error: unknown): string {
   if (error instanceof Error) {

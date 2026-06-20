@@ -12,7 +12,9 @@
     "history": "History",
     "documents": "Documents",
     "expenses": "Expenses",
+    "costs": "Cost overview",
     "fuel": "Fuel",
+    "wishlist": "Wishlist",
     "reminders": "Reminders",
     "settings": "Settings",
     "openMenu": "Open menu",
@@ -121,6 +123,7 @@
         "general": "General",
         "notifications": "Notifications",
         "regional": "Regional",
+        "data": "Data & export",
         "catalog": "Catalog"
       },
       "general": {
@@ -130,6 +133,32 @@
       "appearance": {
         "title": "Appearance",
         "description": "Theme and display preferences"
+      },
+      "design": {
+        "title": "Design preset",
+        "description": "Color themes for sidebar and accent colors",
+        "presets": {
+          "default": "Classic",
+          "defaultDesc": "Default Smart Garage blue",
+          "space": "Space",
+          "spaceDesc": "Light blue gradient — cosmic feel",
+          "forest": "Forest",
+          "forestDesc": "Fresh green tones",
+          "sunset": "Sunset",
+          "sunsetDesc": "Warm orange and amber",
+          "midnight": "Midnight",
+          "midnightDesc": "Deep indigo and violet",
+          "rose": "Rose",
+          "roseDesc": "Pink and magenta accents"
+        }
+      },
+      "export": {
+        "title": "Export & backup",
+        "description": "Download your garage data as JSON or expenses as CSV",
+        "sectionTitle": "Download",
+        "sectionDescription": "Exports include vehicles, expenses, fuel entries, and wishlist items you can access.",
+        "downloadJson": "Download JSON backup",
+        "downloadCsv": "Download expenses CSV"
       },
       "background": {
         "title": "Background image",
@@ -143,6 +172,10 @@
         "remove": "Remove background",
         "removing": "Removing…",
         "removed": "Background removed",
+        "blurLabel": "Background blur",
+        "blurHint": "Adjust how strongly the interface blurs your background image (0 = off).",
+        "saveBlur": "Save blur",
+        "savingBlur": "Saving…",
         "errors": {
           "uploadFailed": "Upload failed",
           "noFile": "Please choose a file",
@@ -502,6 +535,17 @@
         "technical": "Technical data",
         "image": "Photo"
       },
+      "entryMode": "How to add vehicle",
+      "entryModeCatalog": "From catalog",
+      "entryModeManual": "Enter manually",
+      "entryModeHint": "Use manual entry if your vehicle is not in the catalog.",
+      "make": "Make / brand",
+      "model": "Model",
+      "makePlaceholder": "e.g. Volkswagen",
+      "modelPlaceholder": "e.g. Golf",
+      "variantName": "Variant / trim (optional)",
+      "variantNamePlaceholder": "e.g. GTI, 320d",
+      "manualTechnicalHint": "Enter technical data yourself. All fields except mileage are optional.",
       "manufacturer": "Manufacturer",
       "series": "Series / Model",
       "generation": "Generation",
@@ -568,6 +612,94 @@
       "CNG": "CNG",
       "OTHER": "Other"
     },
+    "odometer": {
+      "label": "Odometer (km)",
+      "update": "Update",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Mileage updated",
+      "cancel": "Cancel",
+      "errors": {
+        "mileageInvalid": "Enter a valid mileage.",
+        "notFound": "Vehicle not found.",
+        "unknown": "Could not update mileage."
+      }
+    },
+    "qr": {
+      "title": "QR code",
+      "hint": "Scan to open this vehicle on your phone",
+      "alt": "QR code for {name}",
+      "openLink": "Open vehicle page"
+    },
+    "inspections": {
+      "title": "TÜV / HU & AU",
+      "subtitle": "Set inspection due dates for reminders",
+      "type": "Type",
+      "nextDue": "Next due",
+      "lastDone": "Last inspection",
+      "reminderWeeks": "Remind weeks before",
+      "sticker": "Sticker no. (optional)",
+      "due": "Due",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Inspection saved",
+      "remove": "Remove",
+      "types": { "HU": "Main inspection (HU/TÜV)", "AU": "Emissions test (AU)" },
+      "errors": {
+        "invalidType": "Invalid inspection type.",
+        "invalidDate": "Enter a valid date.",
+        "notAllowed": "Not allowed.",
+        "unknown": "Something went wrong."
+      }
+    },
+    "insurance": {
+      "title": "Insurance",
+      "subtitle": "Track policies, SF class, and renewal dates",
+      "empty": "No policies recorded yet.",
+      "provider": "Insurer",
+      "coverageLabel": "Coverage",
+      "sfClass": "SF class",
+      "premium": "Annual premium (€)",
+      "policyNumber": "Policy number",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "autoRenew": "Auto-renewal",
+      "year": "year",
+      "until": "until",
+      "add": "Add policy",
+      "saving": "Saving…",
+      "remove": "Remove",
+      "coverage": {
+        "LIABILITY": "Liability",
+        "PARTIAL": "Partial comprehensive",
+        "FULL": "Full comprehensive"
+      },
+      "errors": {
+        "providerRequired": "Enter the insurer name.",
+        "premiumInvalid": "Enter a valid premium.",
+        "dateInvalid": "Enter valid dates.",
+        "notAllowed": "Not allowed.",
+        "unknown": "Something went wrong."
+      }
+    },
+    "sharing": {
+      "title": "Family garage",
+      "subtitle": "Share this vehicle with other users on this server",
+      "empty": "Not shared with anyone yet.",
+      "username": "Username",
+      "usernamePlaceholder": "other-user",
+      "role": "Access",
+      "share": "Share",
+      "sharing": "Sharing…",
+      "remove": "Remove",
+      "roles": { "VIEWER": "View only", "EDITOR": "Can edit" },
+      "errors": {
+        "vehicleNotFound": "Vehicle not found.",
+        "userNotFound": "User not found.",
+        "selfShare": "You already own this vehicle.",
+        "unknown": "Could not share vehicle."
+      }
+    },
     "delete": {
       "button": "Delete",
       "title": "Delete vehicle?",
@@ -580,6 +712,10 @@
       "unknown": "Something went wrong. Please try again.",
       "notFound": "Vehicle not found.",
       "manufacturerRequired": "Please select a manufacturer.",
+      "makeRequired": "Please enter the make / brand.",
+      "modelRequired": "Please enter the model.",
+      "makeInvalid": "Make is too long.",
+      "modelInvalid": "Model is too long.",
       "seriesRequired": "Please select a series.",
       "generationRequired": "Please select a generation.",
       "variantRequired": "Please select a variant.",
@@ -705,7 +841,63 @@
     "overdue": "Overdue",
     "dueSoon": "Due soon",
     "dueInDays": "in {days} days",
-    "dueInKm": "in {km} km"
+    "dueInKm": "in {km} km",
+    "inspectionsTitle": "TÜV / inspections",
+    "inspectionDue": "Due {date}"
+  },
+  "costs": {
+    "title": "Cost overview",
+    "subtitle": "Monthly trends and breakdowns across your garage",
+    "thisMonth": "This month",
+    "twelveMonths": "Last 12 months",
+    "vehiclesTracked": "Vehicles with costs",
+    "monthlyTrend": "Monthly spending",
+    "byCategory": "By category",
+    "byVehicle": "By vehicle",
+    "noData": "No cost data yet.",
+    "categories": {
+      "MAINTENANCE": "Maintenance",
+      "FUEL": "Fuel",
+      "INSURANCE": "Insurance",
+      "TAX": "Tax",
+      "REGISTRATION": "Registration",
+      "REPAIR": "Repair",
+      "ACCESSORY": "Accessory",
+      "OTHER": "Other"
+    }
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "subtitle": "Planned purchases, dream cars, and parts",
+    "addTitle": "Add item",
+    "itemTitle": "Title",
+    "category": "Category",
+    "status": "Status",
+    "plannedMake": "Make (planned vehicle)",
+    "plannedModel": "Model",
+    "budget": "Budget",
+    "targetDate": "Target date",
+    "description": "Description",
+    "add": "Add to wishlist",
+    "saving": "Saving…",
+    "empty": "Your wishlist is empty.",
+    "delete": "Delete",
+    "categories": {
+      "VEHICLE": "Vehicle",
+      "PART": "Part",
+      "ACCESSORY": "Accessory",
+      "OTHER": "Other"
+    },
+    "statuses": {
+      "IDEA": "Idea",
+      "PLANNED": "Planned",
+      "ORDERED": "Ordered",
+      "DONE": "Done"
+    },
+    "errors": {
+      "titleRequired": "Enter a title.",
+      "unknown": "Something went wrong."
+    }
   },
   "admin": {
     "title": "User management",
