@@ -6,17 +6,12 @@ import { formatDate } from "@/lib/regional/format";
 
 export function HeaderDateTime() {
   const locale = useLocale();
-  const [now, setNow] = useState<Date | null>(null);
+  const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 30_000);
     return () => clearInterval(id);
   }, []);
-
-  if (!now) {
-    return null;
-  }
 
   const time = formatDate(now, locale, {
     hour: "2-digit",

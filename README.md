@@ -85,16 +85,21 @@ docker compose up -d
 
 Image: `ghcr.io/flizzy27/smart-garage:latest`
 
-## 🔄 Updates
+## Updates
 
-| Platform | How |
-|----------|-----|
-| **Unraid** | Docker tab → **smart-garage** → **Force Update** → restart |
-| **Docker** | `docker pull ghcr.io/flizzy27/smart-garage:latest` → recreate container |
+| Channel | Image tag | When updated |
+|---------|-----------|--------------|
+| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.3.1`, …) — CI must pass first |
+| **Development** | `ghcr.io/flizzy27/smart-garage:development` | Every push to `main` after CI passes |
 
-The `:latest` tag is rebuilt automatically on every release. Database migrations run on container start.
+| Platform | Stable update | Dev preview |
+|----------|---------------|-------------|
+| **Unraid** | Docker → **Force Update** (uses `:latest`) | Change repository tag to `:development` in container settings |
+| **Docker** | `docker pull ghcr.io/flizzy27/smart-garage:latest` | `docker pull ghcr.io/flizzy27/smart-garage:development` |
 
-Pin a version: `ghcr.io/flizzy27/smart-garage:v0.3.0`
+**Promote to stable:** when a dev build is approved, tag a release (`git tag v0.3.1 && git push origin v0.3.1`). That publishes `:latest`.
+
+Pin a version: `ghcr.io/flizzy27/smart-garage:v0.3.1`
 
 ## 💾 Backup
 

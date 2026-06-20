@@ -9,6 +9,20 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.3.1] - 2026-06-19
+
+### Fixed
+
+- **CI failures** — resolved ESLint errors (`set-state-in-effect`, unsafe optional chaining) that blocked all GitHub Actions runs
+
+### Changed
+
+- **Two Docker channels:**
+  - `:development` — built on every `main` push (after CI passes)
+  - `:latest` — stable channel, only on version tags `v*` (after CI passes)
+- Docker publish workflow now runs lint/build before pushing any image
+- Unraid template stays on `:latest` (safe default)
+
 ## [0.3.0] - 2026-06-19
 
 ### Production release
@@ -48,7 +62,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/flizzy27/smart-garage/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/flizzy27/smart-garage/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/flizzy27/smart-garage/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/flizzy27/smart-garage/compare/v0.1.0...v0.2.0

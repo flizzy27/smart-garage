@@ -70,9 +70,16 @@ docker start smart-garage
 
 ## Updates
 
-1. **Backup** first
-2. Pull new image (`Force Update` on Unraid, or `docker pull`)
-3. Restart container — `prisma migrate deploy` runs in the entrypoint
+| Channel | Tag | When |
+|---------|-----|------|
+| **Stable** | `:latest` | Version tag `vX.Y.Z` (CI must pass) |
+| **Development** | `:development` | Every push to `main` (CI must pass) |
+
+1. Backup AppData
+2. **Force Update** for stable, or set image to `:development` for preview
+3. Restart container — migrations run on start
+
+**Promote to stable:** tag a release on GitHub (`v0.3.2`).
 
 ## Troubleshooting
 
