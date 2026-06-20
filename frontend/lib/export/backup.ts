@@ -26,7 +26,7 @@ export async function buildUserExport(userId: string) {
 
   return {
     exportedAt: new Date().toISOString(),
-    version: process.env.APP_VERSION ?? "0.4.0",
+    version: process.env.APP_VERSION ?? "0.4.2",
     preferences: preferences
       ? {
           theme: preferences.theme,

@@ -102,7 +102,7 @@ Image: `ghcr.io/flizzy27/smart-garage:latest`
 | **Unraid** | Docker → **Force Update** (uses `:latest`) | Change repository tag to `:development` in container settings |
 | **Docker** | `docker pull ghcr.io/flizzy27/smart-garage:latest` | `docker pull ghcr.io/flizzy27/smart-garage:development` |
 
-**Promote to stable:** when a dev build is approved, tag a release (`git tag v0.3.1 && git push origin v0.3.1`). That publishes `:latest`.
+**Promote to stable:** when a dev build is approved, tag a release (`git tag v0.4.2 && git push origin v0.4.2`). That publishes `:latest`.
 
 Pin a version: `ghcr.io/flizzy27/smart-garage:v0.4.0`
 

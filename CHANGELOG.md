@@ -9,6 +9,14 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.2] - 2026-06-20
+
+### Fixed
+
+- **GitHub Actions / Unraid updates** — `package-lock.json` regenerated with npm 10 (CI uses npm 10, lockfile was npm 11); all workflows green again
+- **`:latest` stable image** — republished on tag `v0.4.2` (tags `v0.4.0` / `v0.4.1` never built because CI failed before Docker publish)
+- **ESLint** — odometer quick-update no longer triggers `set-state-in-effect`
+
 ## [0.4.1] - 2026-06-19
 
 ### Fixed
@@ -123,7 +131,10 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.6...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/flizzy27/smart-garage/compare/v0.4.1...v0.4.2
+[0.4.1]: https://github.com/flizzy27/smart-garage/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/flizzy27/smart-garage/compare/v0.3.6...v0.4.0
 [0.3.6]: https://github.com/flizzy27/smart-garage/compare/v0.3.5...v0.3.6
 [0.3.5]: https://github.com/flizzy27/smart-garage/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/flizzy27/smart-garage/compare/v0.3.3...v0.3.4
