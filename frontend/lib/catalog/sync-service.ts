@@ -10,6 +10,10 @@ import {
   type ImportOptions,
   type ImportStats,
 } from "@/lib/catalog/importers/ovd-importer";
+import {
+  importBundledCatalog,
+  ensureBundledCatalogSeeded,
+} from "@/lib/catalog/importers/bundled-seed-importer";
 import type { CardataMakeSlug } from "@/lib/catalog/sources/cardata-wiki";
 import { prisma } from "@/lib/prisma";
 
@@ -120,7 +124,26 @@ export async function ensureCatalogSeeded(
   if (counts.modelYears > 0) {
     return { skipped: true, reason: "Catalog already populated" };
   }
+
+  const log = options.onProgress ?? console.log;
+  const seeded = await ensureBundledCatalogSeeded(prisma, log);
+  if (seeded) {
+    const after = await getCatalogCounts();
+    return {
+      skipped: false,
+      ovd: {
+        manufacturers: after.manufacturers,
+        series: after.series,
+        generations: after.generations,
+        variants: after.variants,
+        engines: after.engines,
+        modelYears: after.modelYears,
+      },
+    };
+  }
+
   return syncCatalog({ ...options, force: true });
 }
 
-export type { CardataMakeSlug } from "@/lib/catalog/sources/cardata-wiki";
+export { importBundledCatalog, ensureBundledCatalogSeeded };
+export type { CardataMakeSlug };
