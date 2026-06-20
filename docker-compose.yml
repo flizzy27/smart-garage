@@ -3,13 +3,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ghcr.io/flizzy27/smart-garage:latest
     container_name: smart-garage
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/data
+      - smart-garage-data:/data
     environment:
       - DATABASE_URL=file:/data/smart-garage.db
       - UPLOAD_DIR=/data/uploads
+      - MAX_UPLOAD_SIZE_MB=${MAX_UPLOAD_SIZE_MB:-25}
+      - MAX_IMAGE_SIZE_MB=${MAX_IMAGE_SIZE_MB:-10}
       - NODE_ENV=production
     restart: unless-stopped
+
+volumes:
+  smart-garage-data:

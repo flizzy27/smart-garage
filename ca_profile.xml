@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Maintainer>
+  <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
+  <Profile>
+    Smart Garage — open-source, self-hosted vehicle management for Unraid and homelab users.
+    Track maintenance, fuel, expenses, and documents in a single container.
+  </Profile>
+  <Project>https://github.com/flizzy27/smart-garage</Project>
+  <Support>https://github.com/flizzy27/smart-garage/issues</Support>
+</Maintainer>

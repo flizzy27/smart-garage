@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [0.2.1] - 2026-06-19
+
+### Added
+
+- **Unraid Community Applications template** (`templates/smart-garage.xml`) with configurable port, AppData path, and upload size limits
+- `ca_profile.xml` and `icon.svg` for CA repository submission
+- GitHub Actions workflow to publish Docker image to `ghcr.io/flizzy27/smart-garage`
+- [docs/UNRAID-CA-SUBMIT.md](./docs/UNRAID-CA-SUBMIT.md) — how to list Smart Garage in the Unraid Apps store
+
+### Changed
+
+- Docker Compose uses a **named volume** (no manual `mkdir data` required)
+- `MAX_UPLOAD_SIZE_MB` is enforced at runtime in upload handlers (configurable in Unraid template)
+- Updated [docs/UNRAID.md](./docs/UNRAID.md) — install without `docker compose`
+
 ## [0.2.0] - 2026-06-19
 
 ### Added
@@ -41,6 +56,7 @@ _Nothing yet._
 - Project documentation (architecture, database design, roadmap)
 - MIT License
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/flizzy27/smart-garage/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/flizzy27/smart-garage/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/flizzy27/smart-garage/releases/tag/v0.1.0

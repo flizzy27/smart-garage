@@ -1,162 +1,102 @@
 # Smart Garage on Unraid
 
-Step-by-step guide to run Smart Garage as a single Docker container on Unraid.
+Install Smart Garage on Unraid **without `docker compose`** — use the **Community Applications** template or the Unraid Docker UI.
 
-## Do you need Docker Desktop?
+## Why no manual `data` folder?
 
-| Where | Docker Desktop? |
-|-------|-----------------|
-| **Unraid server** | **No** — Unraid includes Docker |
-| **Windows PC (optional)** | Only if you want to **build/test locally** before deploying to Unraid |
+| Install method | Who creates storage |
+|----------------|---------------------|
+| **Unraid template (recommended)** | Unraid creates `/mnt/user/appdata/smart-garage` automatically when you set the AppData path |
+| **Inside the container** | Entrypoint runs `mkdir -p /data/uploads`; SQLite file is created on first start |
+| **Docker Compose on PC/Linux** | Named volume `smart-garage-data` is created automatically (no `mkdir` needed) |
 
-On Unraid you use the built-in Docker engine. Docker Desktop on your PC is optional for trying the image before copying it to the NAS.
+You only needed `mkdir data` before because the old compose file used a host bind mount (`./data`). That is fixed now.
 
----
+## Prerequisites
 
-## Option A — Build on Unraid (simplest)
+- Unraid 6.9+ with **Docker** enabled
+- **Community Applications** plugin installed (Apps tab)
+- No Docker Desktop on Unraid (Unraid has its own Docker engine)
+- No `docker compose` CLI required — the template uses Unraid’s Docker UI
 
-### 1. Get the project onto Unraid
+## Option 1 — Install from template (works today)
 
-SSH into Unraid or use the terminal:
+Use this **before** the app appears in the public CA search (or anytime):
 
-```bash
-cd /mnt/user/appdata
-git clone https://github.com/flizzy27/smart-garage.git
-cd smart-garage
-```
+1. Open Unraid → **Docker** tab  
+2. Click **Add Container**  
+3. At the bottom, choose **Click here to install another applications's template** (wording may vary slightly by Unraid version)  
+4. Paste this URL:
 
-Or clone on your PC and copy the folder to `/mnt/user/appdata/smart-garage` via SMB.
+   ```
+   https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml
+   ```
 
-### 2. Create persistent data folder
+5. Click **Install** / **Apply**  
+6. Configure:
+   - **Web UI port** — default `3000` (change if port is taken)
+   - **AppData** — default `/mnt/user/appdata/smart-garage` (created automatically)
+   - **Max upload size (MB)** — default `25`
+   - **Max image size (MB)** — default `10`
+7. Click **Apply** and start the container  
+8. Open **http://\<unraid-ip\>:\<port\>/** → register → add a vehicle
 
-```bash
-mkdir -p /mnt/user/appdata/smart-garage/data
-```
+The container image is pulled from:
 
-This folder will hold the SQLite database and uploaded files.
+`ghcr.io/flizzy27/smart-garage:latest`
 
-### 3. Build and start
+## Option 2 — Search in Community Applications (after CA approval)
 
-```bash
-cd /mnt/user/appdata/smart-garage
-docker compose up -d --build
-```
+To show **Smart Garage** when users search in the **Apps** store:
 
-First build takes several minutes (downloads Node, npm install, Next.js build).
+1. Maintainer submits the repo at [ca.unraid.net/submit](https://ca.unraid.net/submit/new)  
+2. After review, the app is listed under **Apps** → search **Smart Garage**
 
-### 4. Open the app
+See [UNRAID-CA-SUBMIT.md](./UNRAID-CA-SUBMIT.md) for the submission checklist.
 
-Browser: `http://<unraid-ip>:3000`
+## Option 3 — Manual Docker UI
 
-- Register your account (first user = admin)
-- Add a vehicle and start using the app
+If the template link does not work on your Unraid version:
 
-### 5. Persistent paths
-
-| Host (Unraid) | Container | Content |
-|---------------|-----------|---------|
-| `/mnt/user/appdata/smart-garage/data` | `/data` | SQLite DB + uploads |
-
-The `docker-compose.yml` in the repo maps `./data` → `/data`. When you run compose from `/mnt/user/appdata/smart-garage`, data stays on the array.
-
----
-
-## Option B — Build on Windows, run on Unraid
-
-Useful if you develop on a PC with Docker Desktop:
-
-### On Windows (Docker Desktop running)
-
-```powershell
-cd C:\path\to\smart-garage
-mkdir data
-docker compose up -d --build
-```
-
-Test at http://localhost:3000. Stop when done:
-
-```powershell
-docker compose down
-```
-
-### On Unraid
-
-Copy the project folder to `/mnt/user/appdata/smart-garage` and run the same `docker compose up -d --build` there.  
-You do **not** export a `.tar` manually — Compose builds the image from the `Dockerfile` on the machine where you run it.
-
----
-
-## Option C — Unraid Docker UI (manual container)
-
-If you prefer the Unraid web UI instead of Compose:
-
-1. **Docker** → **Add Container**
-2. Build the image first (terminal):  
-   `docker build -t smart-garage:0.2.0 /mnt/user/appdata/smart-garage`
-3. Template settings:
-
-| Field | Value |
-|-------|-------|
+| Setting | Value |
+|---------|-------|
 | Name | `smart-garage` |
-| Repository | `smart-garage:0.2.0` |
+| Repository | `ghcr.io/flizzy27/smart-garage:latest` |
 | Network | bridge |
-| Port | `3000:3000` |
-| Path | `/mnt/user/appdata/smart-garage/data` → `/data` |
-| Restart policy | unless-stopped |
-
-4. Apply → open `http://<unraid-ip>:3000`
-
----
+| Port | `3000` → `3000` TCP |
+| Path | `/mnt/user/appdata/smart-garage` → `/data` |
+| Variable | `DATABASE_URL` = `file:/data/smart-garage.db` |
+| Variable | `UPLOAD_DIR` = `/data/uploads` |
+| Variable | `MAX_UPLOAD_SIZE_MB` = `25` |
+| Variable | `MAX_IMAGE_SIZE_MB` = `10` |
+| Variable | `NODE_ENV` = `production` |
 
 ## Updates
 
-```bash
-cd /mnt/user/appdata/smart-garage
+1. Backup `/mnt/user/appdata/smart-garage`  
+2. Docker → smart-garage → **Force Update** (pulls latest image)  
+3. Restart container — migrations run automatically on start
 
-# Backup first!
-tar -czf ../smart-garage-backup-$(date +%F).tar.gz data/
+Pin a version by changing the repository tag, e.g. `ghcr.io/flizzy27/smart-garage:v0.2.1`.
 
-git pull
-docker compose up -d --build
+## Backup
+
+Archive the entire AppData folder:
+
 ```
-
-Migrations run automatically on container start (`prisma migrate deploy` in entrypoint).
-
-To use a specific version:
-
-```bash
-git checkout v0.2.0
-docker compose up -d --build
+/mnt/user/appdata/smart-garage/
+├── smart-garage.db
+└── uploads/
 ```
-
----
-
-## Reverse proxy (optional)
-
-If you use **Nginx Proxy Manager** or **SWAG** on Unraid:
-
-- Forward to Unraid IP, port **3000**
-- Enable HTTPS on the proxy
-- No extra env vars required for basic LAN use
-
----
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---------|-----|
-| Port 3000 in use | Change in `docker-compose.yml`: `"3001:3000"` |
-| Container restart loop | Check logs: Docker → smart-garage → Logs |
-| Permission errors on `/data` | `chown -R 1000:1000 /mnt/user/appdata/smart-garage/data` |
-| Blank page after update | Hard refresh; check logs for migration errors |
-
----
-
-## Backup & restore
-
-**Backup:** archive `/mnt/user/appdata/smart-garage/data` (entire folder).
-
-**Restore:** stop container → replace `data` folder → start container.
+| Issue | Solution |
+|-------|----------|
+| `compose` command unknown | Normal on Unraid — use the template (this guide), not compose |
+| Image pull failed | Ensure `ghcr.io/flizzy27/smart-garage:latest` exists (GitHub Actions publish workflow) |
+| Port conflict | Change Web UI port to e.g. `3001` in template settings |
+| Permission errors | `chown -R 1000:1000 /mnt/user/appdata/smart-garage` |
 
 ---
 

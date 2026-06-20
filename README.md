@@ -2,7 +2,7 @@
 
 Self-hosted vehicle management for homelab and NAS users. Track maintenance, expenses, fuel consumption, documents, and reminders — in one Docker container.
 
-**Version:** 0.2.0 · [Changelog](./CHANGELOG.md) · MIT License
+**Version:** 0.2.1 · [Changelog](./CHANGELOG.md) · MIT License
 
 ## Features (v0.2)
 
@@ -23,17 +23,22 @@ Works on **Unraid**, Linux, Windows, and macOS. You only need Docker on the mach
 ```bash
 git clone https://github.com/flizzy27/smart-garage.git
 cd smart-garage
-mkdir -p data
 docker compose up -d --build
 ```
 
+No manual `data` folder needed — Docker creates a named volume automatically.
+
 Open **http://your-server-ip:3000** → register your account → add a vehicle.
 
-Data persists in `./data` (SQLite DB + uploads). Back up that folder before upgrades.
+Data persists in the Docker volume `smart-garage-data`. On Unraid, use the [CA template](./templates/smart-garage.xml) instead (appdata path `/mnt/user/appdata/smart-garage`).
 
-### Unraid
+### Unraid (no compose required)
 
-See **[docs/UNRAID.md](./docs/UNRAID.md)** for step-by-step Unraid setup (appdata paths, port, updates).
+1. **Docker** → **Add Container** → install from template URL:
+   `https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml`
+2. Set port, AppData path, and upload limits in the UI
+3. See **[docs/UNRAID.md](./docs/UNRAID.md)** for details
+4. To list in the **Apps** store search: submit the repo via [docs/UNRAID-CA-SUBMIT.md](./docs/UNRAID-CA-SUBMIT.md)
 
 ## Development (local, without Docker app image)
 
@@ -76,6 +81,7 @@ Tagged releases follow [Semantic Versioning](https://semver.org/):
 
 | Tag | Summary |
 |-----|---------|
+| `v0.2.1` | Unraid CA template, GHCR image publish, no manual data folder |
 | `v0.2.0` | Full V1 app: auth, vehicles, maintenance, fuel analytics, Docker |
 | `v0.1.0` | Initial Next.js scaffold |
 
