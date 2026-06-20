@@ -40,15 +40,11 @@ coverage/
 Thumbs.db
 Desktop.ini
 
-# IDE (optional local settings)
+# IDE / local AI agent config (not published to GitHub)
 .idea/
-.cursor/*
-!.cursor/hooks.json
-!.cursor/hooks/
-!.cursor/hooks/**
-.cursor/hooks/state/
-!.cursor/rules/
-!.cursor/rules/**
+AGENTS.md
+frontend/AGENTS.md
+.cursor/
 *.swp
 *.swo
 
