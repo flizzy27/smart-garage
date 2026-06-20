@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -28,17 +28,21 @@ export function OdometerQuickUpdate({
   const t = useTranslations("vehicles.odometer");
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const actionWithClose = useCallback(
+    async (prev: OdometerActionResult | null, formData: FormData) => {
+      const result = await updateOdometerAction(prev, formData);
+      if (result?.ok) {
+        setOpen(false);
+        router.refresh();
+      }
+      return result;
+    },
+    [router],
+  );
   const [state, action, pending] = useActionState<
     OdometerActionResult | null,
     FormData
-  >(updateOdometerAction, null);
-
-  useEffect(() => {
-    if (state?.ok) {
-      setOpen(false);
-      router.refresh();
-    }
-  }, [state?.ok, router]);
+  >(actionWithClose, null);
 
   if (compact && !open) {
     return (
