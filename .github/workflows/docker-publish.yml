@@ -49,9 +49,20 @@ jobs:
           DATABASE_URL: file:../data/smart-garage.db
           UPLOAD_DIR: ../data/uploads
 
+  docker-smoke:
+    name: Docker startup smoke test
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image and verify startup
+        run: |
+          chmod +x scripts/docker-smoke.sh
+          ./scripts/docker-smoke.sh smart-garage:ci-smoke
+
   publish-development:
     name: Push development image
-    needs: validate
+    needs: [validate, docker-smoke]
     if: >
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_dispatch' && inputs.channel == 'development')
@@ -76,7 +87,7 @@ jobs:
 
   publish-stable:
     name: Push stable image
-    needs: validate
+    needs: [validate, docker-smoke]
     if: >
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
       (github.event_name == 'workflow_dispatch' && inputs.channel == 'stable')
