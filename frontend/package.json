@@ -1,17 +1,43 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "smart-garage-frontend",
+  "version": "0.2.0",
   "private": true,
+  "description": "Smart Garage — self-hosted vehicle management (Next.js)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset",
+    "db:unlock": "tsx scripts/db-unlock.ts",
+    "db:repair": "tsx scripts/db-unlock.ts && prisma migrate deploy && prisma generate",
+    "catalog:import": "tsx scripts/catalog-import.ts",
+    "catalog:import:quick": "tsx scripts/catalog-import.ts --quick",
+    "catalog:import:ci": "tsx scripts/catalog-import.ts --ci",
+    "catalog:import:cardata": "tsx scripts/catalog-import.ts --source=cardata --force",
+    "catalog:download:cardata": "tsx scripts/catalog-download-cardata.ts",
+    "catalog:dedup": "tsx scripts/catalog-dedup.ts",
+    "catalog:validate": "tsx scripts/catalog-validate.ts",
+    "catalog:sync": "tsx scripts/catalog-import.ts --force"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "csv-parse": "^7.0.0",
     "next": "16.2.9",
+    "next-intl": "^4.13.0",
+    "prisma": "^6.19.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,6 +47,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

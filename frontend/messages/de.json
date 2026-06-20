@@ -1,0 +1,734 @@
+{
+  "app": {
+    "name": "Smart Garage",
+    "tagline": "Selbst gehostete Fahrzeugverwaltung",
+    "version": "v0.1 · Vorschau",
+    "creator": "Erstellt von"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "vehicles": "Fahrzeuge",
+    "maintenance": "Wartung",
+    "history": "Verlauf",
+    "documents": "Dokumente",
+    "expenses": "Ausgaben",
+    "fuel": "Kraftstoff",
+    "reminders": "Erinnerungen",
+    "settings": "Einstellungen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "collapseSidebar": "Seitenleiste einklappen",
+    "expandSidebar": "Seitenleiste ausklappen",
+    "groups": {
+      "overview": "Überblick",
+      "fleet": "Fuhrpark",
+      "finance": "Finanzen"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Ihr Fahrzeug im Überblick",
+    "primaryVehicle": {
+      "label": "Ihr Fahrzeug",
+      "emptyTitle": "Noch kein Fahrzeug",
+      "emptyDescription": "Fügen Sie Ihr Auto hinzu, um Wartung, Kosten und Daten zu verfolgen.",
+      "addVehicle": "Fahrzeug hinzufügen",
+      "odometer": "Kilometerstand",
+      "power": "Leistung",
+      "fuel": "Kraftstoff",
+      "plate": "Kennzeichen",
+      "viewVehicle": "Details anzeigen",
+      "manageMaintenance": "Wartung",
+      "overdueBadge": "{count} überfällig",
+      "dueSoonBadge": "{count} bald fällig"
+    },
+    "vehicleCount": {
+      "title": "Fahrzeuge",
+      "description": "In Ihrer Garage registriert"
+    },
+    "upcomingMaintenance": {
+      "title": "Anstehende Wartungen",
+      "description": "Bald fällige Services — rote Einträge brauchen Aufmerksamkeit",
+      "dueInDays": "{days} Tage",
+      "dueInKm": "{km} km",
+      "overdue": "Überfällig",
+      "viewAll": "Alle anzeigen",
+      "empty": "Alles OK — keine Wartung bald fällig",
+      "count": "{count, plural, one {# Aufgabe} other {# Aufgaben}}",
+      "columns": {
+        "service": "Service",
+        "vehicle": "Fahrzeug",
+        "due": "Fällig"
+      }
+    },
+    "costOverview": {
+      "title": "Kostenübersicht",
+      "description": "Diesen Monat",
+      "trend": "{percent} % vs. letzter Monat"
+    },
+    "fuelQuickAdd": {
+      "title": "Schnell tanken",
+      "hint": "Datum wird automatisch auf heute gesetzt.",
+      "vehicle": "Fahrzeug",
+      "amount": "Betrag (€)",
+      "pricePerLiter": "Preis/L (€)",
+      "liters": "Liter",
+      "save": "Erfassen",
+      "saving": "Speichern…",
+      "saved": "Tankvorgang gespeichert"
+    },
+    "dueSoon": {
+      "title": "Fällig in 30 Tagen",
+      "description": "Anstehende Wartungsaufgaben"
+    },
+    "maintenanceTypes": {
+      "oilChange": "Ölwechsel",
+      "inspection": "HU (Hauptuntersuchung)",
+      "brakes": "Bremsen"
+    }
+  },
+  "pages": {
+    "vehicles": {
+      "title": "Fahrzeuge",
+      "subtitle": "Verwalten Sie Ihren Fuhrpark",
+      "placeholder": "Die Fahrzeugverwaltung erscheint hier."
+    },
+    "maintenance": {
+      "title": "Wartung",
+      "subtitle": "Servicehistorie und Intervalle",
+      "placeholder": "Die Wartungsverfolgung erscheint hier."
+    },
+    "documents": {
+      "title": "Dokumente",
+      "subtitle": "Rechnungen, Berichte und Dateien",
+      "placeholder": "Die Dokumentenverwaltung erscheint hier."
+    },
+    "expenses": {
+      "title": "Ausgaben",
+      "subtitle": "Kosten über alle Fahrzeuge",
+      "placeholder": "Die Kostenverfolgung erscheint hier."
+    },
+    "reminders": {
+      "title": "Erinnerungen",
+      "subtitle": "Anstehende Aufgaben und Hinweise",
+      "placeholder": "Erinnerungen erscheinen hier."
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "subtitle": "Passen Sie die Anwendung an",
+      "nav": {
+        "ariaLabel": "Einstellungsbereiche",
+        "general": "Allgemein",
+        "notifications": "Benachrichtigungen",
+        "regional": "Regional",
+        "catalog": "Katalog"
+      },
+      "general": {
+        "title": "Allgemein",
+        "description": "Sprache und Darstellung"
+      },
+      "appearance": {
+        "title": "Darstellung",
+        "description": "Design und Anzeigeoptionen"
+      },
+      "background": {
+        "title": "Hintergrundbild",
+        "description": "Eigenes Hintergrundbild für die App-Oberfläche",
+        "empty": "Noch kein Hintergrundbild hochgeladen.",
+        "file": "Bilddatei",
+        "hint": "JPEG, PNG, WebP oder GIF. Max. 10 MB.",
+        "upload": "Hintergrund setzen",
+        "uploading": "Hochladen…",
+        "uploaded": "Hintergrundbild gespeichert",
+        "remove": "Hintergrund entfernen",
+        "removing": "Entfernen…",
+        "removed": "Hintergrundbild entfernt",
+        "errors": {
+          "uploadFailed": "Upload fehlgeschlagen",
+          "noFile": "Bitte eine Datei wählen",
+          "invalidFileType": "Dateityp nicht erlaubt",
+          "fileTooLarge": "Datei zu groß",
+          "unauthorized": "Nicht angemeldet"
+        }
+      },
+      "language": {
+        "title": "Sprache",
+        "description": "Sprache der Benutzeroberfläche",
+        "label": "Oberflächensprache"
+      },
+      "theme": {
+        "label": "Design",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "system": "System"
+      },
+      "regional": {
+        "title": "Region",
+        "description": "Zeitzone und Währung für Datum und Kosten",
+        "timezone": "Zeitzone",
+        "currency": "Währung"
+      },
+      "future": {
+        "title": "Weitere Einstellungen",
+        "description": "Zusätzliche Optionen folgen nach Konto- und Datenbankeinrichtung.",
+        "timezone": "Zeitzone",
+        "currency": "Währung",
+        "accentColor": "Akzentfarbe"
+      },
+      "catalog": {
+        "title": "Fahrzeugkatalog",
+        "description": "Datenquellen für Werksdaten",
+        "notice": "Werksdaten stammen von",
+        "license": "CC BY 4.0"
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "description": "Wählen Sie, wo, wann und wofür Sie Benachrichtigungen erhalten",
+        "testAllTitle": "Testbenachrichtigung",
+        "testAllDescription": "Sendet eine Testnachricht an alle aktivierten Kanäle mit Ihren gespeicherten Einstellungen.",
+        "testAllButton": "Test an alle Kanäle senden",
+        "testSuccessChannels": "Test gesendet über: {channels}",
+        "channelsTitle": "Kanäle (wo)",
+        "channelsDescription": "Aktivieren Sie einen oder mehrere Kanäle. Benachrichtigungen gehen an alle aktiven Kanäle.",
+        "eventsTitle": "Ereignisse (was)",
+        "eventsDescription": "Wählen Sie, welche Ereignisse eine Benachrichtigung auslösen.",
+        "deliveryTitle": "Zustellung (wann)",
+        "deliveryDescription": "Zeitfenster, Ruhezeiten und Mindestabstand zwischen Benachrichtigungen.",
+        "pushoverEnabled": "Pushover",
+        "pushoverChannelHint": "Mobile Push-Nachrichten über pushover.net",
+        "pushoverUserKey": "User Key",
+        "pushoverAppToken": "App-API-Token",
+        "telegramEnabled": "Telegram",
+        "telegramChannelHint": "Nachrichten über Telegram-Bot",
+        "telegramBotToken": "Bot-Token",
+        "telegramChatId": "Chat-ID",
+        "eventMaintenanceOverdue": "Wartung überfällig",
+        "eventMaintenanceOverdueHint": "Wenn ein Service über Datum oder Kilometerstand fällig ist",
+        "eventMaintenanceDueSoon": "Wartung bald fällig",
+        "eventMaintenanceDueSoonHint": "Innerhalb von 30 Tagen oder 1.500 km zum nächsten Service",
+        "eventMaintenanceLogged": "Service erfasst",
+        "eventMaintenanceLoggedHint": "Demnächst — wenn ein Service eingetragen wird",
+        "eventExpenseAdded": "Neue Ausgabe",
+        "eventExpenseAddedHint": "Demnächst — wenn eine Kostenbuchung erfasst wird",
+        "deliveryImmediate": "Sofort senden",
+        "deliveryImmediateHint": "Zustellung sobald ein Ereignis zu Ihren Regeln passt",
+        "deliveryScheduled": "Zeitfenster",
+        "deliveryScheduledHint": "Nur um die gewählte Uhrzeit an ausgewählten Wochentagen",
+        "scheduledTime": "Bevorzugte Uhrzeit",
+        "scheduledDays": "Wochentage",
+        "minIntervalHours": "Mindestabstand zwischen Benachrichtigungen",
+        "intervalImmediate": "Kein Minimum (bei jedem Check)",
+        "interval1h": "1 Stunde",
+        "interval6h": "6 Stunden",
+        "interval12h": "12 Stunden",
+        "interval24h": "24 Stunden",
+        "interval7d": "7 Tage",
+        "quietHoursEnabled": "Ruhezeiten",
+        "quietHoursHint": "Benachrichtigungen in diesem Zeitraum blockieren",
+        "quietHoursStart": "Ruhezeit Beginn",
+        "quietHoursEnd": "Ruhezeit Ende",
+        "timezone": "Zeitzone für Planung",
+        "timezoneHint": "Für Zeitfenster und Ruhezeiten",
+        "save": "Benachrichtigungen speichern",
+        "saving": "Speichern…",
+        "saved": "Benachrichtigungseinstellungen gespeichert.",
+        "sending": "Senden…",
+        "days": {
+          "MO": "Mo",
+          "TU": "Di",
+          "WE": "Mi",
+          "TH": "Do",
+          "FR": "Fr",
+          "SA": "Sa",
+          "SU": "So"
+        }
+      }
+    }
+  },
+  "maintenance": {
+    "title": "Wartung",
+    "subtitle": "Servicepläne, Intervalle und Historie",
+    "schedulesTitle": "Servicepläne",
+    "schedulesSubtitle": "Basierend auf Herstellerempfehlungen — Intervalle jederzeit anpassbar",
+    "addSchedule": "Service hinzufügen",
+    "cancelAdd": "Abbrechen",
+    "customSchedule": "Eigener Service",
+    "customName": "Bezeichnung",
+    "customNamePlaceholder": "z.B. Kraftstoffadditiv, DPF-Reinigung",
+    "template": "Vorlage",
+    "vehicle": "Fahrzeug",
+    "allVehicles": "Alle Fahrzeuge",
+    "category": "Kategorie",
+    "intervalKm": "Intervall (km)",
+    "intervalMonths": "Intervall (Monate)",
+    "estimatedCost": "Gesch. Kosten (€)",
+    "recommendedCost": "Typische Kosten",
+    "lastPerformed": "Zuletzt durchgeführt",
+    "lastOdometer": "Km-Stand bei Service",
+    "notes": "Notizen",
+    "saveSchedule": "Plan speichern",
+    "scheduleCreated": "Plan hinzugefügt",
+    "scheduleUpdated": "Intervalle aktualisiert",
+    "serviceLogged": "Service erfasst — nächster Termin berechnet",
+    "empty": "Noch keine Wartungspläne. Vorlage wählen oder eigenen Service anlegen.",
+    "editOrLog": "Erfassen / bearbeiten",
+    "hideDetails": "Ausblenden",
+    "remove": "Entfernen",
+    "logService": "Service erfassen",
+    "logServiceHint": "Durchgeführten Service erfassen — wird dauerhaft im Verlauf gespeichert.",
+    "logOrHistory": "Service erfassen",
+    "viewHistory": "Verlauf anzeigen",
+    "note": "Notiz",
+    "editIntervals": "Intervalle bearbeiten",
+    "performedAt": "Datum",
+    "odometer": "Kilometerstand",
+    "cost": "Kosten (€)",
+    "vendor": "Werkstatt",
+    "saveIntervals": "Intervalle speichern",
+    "saving": "Speichern…",
+    "dueInDays": "in {days} Tagen",
+    "dueInKm": "in {km} km",
+    "status": {
+      "OK": "OK",
+      "DUE_SOON": "Bald fällig",
+      "OVERDUE": "Überfällig"
+    },
+    "categories": {
+      "ENGINE": "Motor",
+      "FILTERS": "Filter",
+      "FLUIDS": "Flüssigkeiten",
+      "BRAKES": "Bremsen",
+      "TIRES": "Reifen",
+      "INSPECTION": "Inspektion",
+      "ADDITIVE": "Additiv",
+      "OTHER": "Sonstiges"
+    },
+    "detail": {
+      "back": "Zurück zur Wartung",
+      "historyTitle": "Service-Verlauf",
+      "historySubtitle": "{count, plural, one {# Eintrag erfasst} other {# Einträge erfasst}}",
+      "lastService": "Letzter Service",
+      "lastOdometer": "Km-Stand beim letzten Service",
+      "entries": "Einträge gesamt",
+      "entryCount": "{count, plural, one {# Eintrag} other {# Einträge}}"
+    },
+    "receipt": {
+      "title": "Beleg anhängen",
+      "hint": "Rechnung oder Foto einem erfassten Service zuordnen.",
+      "service": "Service",
+      "file": "Datei",
+      "upload": "Hochladen",
+      "uploading": "Hochladen…",
+      "success": "Beleg gespeichert",
+      "errors": {
+        "uploadFailed": "Upload fehlgeschlagen",
+        "noFile": "Bitte eine Datei wählen",
+        "invalidFileType": "Dateityp nicht erlaubt",
+        "fileTooLarge": "Datei zu groß"
+      }
+    }
+  },
+  "history": {
+    "title": "Verlauf",
+    "subtitle": "Alle erfassten Services über alle Fahrzeuge",
+    "empty": "Noch keine Service-Einträge. Erfassen Sie einen Service über das Dashboard oder die Wartungsseite.",
+    "latest": "Aktuell",
+    "odometer": "Kilometerstand",
+    "cost": "Kosten",
+    "vendor": "Werkstatt"
+  },
+  "documents": {
+    "title": "Dokumente",
+    "subtitle": "Rechnungen, Berichte und Fahrzeugdateien",
+    "uploadTitle": "Dokument hochladen",
+    "uploadHint": "PDF und Bilder werden auf der Festplatte gespeichert und bleiben bei gemountetem UPLOAD_DIR auch nach Container-Neustart erhalten.",
+    "upload": "Hochladen",
+    "uploading": "Wird hochgeladen…",
+    "uploadSuccess": "Dokument hochgeladen.",
+    "vehicle": "Fahrzeug",
+    "selectVehicle": "Fahrzeug wählen",
+    "category": "Kategorie",
+    "categoryOptional": "Optional",
+    "title": "Titel",
+    "titlePlaceholder": "z.B. HU-Bericht 2026",
+    "file": "Datei",
+    "fileHint": "PDF, JPEG, PNG, WebP oder GIF — max. 25 MB (über MAX_UPLOAD_SIZE_MB konfigurierbar)",
+    "empty": "Noch keine Dokumente. Laden Sie eine Rechnung, einen Inspektionsbericht oder einen Zulassungsnachweis hoch.",
+    "view": "Ansehen",
+    "download": "Download",
+    "delete": "Löschen",
+    "preview": "Vorschau",
+    "categories": {
+      "INVOICE": "Rechnung",
+      "INSPECTION": "Inspektion",
+      "REGISTRATION": "Zulassung",
+      "INSURANCE": "Versicherung",
+      "OTHER": "Sonstiges"
+    },
+    "errors": {
+      "noFile": "Bitte eine Datei auswählen.",
+      "invalidFileType": "Dateityp nicht unterstützt. PDF oder Bild verwenden.",
+      "fileTooLarge": "Datei ist zu groß.",
+      "vehicleNotFound": "Fahrzeug nicht gefunden.",
+      "uploadFailed": "Upload fehlgeschlagen.",
+      "deleteFailed": "Dokument konnte nicht gelöscht werden."
+    }
+  },
+  "common": {
+    "comingSoon": "Demnächst",
+    "mockData": "Beispieldaten"
+  },
+  "vehicles": {
+    "title": "Fahrzeuge",
+    "subtitle": "Verwalten Sie Ihren Fuhrpark",
+    "addVehicle": "Fahrzeug hinzufügen",
+    "editVehicle": "Bearbeiten",
+    "mileage": "Kilometerstand",
+    "noImage": "Kein Bild",
+    "empty": {
+      "title": "Noch keine Fahrzeuge",
+      "description": "Fügen Sie Ihr erstes Fahrzeug hinzu, um Wartung, Kosten und Dokumente zu verfolgen."
+    },
+    "create": {
+      "title": "Fahrzeug hinzufügen",
+      "subtitle": "Neues Fahrzeug in Ihrer Garage registrieren",
+      "submit": "Fahrzeug anlegen"
+    },
+    "edit": {
+      "title": "Fahrzeug bearbeiten",
+      "subtitle": "Fahrzeugdaten aktualisieren",
+      "submit": "Änderungen speichern"
+    },
+    "detail": {
+      "subtitle": "Fahrzeugübersicht und Module",
+      "overview": "Überblick",
+      "specifications": "Technische Daten",
+      "powerPs": "Leistung (PS)",
+      "powerKw": "Leistung (kW)"
+    },
+    "modifications": {
+      "title": "Modifikationen",
+      "subtitle": "Tuning und Umbauten erfassen. Leistungsgewinne aktualisieren die aktuellen Werte automatisch.",
+      "empty": "Noch keine Modifikationen erfasst.",
+      "open": "Modifikationen verwalten",
+      "count": "{count, plural, one {# Modifikation} other {# Modifikationen}}",
+      "category": "Kategorie",
+      "selectCategory": "Kategorie wählen",
+      "name": "Bezeichnung",
+      "description": "Beschreibung",
+      "installedAt": "Einbaudatum",
+      "cost": "Kosten (€)",
+      "addedPowerPs": "Mehrleistung (PS)",
+      "addedPowerKw": "Mehrleistung (kW)",
+      "addedTorqueNm": "Mehrdrehmoment (Nm)",
+      "notes": "Notizen",
+      "add": "Modifikation hinzufügen",
+      "adding": "Wird hinzugefügt…",
+      "added": "Modifikation gespeichert.",
+      "remove": "Entfernen",
+      "error": "Modifikation konnte nicht gespeichert werden."
+    },
+    "modificationCategories": {
+      "STAGE_1": "Stufe 1",
+      "STAGE_2": "Stufe 2",
+      "STAGE_3": "Stufe 3",
+      "STAGE_4": "Stufe 4",
+      "INTAKE": "Ansaugung",
+      "INTERCOOLER": "Ladeluftkühler",
+      "DOWNPIPE": "Downpipe",
+      "EXHAUST": "Abgasanlage",
+      "TURBOCHARGER": "Turbolader",
+      "FUEL_PUMP_HP": "Hochdruck-Kraftstoffpumpe",
+      "FUEL_PUMP_LP": "Niederdruck-Kraftstoffpumpe",
+      "INJECTORS": "Injektoren",
+      "SUSPENSION": "Fahrwerk",
+      "BRAKES": "Bremsen",
+      "WHEELS": "Felgen",
+      "ECU_TUNE": "ECU-Tuning",
+      "TRANSMISSION_TUNE": "Getriebe-Tuning",
+      "CUSTOM": "Individuell"
+    },
+    "bodyTypes": {
+      "SEDAN": "Limousine",
+      "HATCHBACK": "Schrägheck",
+      "WAGON": "Kombi",
+      "COUPE": "Coupé",
+      "CONVERTIBLE": "Cabrio",
+      "SUV": "SUV",
+      "CROSSOVER": "Crossover",
+      "VAN": "Van",
+      "PICKUP": "Pickup",
+      "OTHER": "Sonstige"
+    },
+    "driveTypes": {
+      "FWD": "Frontantrieb",
+      "RWD": "Heckantrieb",
+      "AWD": "Allradantrieb",
+      "FOUR_WD": "Vierradantrieb",
+      "OTHER": "Sonstige"
+    },
+    "hub": {
+      "title": "Fahrzeugmodule",
+      "subtitle": "Zentrale Übersicht für alles rund um dieses Fahrzeug",
+      "entryCount": "{count, plural, =0 {Noch keine Einträge} one {# Eintrag} other {# Einträge}}",
+      "openModule": "Öffnen",
+      "modules": {
+        "maintenance": {
+          "title": "Wartung",
+          "description": "Servicehistorie, Intervalle und anstehende Arbeiten"
+        },
+        "expenses": {
+          "title": "Ausgaben",
+          "description": "Kosten, Belege und Ausgabentrends"
+        },
+        "documents": {
+          "title": "Dokumente",
+          "description": "Rechnungen, Zulassung und Fahrzeugdateien"
+        },
+        "fuel": {
+          "title": "Kraftstoff",
+          "description": "Tankvorgänge, Verbrauch und Kraftstoffkosten"
+        },
+        "reminders": {
+          "title": "Erinnerungen",
+          "description": "Fälligkeiten, Hinweise und Benachrichtigungen"
+        }
+      }
+    },
+    "form": {
+      "sections": {
+        "identity": "Marke & Modell",
+        "registration": "Zulassung",
+        "technical": "Technische Daten",
+        "image": "Foto"
+      },
+      "manufacturer": "Hersteller",
+      "series": "Baureihe / Modell",
+      "generation": "Generation",
+      "variant": "Variante / Ausstattung",
+      "engine": "Motor",
+      "productionYear": "Produktionsjahr",
+      "selectManufacturer": "Hersteller wählen",
+      "selectSeries": "Baureihe wählen",
+      "selectGeneration": "Generation wählen",
+      "selectVariant": "Variante wählen",
+      "selectEngine": "Motor wählen",
+      "selectYear": "Jahr wählen",
+      "searchManufacturer": "Hersteller suchen…",
+      "searchSeries": "Baureihe suchen…",
+      "searchGeneration": "Generation suchen…",
+      "searchVariant": "Variante suchen…",
+      "searchEngine": "Motor suchen…",
+      "searchYear": "Jahr filtern…",
+      "noManufacturers": "Keine Hersteller gefunden",
+      "noSeries": "Keine Baureihen gefunden",
+      "noGenerations": "Keine Generationen gefunden",
+      "noVariants": "Keine Varianten gefunden",
+      "noEngines": "Keine Motoren gefunden",
+      "noYears": "Keine Produktionsjahre gefunden",
+      "loading": "Laden…",
+      "loadingSpecs": "Technische Daten werden aus dem Katalog geladen…",
+      "specsLoaded": "Technische Daten aus dem Katalog geladen. Felder können angepasst werden.",
+      "technicalHint": "Werte stammen aus dem Fahrzeugkatalog. Nur bei Abweichungen überschreiben.",
+      "engineCode": "Motorcode",
+      "engineDescription": "Motor",
+      "powerPs": "Leistung (PS)",
+      "torqueNm": "Drehmoment (Nm)",
+      "displacement": "Hubraum (ccm)",
+      "bodyType": "Karosserie",
+      "driveType": "Antrieb",
+      "selectBodyType": "Karosserie wählen",
+      "selectDriveType": "Antrieb wählen",
+      "year": "Baujahr",
+      "color": "Farbe",
+      "colorPlaceholder": "z. B. Alpinweiß",
+      "vin": "FIN (VIN)",
+      "hsn": "HSN",
+      "tsn": "TSN",
+      "hsnTsn": "HSN / TSN",
+      "licensePlate": "Kennzeichen",
+      "powerKw": "Leistung (kW)",
+      "fuelType": "Kraftstoff",
+      "selectFuelType": "Kraftstoff wählen",
+      "mileage": "Kilometerstand (km)",
+      "image": "Fahrzeugfoto",
+      "imageHint": "JPEG, PNG, WebP oder GIF. Max. 10 MB.",
+      "noImage": "Kein Foto ausgewählt",
+      "notes": "Notizen",
+      "cancel": "Abbrechen",
+      "saving": "Speichern…"
+    },
+    "fuelTypes": {
+      "PETROL": "Benzin",
+      "DIESEL": "Diesel",
+      "ELECTRIC": "Elektro",
+      "HYBRID": "Hybrid",
+      "PLUGIN_HYBRID": "Plug-in-Hybrid",
+      "LPG": "LPG",
+      "CNG": "Erdgas (CNG)",
+      "OTHER": "Sonstige"
+    },
+    "delete": {
+      "button": "Löschen",
+      "title": "Fahrzeug löschen?",
+      "description": "{name} wird aus Ihrer Garage entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirm": "Fahrzeug löschen",
+      "cancel": "Abbrechen",
+      "deleting": "Löschen…"
+    },
+    "errors": {
+      "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "notFound": "Fahrzeug nicht gefunden.",
+      "manufacturerRequired": "Bitte wählen Sie einen Hersteller.",
+      "seriesRequired": "Bitte wählen Sie eine Baureihe.",
+      "generationRequired": "Bitte wählen Sie eine Generation.",
+      "variantRequired": "Bitte wählen Sie eine Variante.",
+      "engineRequired": "Bitte wählen Sie einen Motor.",
+      "yearRequired": "Bitte wählen Sie ein Produktionsjahr.",
+      "CATALOG_NOT_FOUND": "Der gewählte Katalogeintrag ist ungültig.",
+      "yearInvalid": "Bitte geben Sie ein gültiges Baujahr ein.",
+      "vinInvalid": "FIN darf höchstens 17 gültige Zeichen haben.",
+      "hsnInvalid": "HSN darf höchstens 4 Ziffern haben.",
+      "tsnInvalid": "TSN darf höchstens 3 Zeichen haben.",
+      "licensePlateInvalid": "Kennzeichen ist zu lang.",
+      "engineInvalid": "Motorbeschreibung ist zu lang.",
+      "powerInvalid": "Bitte geben Sie eine gültige Leistung in kW ein.",
+      "mileageInvalid": "Bitte geben Sie einen gültigen Kilometerstand ein.",
+      "colorInvalid": "Farbe ist zu lang.",
+      "notesInvalid": "Notizen sind zu lang.",
+      "MODEL_NOT_FOUND": "Das gewählte Modell ist ungültig.",
+      "INVALID_IMAGE_TYPE": "Nicht unterstütztes Bildformat.",
+      "IMAGE_TOO_LARGE": "Das Bild überschreitet die maximale Größe.",
+      "validationFailed": "Bitte prüfen Sie die Eingaben."
+    }
+  },
+  "auth": {
+    "loginTitle": "Anmelden",
+    "loginSubtitle": "Melden Sie sich mit Benutzername und Passwort an",
+    "registerTitle": "Konto erstellen",
+    "registerSubtitle": "Wähle einen Benutzernamen und ein Passwort — deine Garage, deine Daten.",
+    "username": "Benutzername",
+    "usernameHint": "3–32 Zeichen, Buchstaben, Zahlen, _ und -",
+    "displayName": "Anzeigename",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "rememberMe": "Angemeldet bleiben",
+    "signingIn": "Anmelden…",
+    "createAccount": "Konto erstellen",
+    "creatingAccount": "Erstellen…",
+    "noAccount": "Noch kein Konto?",
+    "hasAccount": "Bereits ein Konto?",
+    "registerLink": "Registrieren",
+    "loginLink": "Anmelden",
+    "signOut": "Abmelden",
+    "admin": "Benutzerverwaltung",
+    "errors": {
+      "invalidUsername": "Ungültiger Benutzername",
+      "passwordTooShort": "Passwort muss mindestens 8 Zeichen haben",
+      "usernameTaken": "Benutzername bereits vergeben",
+      "invalidCredentials": "Benutzername oder Passwort falsch",
+      "failed": "Aktion fehlgeschlagen"
+    }
+  },
+  "expenses": {
+    "title": "Ausgaben",
+    "subtitle": "Kosten über alle Fahrzeuge",
+    "addTitle": "Ausgabe erfassen",
+    "addHint": "Manuelle Ausgaben — Wartungskosten werden beim Service-Log automatisch erfasst.",
+    "vehicle": "Fahrzeug",
+    "category": "Kategorie",
+    "date": "Datum",
+    "amount": "Betrag (€)",
+    "description": "Beschreibung",
+    "save": "Speichern",
+    "saving": "Speichern…",
+    "added": "Ausgabe gespeichert",
+    "deleted": "Ausgabe gelöscht",
+    "delete": "Löschen",
+    "listTitle": "Alle Ausgaben",
+    "empty": "Noch keine Ausgaben erfasst.",
+    "categories": {
+      "MAINTENANCE": "Wartung",
+      "FUEL": "Kraftstoff",
+      "INSURANCE": "Versicherung",
+      "TAX": "Steuer",
+      "REGISTRATION": "Zulassung",
+      "REPAIR": "Reparatur",
+      "ACCESSORY": "Zubehör",
+      "OTHER": "Sonstiges"
+    }
+  },
+  "fuel": {
+    "title": "Kraftstoff",
+    "subtitle": "Tankvorgänge und Kraftstoffkosten",
+    "addTitle": "Tankvorgang erfassen",
+    "addHint": "Liter, Kosten und Kilometerstand optional.",
+    "vehicle": "Fahrzeug",
+    "date": "Datum",
+    "liters": "Liter",
+    "amount": "Kosten (€)",
+    "odometer": "Kilometerstand",
+    "station": "Tankstelle",
+    "note": "Notiz",
+    "save": "Speichern",
+    "saving": "Speichern…",
+    "added": "Tankvorgang gespeichert",
+    "deleted": "Eintrag gelöscht",
+    "delete": "Löschen",
+    "listTitle": "Tankhistorie",
+    "empty": "Noch keine Tankvorgänge erfasst.",
+    "fillUp": "Tanken",
+    "analytics": {
+      "title": "Auswertung",
+      "subtitle": "Verbrauch, Preise und Kosten aus Ihren Tankvorgängen",
+      "avgConsumption": "Ø Verbrauch",
+      "projectedAnnual": "Vorauss. Jahresverbrauch",
+      "projectedAnnualCost": "≈ {cost} Kraftstoffkosten/Jahr",
+      "projectedAnnualKm": "≈ {km} km/Jahr geschätzt",
+      "avgPrice": "Ø Preis/L",
+      "totalCost": "Gesamtkosten",
+      "totalLiters": "{liters} L getankt",
+      "costPer100Km": "Kosten / 100 km",
+      "distanceTracked": "{km} km erfasst",
+      "basedOnSegments": "aus {count} Tankstrecken",
+      "needsOdometer": "Kilometerstand bei Tankvorgängen nötig",
+      "needsMoreData": "Mehr Einträge mit Literangabe nötig",
+      "priceChart": "Preis pro Liter",
+      "consumptionChart": "Verbrauch (L/100 km)",
+      "costChart": "Tankkosten pro Monat"
+    }
+  },
+  "reminders": {
+    "title": "Erinnerungen",
+    "subtitle": "Überfällige und bald fällige Wartungen",
+    "allClear": "Alles erledigt — keine fälligen Wartungen.",
+    "overdue": "Überfällig",
+    "dueSoon": "Bald fällig",
+    "dueInDays": "in {days} Tagen",
+    "dueInKm": "in {km} km"
+  },
+  "admin": {
+    "title": "Benutzerverwaltung",
+    "subtitle": "Weitere Benutzer anlegen und Konten verwalten",
+    "createUser": "Neuen Benutzer anlegen",
+    "createUserHint": "Jeder Benutzer sieht nur seine eigenen Fahrzeuge und Daten.",
+    "username": "Benutzername",
+    "displayName": "Anzeigename",
+    "password": "Passwort",
+    "create": "Benutzer erstellen",
+    "creating": "Erstellen…",
+    "userCreated": "Benutzer erstellt",
+    "usersTitle": "Benutzer",
+    "vehicles": "Fahrzeuge",
+    "active": "Aktiv",
+    "inactive": "Deaktiviert",
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren",
+    "errors": {
+      "invalidUsername": "Ungültiger Benutzername",
+      "passwordTooShort": "Passwort zu kurz",
+      "usernameTaken": "Benutzername vergeben",
+      "failed": "Fehler"
+    }
+  }
+}

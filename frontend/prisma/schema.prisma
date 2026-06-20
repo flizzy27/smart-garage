@@ -1,0 +1,589 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  ELECTRIC
+  HYBRID
+  PLUGIN_HYBRID
+  LPG
+  CNG
+  OTHER
+}
+
+enum ExpenseCategory {
+  MAINTENANCE
+  FUEL
+  INSURANCE
+  TAX
+  REGISTRATION
+  REPAIR
+  ACCESSORY
+  OTHER
+}
+
+enum DocumentPurpose {
+  VEHICLE_IMAGE
+  VEHICLE_DOCUMENT
+  RECEIPT
+  OTHER
+}
+
+enum DocumentCategory {
+  INVOICE
+  INSPECTION
+  REGISTRATION
+  INSURANCE
+  OTHER
+}
+
+enum CatalogDataSource {
+  NHTSA_VPIC
+  OPEN_VEHICLE_DB
+  CARDATA_WIKI
+  MANUAL
+}
+
+enum BodyType {
+  SEDAN
+  HATCHBACK
+  WAGON
+  COUPE
+  CONVERTIBLE
+  SUV
+  CROSSOVER
+  VAN
+  PICKUP
+  OTHER
+}
+
+enum DriveType {
+  FWD
+  RWD
+  AWD
+  FOUR_WD
+  OTHER
+}
+
+enum ModificationCategory {
+  STAGE_1
+  STAGE_2
+  STAGE_3
+  STAGE_4
+  INTAKE
+  INTERCOOLER
+  DOWNPIPE
+  EXHAUST
+  TURBOCHARGER
+  FUEL_PUMP_HP
+  FUEL_PUMP_LP
+  INJECTORS
+  SUSPENSION
+  BRAKES
+  WHEELS
+  ECU_TUNE
+  TRANSMISSION_TUNE
+  CUSTOM
+}
+
+enum ImportRunStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum MaintenanceCategory {
+  ENGINE
+  FILTERS
+  FLUIDS
+  BRAKES
+  TIRES
+  INSPECTION
+  ADDITIVE
+  OTHER
+}
+
+enum MaintenanceDueStatus {
+  OK
+  DUE_SOON
+  OVERDUE
+}
+
+model User {
+  id              String    @id @default(cuid())
+  username        String    @unique
+  email           String    @unique
+  emailVerifiedAt DateTime?
+  passwordHash    String
+  displayName     String?
+  role            UserRole  @default(USER)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastLoginAt     DateTime?
+
+  vehicles             Vehicle[]
+  sessions             Session[]
+  preferences          UserPreferences?
+  maintenanceRecords   MaintenanceRecord[]       @relation("MaintenanceRecordCreatedBy")
+  expenses             Expense[]                 @relation("ExpenseCreatedBy")
+  documents            Document[]                @relation("DocumentUploadedBy")
+  fuelEntries          FuelEntry[]               @relation("FuelEntryCreatedBy")
+  notificationSettings UserNotificationSettings?
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model UserPreferences {
+  userId              String   @id
+  theme               String   @default("system")
+  locale              String   @default("de")
+  timezone            String   @default("Europe/Berlin")
+  currency            String   @default("EUR")
+  backgroundImageKey  String?
+  backgroundMimeType  String?
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserNotificationSettings {
+  userId                  String    @id
+  pushoverEnabled         Boolean   @default(false)
+  pushoverUserKey         String?
+  pushoverAppToken        String?
+  telegramEnabled         Boolean   @default(false)
+  telegramBotToken        String?
+  telegramChatId            String?
+  eventMaintenanceOverdue Boolean   @default(true)
+  eventMaintenanceDueSoon   Boolean   @default(true)
+  eventMaintenanceLogged    Boolean   @default(false)
+  eventExpenseAdded         Boolean   @default(false)
+  deliveryImmediate         Boolean   @default(true)
+  deliveryScheduled         Boolean   @default(false)
+  scheduledTime             String?   @default("08:00")
+  scheduledDays             String?   @default("MO,TU,WE,TH,FR,SA,SU")
+  minIntervalHours          Int       @default(6)
+  quietHoursEnabled         Boolean   @default(false)
+  quietHoursStart           String?   @default("22:00")
+  quietHoursEnd             String?   @default("07:00")
+  timezone                  String    @default("Europe/Berlin")
+  lastMaintenanceAlertAt    DateTime?
+  updatedAt                 DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Vehicle catalog (reference data) ─────────────────────────────────────
+
+model CatalogSyncState {
+  source         CatalogDataSource @id
+  lastSyncAt     DateTime?
+  datasetVersion String?
+  cursorJson     Json?
+  updatedAt      DateTime          @updatedAt
+}
+
+model CatalogImportRun {
+  id               String            @id @default(cuid())
+  source           CatalogDataSource
+  status           ImportRunStatus   @default(PENDING)
+  recordsProcessed Int               @default(0)
+  recordsCreated   Int               @default(0)
+  recordsUpdated   Int               @default(0)
+  errorMessage     String?
+  startedAt        DateTime          @default(now())
+  finishedAt       DateTime?
+  metadata         Json?
+}
+
+model CatalogManufacturer {
+  id         String            @id @default(cuid())
+  source     CatalogDataSource @default(NHTSA_VPIC)
+  externalId String?
+  name       String
+  slug       String            @unique
+  country    String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  series   CatalogSeries[]
+  vehicles Vehicle[]
+
+  @@unique([source, externalId])
+  @@index([name])
+}
+
+model CatalogSeries {
+  id             String   @id @default(cuid())
+  manufacturerId String
+  externalId     String?
+  name           String
+  slug           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  manufacturer CatalogManufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  generations  CatalogGeneration[]
+
+  @@unique([manufacturerId, slug])
+  @@unique([manufacturerId, externalId])
+  @@index([manufacturerId])
+  @@index([name])
+}
+
+model CatalogGeneration {
+  id        String   @id @default(cuid())
+  seriesId  String
+  name      String
+  code      String?
+  yearFrom  Int
+  yearTo    Int?
+  source    CatalogDataSource @default(NHTSA_VPIC)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  series   CatalogSeries   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  variants CatalogVariant[]
+
+  @@index([seriesId])
+  @@index([yearFrom, yearTo])
+}
+
+model CatalogVariant {
+  id           String            @id @default(cuid())
+  generationId String
+  name         String
+  trim         String?
+  bodyType     BodyType?
+  driveType    DriveType?
+  source       CatalogDataSource @default(NHTSA_VPIC)
+  externalId   String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  generation CatalogGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  engines    CatalogEngine[]
+  modelYears CatalogModelYear[]
+
+  @@index([generationId])
+  @@index([name])
+}
+
+model CatalogEngine {
+  id                 String    @id @default(cuid())
+  variantId          String
+  code               String?
+  name               String
+  displacementCc     Int?
+  fuelType           FuelType?
+  powerKw            Int?
+  powerPs            Int?
+  torqueNm           Int?
+  transmissionTypes  Json?
+  metadata           Json?
+  source             CatalogDataSource @default(NHTSA_VPIC)
+  externalId         String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  variant    CatalogVariant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  modelYears CatalogModelYear[]
+
+  @@index([variantId])
+  @@index([name])
+}
+
+model CatalogModelYear {
+  id        String   @id @default(cuid())
+  variantId String
+  engineId  String
+  year      Int
+  source    CatalogDataSource @default(NHTSA_VPIC)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  variant  CatalogVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  engine   CatalogEngine  @relation(fields: [engineId], references: [id], onDelete: Cascade)
+  vehicles Vehicle[]
+
+  @@unique([variantId, engineId, year])
+  @@index([year])
+}
+
+// ─── User vehicles ───────────────────────────────────────────────────────────
+
+model Vehicle {
+  id                 String    @id @default(cuid())
+  ownerUserId        String
+  catalogModelYearId String?
+  manufacturerId     String?
+  make               String?
+  model              String?
+  productionYear     Int?
+  year               Int?
+  vin                String?
+  hsn                String?
+  tsn                String?
+  licensePlate       String?
+  color              String?
+  currentOdometerKm  Int       @default(0)
+  purchaseDate       DateTime?
+  purchasePriceCents BigInt?
+  purchaseCurrency   String?   @default("EUR")
+  notes              String?
+  metadata           Json?
+  deletedAt          DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  owner            User                 @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  catalogModelYear CatalogModelYear?    @relation(fields: [catalogModelYearId], references: [id], onDelete: SetNull)
+  manufacturer     CatalogManufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  factorySpecs     VehicleFactorySpec?
+  currentSpecs     VehicleCurrentSpec?
+  modifications    VehicleModification[]
+  maintenanceRecords MaintenanceRecord[]
+  maintenanceSchedules VehicleMaintenanceSchedule[]
+  expenses         Expense[]
+  documents        Document[]
+  fuelEntries      FuelEntry[]
+
+  @@index([ownerUserId])
+  @@index([catalogModelYearId])
+  @@index([manufacturerId])
+}
+
+model VehicleFactorySpec {
+  vehicleId          String    @id
+  engineCode         String?
+  engineDescription  String?
+  powerKw            Int?
+  powerPs            Int?
+  torqueNm           Int?
+  fuelType           FuelType?
+  displacementCc     Int?
+  bodyType           BodyType?
+  driveType          DriveType?
+  transmissionTypes  Json?
+  productionYearFrom Int?
+  productionYearTo   Int?
+  rawCatalog         Json?
+  createdAt          DateTime  @default(now())
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+model VehicleCurrentSpec {
+  vehicleId         String    @id
+  engineCode        String?
+  engineDescription String?
+  powerKw           Int?
+  powerPs           Int?
+  torqueNm          Int?
+  fuelType          FuelType?
+  displacementCc    Int?
+  bodyType          BodyType?
+  driveType         DriveType?
+  transmissionTypes Json?
+  updatedAt         DateTime  @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+model VehicleModification {
+  id            String               @id @default(cuid())
+  vehicleId     String
+  category      ModificationCategory
+  name          String
+  description   String?
+  installedAt   DateTime?
+  costCents     BigInt?
+  currency      String?              @default("EUR")
+  addedPowerKw  Int?
+  addedPowerPs  Int?
+  addedTorqueNm Int?
+  notes         String?
+  isCustom      Boolean              @default(false)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+}
+
+model MaintenanceTemplate {
+  id                    String              @id @default(cuid())
+  slug                  String              @unique
+  category              MaintenanceCategory
+  nameEn                String
+  nameDe                String
+  descriptionEn         String?
+  descriptionDe         String?
+  defaultIntervalKm     Int?
+  defaultIntervalMonths Int?
+  defaultCostCentsMin   BigInt?
+  defaultCostCentsMax   BigInt?
+  sortOrder             Int                 @default(0)
+  isSystem              Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  schedules VehicleMaintenanceSchedule[]
+
+  @@index([category])
+}
+
+model VehicleMaintenanceSchedule {
+  id                  String               @id @default(cuid())
+  vehicleId           String
+  templateId          String?
+  customName          String?
+  category            MaintenanceCategory    @default(OTHER)
+  intervalKm          Int?
+  intervalMonths      Int?
+  lastPerformedAt     DateTime?
+  lastOdometerKm      Int?
+  nextDueAt           DateTime?
+  nextDueOdometerKm   Int?
+  estimatedCostCents  BigInt?
+  currency            String               @default("EUR")
+  notes               String?
+  isActive            Boolean              @default(true)
+  dueStatus           MaintenanceDueStatus @default(OK)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  vehicle  Vehicle              @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  template MaintenanceTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  records  MaintenanceRecord[]
+
+  @@index([vehicleId])
+  @@index([nextDueAt])
+  @@index([dueStatus])
+}
+
+model MaintenanceRecord {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  scheduleId      String?
+  performedAt     DateTime
+  odometerKm      Int?
+  costCents       BigInt   @default(0)
+  currency        String   @default("EUR")
+  vendorName      String?
+  title           String?
+  note            String?
+  createdByUserId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  vehicle   Vehicle                     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  schedule  VehicleMaintenanceSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+  createdBy User                        @relation("MaintenanceRecordCreatedBy", fields: [createdByUserId], references: [id])
+  expenses  Expense[]
+  documents Document[]
+
+  @@index([vehicleId])
+  @@index([scheduleId])
+  @@index([performedAt])
+}
+
+model FuelEntry {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  filledAt        DateTime
+  odometerKm      Int?
+  liters          Float?
+  totalCostCents  BigInt
+  currency        String   @default("EUR")
+  stationName     String?
+  note            String?
+  createdByUserId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("FuelEntryCreatedBy", fields: [createdByUserId], references: [id])
+
+  @@index([vehicleId])
+  @@index([filledAt])
+}
+
+model Expense {
+  id                  String          @id @default(cuid())
+  vehicleId           String
+  category            ExpenseCategory
+  occurredAt          DateTime
+  amountCents         BigInt
+  currency            String          @default("EUR")
+  odometerKm          Int?
+  maintenanceRecordId   String?
+  description         String?
+  createdByUserId     String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  vehicle           Vehicle            @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  maintenanceRecord MaintenanceRecord? @relation(fields: [maintenanceRecordId], references: [id], onDelete: SetNull)
+  createdBy         User               @relation("ExpenseCreatedBy", fields: [createdByUserId], references: [id])
+  documents         Document[]
+
+  @@index([vehicleId])
+  @@index([occurredAt])
+}
+
+model Document {
+  id                  String            @id @default(cuid())
+  uploadedByUserId    String
+  vehicleId           String?
+  maintenanceRecordId String?
+  expenseId           String?
+  purpose             DocumentPurpose   @default(OTHER)
+  category            DocumentCategory?
+  title               String?
+  originalFilename    String
+  storageKey          String            @unique
+  storageBackend      String            @default("local")
+  mimeType            String
+  sizeBytes           BigInt
+  width               Int?
+  height              Int?
+  sha256              String?
+  deletedAt           DateTime?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  uploadedBy        User               @relation("DocumentUploadedBy", fields: [uploadedByUserId], references: [id])
+  vehicle           Vehicle?           @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  maintenanceRecord MaintenanceRecord? @relation(fields: [maintenanceRecordId], references: [id], onDelete: SetNull)
+  expense           Expense?           @relation(fields: [expenseId], references: [id], onDelete: SetNull)
+
+  @@index([vehicleId])
+  @@index([uploadedByUserId])
+}

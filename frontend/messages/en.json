@@ -1,0 +1,734 @@
+{
+  "app": {
+    "name": "Smart Garage",
+    "tagline": "Self-hosted vehicle management",
+    "version": "v0.1 · Preview",
+    "creator": "Created by"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "vehicles": "Vehicles",
+    "maintenance": "Maintenance",
+    "history": "History",
+    "documents": "Documents",
+    "expenses": "Expenses",
+    "fuel": "Fuel",
+    "reminders": "Reminders",
+    "settings": "Settings",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "groups": {
+      "overview": "Overview",
+      "fleet": "Fleet",
+      "finance": "Finance"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your vehicle at a glance",
+    "primaryVehicle": {
+      "label": "Your vehicle",
+      "emptyTitle": "No vehicle yet",
+      "emptyDescription": "Add your car to track maintenance, costs, and specs.",
+      "addVehicle": "Add vehicle",
+      "odometer": "Odometer",
+      "power": "Power",
+      "fuel": "Fuel",
+      "plate": "Plate",
+      "viewVehicle": "View details",
+      "manageMaintenance": "Maintenance",
+      "overdueBadge": "{count} overdue",
+      "dueSoonBadge": "{count} due soon"
+    },
+    "vehicleCount": {
+      "title": "Vehicles",
+      "description": "Registered in your garage"
+    },
+    "upcomingMaintenance": {
+      "title": "Upcoming maintenance",
+      "description": "Services due soon — red items need attention",
+      "dueInDays": "{days} days",
+      "dueInKm": "{km} km",
+      "overdue": "Overdue",
+      "viewAll": "View all",
+      "empty": "All good — no maintenance due soon",
+      "count": "{count, plural, one {# task} other {# tasks}}",
+      "columns": {
+        "service": "Service",
+        "vehicle": "Vehicle",
+        "due": "Due"
+      }
+    },
+    "costOverview": {
+      "title": "Cost overview",
+      "description": "This month",
+      "trend": "{percent}% vs last month"
+    },
+    "fuelQuickAdd": {
+      "title": "Quick fill-up",
+      "hint": "Date is automatically set to today.",
+      "vehicle": "Vehicle",
+      "amount": "Amount (€)",
+      "pricePerLiter": "Price/L (€)",
+      "liters": "Liters",
+      "save": "Log fill-up",
+      "saving": "Saving…",
+      "saved": "Fill-up saved"
+    },
+    "dueSoon": {
+      "title": "Due within 30 days",
+      "description": "Maintenance tasks approaching"
+    },
+    "maintenanceTypes": {
+      "oilChange": "Oil change",
+      "inspection": "Inspection (HU)",
+      "brakes": "Brake service"
+    }
+  },
+  "pages": {
+    "vehicles": {
+      "title": "Vehicles",
+      "subtitle": "Manage your fleet",
+      "placeholder": "Vehicle management will appear here."
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "subtitle": "Service history and schedules",
+      "placeholder": "Maintenance tracking will appear here."
+    },
+    "documents": {
+      "title": "Documents",
+      "subtitle": "Invoices, reports, and files",
+      "placeholder": "Document storage will appear here."
+    },
+    "expenses": {
+      "title": "Expenses",
+      "subtitle": "Costs across your vehicles",
+      "placeholder": "Expense tracking will appear here."
+    },
+    "reminders": {
+      "title": "Reminders",
+      "subtitle": "Upcoming tasks and alerts",
+      "placeholder": "Reminders will appear here."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Personalize your experience",
+      "nav": {
+        "ariaLabel": "Settings sections",
+        "general": "General",
+        "notifications": "Notifications",
+        "regional": "Regional",
+        "catalog": "Catalog"
+      },
+      "general": {
+        "title": "General",
+        "description": "Language and appearance"
+      },
+      "appearance": {
+        "title": "Appearance",
+        "description": "Theme and display preferences"
+      },
+      "background": {
+        "title": "Background image",
+        "description": "Personal background for the app interface",
+        "empty": "No background image uploaded yet.",
+        "file": "Image file",
+        "hint": "JPEG, PNG, WebP or GIF. Max. 10 MB.",
+        "upload": "Set background",
+        "uploading": "Uploading…",
+        "uploaded": "Background saved",
+        "remove": "Remove background",
+        "removing": "Removing…",
+        "removed": "Background removed",
+        "errors": {
+          "uploadFailed": "Upload failed",
+          "noFile": "Please choose a file",
+          "invalidFileType": "File type not allowed",
+          "fileTooLarge": "File too large",
+          "unauthorized": "Not signed in"
+        }
+      },
+      "language": {
+        "title": "Language",
+        "description": "Choose your interface language",
+        "label": "Interface language"
+      },
+      "theme": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "regional": {
+        "title": "Regional",
+        "description": "Timezone and currency for dates and costs",
+        "timezone": "Timezone",
+        "currency": "Currency"
+      },
+      "future": {
+        "title": "More settings",
+        "description": "Additional options will be available after account and database setup.",
+        "timezone": "Timezone",
+        "currency": "Currency",
+        "accentColor": "Accent color"
+      },
+      "catalog": {
+        "title": "Vehicle catalog",
+        "description": "Data sources for factory specifications",
+        "notice": "Factory specs are sourced from",
+        "license": "CC BY 4.0"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Choose where, what, and when you receive alerts",
+        "testAllTitle": "Test notification",
+        "testAllDescription": "Sends a test message to all enabled channels using your saved settings.",
+        "testAllButton": "Send test to all channels",
+        "testSuccessChannels": "Test sent via: {channels}",
+        "channelsTitle": "Channels (where)",
+        "channelsDescription": "Enable one or more delivery channels. Alerts are sent to every active channel.",
+        "eventsTitle": "Events (what)",
+        "eventsDescription": "Select which events should trigger a notification.",
+        "deliveryTitle": "Delivery (when)",
+        "deliveryDescription": "Control timing, quiet hours, and how often alerts may repeat.",
+        "pushoverEnabled": "Pushover",
+        "pushoverChannelHint": "Mobile push via pushover.net",
+        "pushoverUserKey": "User key",
+        "pushoverAppToken": "App API token",
+        "telegramEnabled": "Telegram",
+        "telegramChannelHint": "Messages via Telegram bot",
+        "telegramBotToken": "Bot token",
+        "telegramChatId": "Chat ID",
+        "eventMaintenanceOverdue": "Maintenance overdue",
+        "eventMaintenanceOverdueHint": "When a service is past its due date or mileage",
+        "eventMaintenanceDueSoon": "Maintenance due soon",
+        "eventMaintenanceDueSoonHint": "Within 30 days or 1,500 km of the next service",
+        "eventMaintenanceLogged": "Service logged",
+        "eventMaintenanceLoggedHint": "Coming soon — when a service entry is saved",
+        "eventExpenseAdded": "New expense",
+        "eventExpenseAddedHint": "Coming soon — when a cost is recorded",
+        "deliveryImmediate": "Send immediately",
+        "deliveryImmediateHint": "Deliver as soon as an event matches your rules",
+        "deliveryScheduled": "Scheduled window",
+        "deliveryScheduledHint": "Only send around the selected time on selected weekdays",
+        "scheduledTime": "Preferred time",
+        "scheduledDays": "Weekdays",
+        "minIntervalHours": "Minimum interval between alerts",
+        "intervalImmediate": "No minimum (every check)",
+        "interval1h": "1 hour",
+        "interval6h": "6 hours",
+        "interval12h": "12 hours",
+        "interval24h": "24 hours",
+        "interval7d": "7 days",
+        "quietHoursEnabled": "Quiet hours",
+        "quietHoursHint": "Block notifications during this time range",
+        "quietHoursStart": "Quiet hours start",
+        "quietHoursEnd": "Quiet hours end",
+        "timezone": "Timezone for scheduling",
+        "timezoneHint": "Used for scheduled delivery and quiet hours",
+        "save": "Save notification settings",
+        "saving": "Saving…",
+        "saved": "Notification settings saved.",
+        "sending": "Sending…",
+        "days": {
+          "MO": "Mon",
+          "TU": "Tue",
+          "WE": "Wed",
+          "TH": "Thu",
+          "FR": "Fri",
+          "SA": "Sat",
+          "SU": "Sun"
+        }
+      }
+    }
+  },
+  "maintenance": {
+    "title": "Maintenance",
+    "subtitle": "Service schedules, intervals, and history",
+    "schedulesTitle": "Service schedules",
+    "schedulesSubtitle": "Based on OEM recommendations — adjust intervals anytime",
+    "addSchedule": "Add service",
+    "cancelAdd": "Cancel",
+    "customSchedule": "Custom service",
+    "customName": "Service name",
+    "customNamePlaceholder": "e.g. Fuel additive, DPF cleaning",
+    "template": "Template",
+    "vehicle": "Vehicle",
+    "allVehicles": "All vehicles",
+    "category": "Category",
+    "intervalKm": "Interval (km)",
+    "intervalMonths": "Interval (months)",
+    "estimatedCost": "Est. cost (€)",
+    "recommendedCost": "Typical cost",
+    "lastPerformed": "Last performed",
+    "lastOdometer": "Odometer at service (km)",
+    "notes": "Notes",
+    "saveSchedule": "Save schedule",
+    "scheduleCreated": "Schedule added",
+    "scheduleUpdated": "Intervals updated",
+    "serviceLogged": "Service logged — next due date recalculated",
+    "empty": "No maintenance schedules yet. Add a template or create a custom service.",
+    "editOrLog": "Log / edit",
+    "hideDetails": "Hide",
+    "remove": "Remove",
+    "logService": "Log service",
+    "logServiceHint": "Record a completed service — it will be saved permanently in your history.",
+    "logOrHistory": "Log service",
+    "viewHistory": "View history",
+    "note": "Note",
+    "editIntervals": "Edit intervals",
+    "performedAt": "Date",
+    "odometer": "Odometer (km)",
+    "cost": "Cost (€)",
+    "vendor": "Workshop / vendor",
+    "saveIntervals": "Save intervals",
+    "saving": "Saving…",
+    "dueInDays": "in {days} days",
+    "dueInKm": "in {km} km",
+    "status": {
+      "OK": "OK",
+      "DUE_SOON": "Due soon",
+      "OVERDUE": "Overdue"
+    },
+    "categories": {
+      "ENGINE": "Engine",
+      "FILTERS": "Filters",
+      "FLUIDS": "Fluids",
+      "BRAKES": "Brakes",
+      "TIRES": "Tires",
+      "INSPECTION": "Inspection",
+      "ADDITIVE": "Additive",
+      "OTHER": "Other"
+    },
+    "detail": {
+      "back": "Back to maintenance",
+      "historyTitle": "Service history",
+      "historySubtitle": "{count, plural, one {# entry recorded} other {# entries recorded}}",
+      "lastService": "Last service",
+      "lastOdometer": "Odometer at last service",
+      "entries": "Total entries",
+      "entryCount": "{count, plural, one {# entry} other {# entries}}"
+    },
+    "receipt": {
+      "title": "Attach receipt",
+      "hint": "Link an invoice or photo to a logged service.",
+      "service": "Service",
+      "file": "File",
+      "upload": "Upload",
+      "uploading": "Uploading…",
+      "success": "Receipt saved",
+      "errors": {
+        "uploadFailed": "Upload failed",
+        "noFile": "Please choose a file",
+        "invalidFileType": "File type not allowed",
+        "fileTooLarge": "File too large"
+      }
+    }
+  },
+  "history": {
+    "title": "History",
+    "subtitle": "All logged services across your vehicles",
+    "empty": "No service entries yet. Log a service from the dashboard or maintenance page.",
+    "latest": "Latest",
+    "odometer": "Odometer",
+    "cost": "Cost",
+    "vendor": "Workshop"
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Invoices, reports, and vehicle files",
+    "uploadTitle": "Upload document",
+    "uploadHint": "PDF and images are stored on disk and survive container restarts when UPLOAD_DIR is mounted.",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "uploadSuccess": "Document uploaded.",
+    "vehicle": "Vehicle",
+    "selectVehicle": "Select vehicle",
+    "category": "Category",
+    "categoryOptional": "Optional",
+    "title": "Title",
+    "titlePlaceholder": "e.g. HU report 2026",
+    "file": "File",
+    "fileHint": "PDF, JPEG, PNG, WebP, or GIF — max 25 MB (configurable via MAX_UPLOAD_SIZE_MB)",
+    "empty": "No documents yet. Upload an invoice, inspection report, or registration document.",
+    "view": "View",
+    "download": "Download",
+    "delete": "Delete",
+    "preview": "Preview",
+    "categories": {
+      "INVOICE": "Invoice",
+      "INSPECTION": "Inspection",
+      "REGISTRATION": "Registration",
+      "INSURANCE": "Insurance",
+      "OTHER": "Other"
+    },
+    "errors": {
+      "noFile": "Please choose a file.",
+      "invalidFileType": "Unsupported file type. Use PDF or an image.",
+      "fileTooLarge": "File is too large.",
+      "vehicleNotFound": "Vehicle not found.",
+      "uploadFailed": "Upload failed.",
+      "deleteFailed": "Could not delete document."
+    }
+  },
+  "common": {
+    "comingSoon": "Coming soon",
+    "mockData": "Sample data"
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "subtitle": "Manage your fleet",
+    "addVehicle": "Add vehicle",
+    "editVehicle": "Edit",
+    "mileage": "Mileage",
+    "noImage": "No image",
+    "empty": {
+      "title": "No vehicles yet",
+      "description": "Add your first vehicle to start tracking maintenance, costs, and documents."
+    },
+    "create": {
+      "title": "Add vehicle",
+      "subtitle": "Register a new vehicle in your garage",
+      "submit": "Create vehicle"
+    },
+    "edit": {
+      "title": "Edit vehicle",
+      "subtitle": "Update vehicle details",
+      "submit": "Save changes"
+    },
+    "detail": {
+      "subtitle": "Vehicle overview and modules",
+      "overview": "Overview",
+      "specifications": "Specifications",
+      "powerPs": "Power (PS)",
+      "powerKw": "Power (kW)"
+    },
+    "modifications": {
+      "title": "Modifications",
+      "subtitle": "Track tuning and upgrades. Power gains update current specifications automatically.",
+      "empty": "No modifications recorded yet.",
+      "open": "Manage modifications",
+      "count": "{count, plural, one {# modification} other {# modifications}}",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "name": "Name",
+      "description": "Description",
+      "installedAt": "Installation date",
+      "cost": "Cost (€)",
+      "addedPowerPs": "Added power (PS)",
+      "addedPowerKw": "Added power (kW)",
+      "addedTorqueNm": "Added torque (Nm)",
+      "notes": "Notes",
+      "add": "Add modification",
+      "adding": "Adding…",
+      "added": "Modification added.",
+      "remove": "Remove",
+      "error": "Could not save modification."
+    },
+    "modificationCategories": {
+      "STAGE_1": "Stage 1",
+      "STAGE_2": "Stage 2",
+      "STAGE_3": "Stage 3",
+      "STAGE_4": "Stage 4",
+      "INTAKE": "Intake",
+      "INTERCOOLER": "Intercooler",
+      "DOWNPIPE": "Downpipe",
+      "EXHAUST": "Exhaust system",
+      "TURBOCHARGER": "Turbocharger",
+      "FUEL_PUMP_HP": "High pressure fuel pump",
+      "FUEL_PUMP_LP": "Low pressure fuel pump",
+      "INJECTORS": "Injectors",
+      "SUSPENSION": "Suspension",
+      "BRAKES": "Brakes",
+      "WHEELS": "Wheels",
+      "ECU_TUNE": "ECU tune",
+      "TRANSMISSION_TUNE": "Transmission tune",
+      "CUSTOM": "Custom"
+    },
+    "bodyTypes": {
+      "SEDAN": "Sedan",
+      "HATCHBACK": "Hatchback",
+      "WAGON": "Wagon",
+      "COUPE": "Coupe",
+      "CONVERTIBLE": "Convertible",
+      "SUV": "SUV",
+      "CROSSOVER": "Crossover",
+      "VAN": "Van",
+      "PICKUP": "Pickup",
+      "OTHER": "Other"
+    },
+    "driveTypes": {
+      "FWD": "Front-wheel drive",
+      "RWD": "Rear-wheel drive",
+      "AWD": "All-wheel drive",
+      "FOUR_WD": "Four-wheel drive",
+      "OTHER": "Other"
+    },
+    "hub": {
+      "title": "Vehicle modules",
+      "subtitle": "Central hub for everything related to this vehicle",
+      "entryCount": "{count, plural, =0 {No entries yet} one {# entry} other {# entries}}",
+      "openModule": "Open",
+      "modules": {
+        "maintenance": {
+          "title": "Maintenance",
+          "description": "Service history, schedules, and upcoming work"
+        },
+        "expenses": {
+          "title": "Expenses",
+          "description": "Costs, receipts, and spending trends"
+        },
+        "documents": {
+          "title": "Documents",
+          "description": "Invoices, registration, and vehicle files"
+        },
+        "fuel": {
+          "title": "Fuel tracking",
+          "description": "Fill-ups, consumption, and fuel costs"
+        },
+        "reminders": {
+          "title": "Reminders",
+          "description": "Due dates, alerts, and notifications"
+        }
+      }
+    },
+    "form": {
+      "sections": {
+        "identity": "Make & model",
+        "registration": "Registration",
+        "technical": "Technical data",
+        "image": "Photo"
+      },
+      "manufacturer": "Manufacturer",
+      "series": "Series / Model",
+      "generation": "Generation",
+      "variant": "Variant / Trim",
+      "engine": "Engine",
+      "productionYear": "Production year",
+      "selectManufacturer": "Select manufacturer",
+      "selectSeries": "Select series",
+      "selectGeneration": "Select generation",
+      "selectVariant": "Select variant",
+      "selectEngine": "Select engine",
+      "selectYear": "Select year",
+      "searchManufacturer": "Type to search manufacturers…",
+      "searchSeries": "Type to search series…",
+      "searchGeneration": "Type to search generations…",
+      "searchVariant": "Type to search variants…",
+      "searchEngine": "Type to search engines…",
+      "searchYear": "Type year to filter…",
+      "noManufacturers": "No manufacturers found",
+      "noSeries": "No series found",
+      "noGenerations": "No generations found",
+      "noVariants": "No variants found",
+      "noEngines": "No engines found",
+      "noYears": "No production years found",
+      "loading": "Loading…",
+      "loadingSpecs": "Loading specifications from catalog…",
+      "specsLoaded": "Technical data loaded from catalog. You can override any field below.",
+      "technicalHint": "Values are pre-filled from the vehicle catalog. Override only if your vehicle differs.",
+      "engineCode": "Engine code",
+      "engineDescription": "Engine",
+      "powerPs": "Power (PS)",
+      "torqueNm": "Torque (Nm)",
+      "displacement": "Displacement (cc)",
+      "bodyType": "Body type",
+      "driveType": "Drive type",
+      "selectBodyType": "Select body type",
+      "selectDriveType": "Select drive type",
+      "year": "Year",
+      "color": "Color",
+      "colorPlaceholder": "e.g. Alpine White",
+      "vin": "VIN (FIN)",
+      "hsn": "HSN",
+      "tsn": "TSN",
+      "hsnTsn": "HSN / TSN",
+      "licensePlate": "License plate",
+      "powerKw": "Power (kW)",
+      "fuelType": "Fuel type",
+      "selectFuelType": "Select fuel type",
+      "mileage": "Mileage (km)",
+      "image": "Vehicle photo",
+      "imageHint": "JPEG, PNG, WebP or GIF. Max 10 MB.",
+      "noImage": "No photo selected",
+      "notes": "Notes",
+      "cancel": "Cancel",
+      "saving": "Saving…"
+    },
+    "fuelTypes": {
+      "PETROL": "Petrol",
+      "DIESEL": "Diesel",
+      "ELECTRIC": "Electric",
+      "HYBRID": "Hybrid",
+      "PLUGIN_HYBRID": "Plug-in hybrid",
+      "LPG": "LPG",
+      "CNG": "CNG",
+      "OTHER": "Other"
+    },
+    "delete": {
+      "button": "Delete",
+      "title": "Delete vehicle?",
+      "description": "This will remove {name} from your garage. This action cannot be undone.",
+      "confirm": "Delete vehicle",
+      "cancel": "Cancel",
+      "deleting": "Deleting…"
+    },
+    "errors": {
+      "unknown": "Something went wrong. Please try again.",
+      "notFound": "Vehicle not found.",
+      "manufacturerRequired": "Please select a manufacturer.",
+      "seriesRequired": "Please select a series.",
+      "generationRequired": "Please select a generation.",
+      "variantRequired": "Please select a variant.",
+      "engineRequired": "Please select an engine.",
+      "yearRequired": "Please select a production year.",
+      "CATALOG_NOT_FOUND": "Selected catalog entry is invalid.",
+      "yearInvalid": "Enter a valid year.",
+      "vinInvalid": "VIN must be up to 17 valid characters.",
+      "hsnInvalid": "HSN must be up to 4 digits.",
+      "tsnInvalid": "TSN must be up to 3 characters.",
+      "licensePlateInvalid": "License plate is too long.",
+      "engineInvalid": "Engine description is too long.",
+      "powerInvalid": "Enter a valid power value in kW.",
+      "mileageInvalid": "Enter a valid mileage in km.",
+      "colorInvalid": "Color is too long.",
+      "notesInvalid": "Notes are too long.",
+      "MODEL_NOT_FOUND": "Selected model is invalid.",
+      "INVALID_IMAGE_TYPE": "Unsupported image format.",
+      "IMAGE_TOO_LARGE": "Image exceeds the maximum size.",
+      "validationFailed": "Please check the form for errors."
+    }
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Use your username and password",
+    "registerTitle": "Create account",
+    "registerSubtitle": "Pick a username and password — your garage, your data.",
+    "username": "Username",
+    "usernameHint": "3–32 characters, letters, numbers, _ and -",
+    "displayName": "Display name",
+    "password": "Password",
+    "signIn": "Sign in",
+    "rememberMe": "Stay signed in",
+    "signingIn": "Signing in…",
+    "createAccount": "Create account",
+    "creatingAccount": "Creating…",
+    "noAccount": "No account yet?",
+    "hasAccount": "Already have an account?",
+    "registerLink": "Register",
+    "loginLink": "Sign in",
+    "signOut": "Sign out",
+    "admin": "User management",
+    "errors": {
+      "invalidUsername": "Invalid username",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "usernameTaken": "Username already taken",
+      "invalidCredentials": "Invalid username or password",
+      "failed": "Action failed"
+    }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "subtitle": "Costs across all vehicles",
+    "addTitle": "Add expense",
+    "addHint": "Manual expenses — maintenance costs are created automatically when logging a service.",
+    "vehicle": "Vehicle",
+    "category": "Category",
+    "date": "Date",
+    "amount": "Amount (€)",
+    "description": "Description",
+    "save": "Save",
+    "saving": "Saving…",
+    "added": "Expense saved",
+    "deleted": "Expense deleted",
+    "delete": "Delete",
+    "listTitle": "All expenses",
+    "empty": "No expenses recorded yet.",
+    "categories": {
+      "MAINTENANCE": "Maintenance",
+      "FUEL": "Fuel",
+      "INSURANCE": "Insurance",
+      "TAX": "Tax",
+      "REGISTRATION": "Registration",
+      "REPAIR": "Repair",
+      "ACCESSORY": "Accessory",
+      "OTHER": "Other"
+    }
+  },
+  "fuel": {
+    "title": "Fuel",
+    "subtitle": "Fill-ups and fuel costs",
+    "addTitle": "Log fill-up",
+    "addHint": "Liters, cost and odometer are optional.",
+    "vehicle": "Vehicle",
+    "date": "Date",
+    "liters": "Liters",
+    "amount": "Cost (€)",
+    "odometer": "Odometer",
+    "station": "Station",
+    "note": "Note",
+    "save": "Save",
+    "saving": "Saving…",
+    "added": "Fill-up saved",
+    "deleted": "Entry deleted",
+    "delete": "Delete",
+    "listTitle": "Fuel history",
+    "empty": "No fill-ups recorded yet.",
+    "fillUp": "Fill-up",
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Consumption, prices and costs from your fill-ups",
+      "avgConsumption": "Avg. consumption",
+      "projectedAnnual": "Projected annual use",
+      "projectedAnnualCost": "≈ {cost} fuel cost/year",
+      "projectedAnnualKm": "≈ {km} km/year estimated",
+      "avgPrice": "Avg. price/L",
+      "totalCost": "Total cost",
+      "totalLiters": "{liters} L filled",
+      "costPer100Km": "Cost / 100 km",
+      "distanceTracked": "{km} km tracked",
+      "basedOnSegments": "from {count} fill segments",
+      "needsOdometer": "Odometer readings needed on fill-ups",
+      "needsMoreData": "More entries with liters needed",
+      "priceChart": "Price per liter",
+      "consumptionChart": "Consumption (L/100 km)",
+      "costChart": "Monthly fuel cost"
+    }
+  },
+  "reminders": {
+    "title": "Reminders",
+    "subtitle": "Overdue and upcoming maintenance",
+    "allClear": "All clear — no due maintenance items.",
+    "overdue": "Overdue",
+    "dueSoon": "Due soon",
+    "dueInDays": "in {days} days",
+    "dueInKm": "in {km} km"
+  },
+  "admin": {
+    "title": "User management",
+    "subtitle": "Create users and manage accounts",
+    "createUser": "Create new user",
+    "createUserHint": "Each user only sees their own vehicles and data.",
+    "username": "Username",
+    "displayName": "Display name",
+    "password": "Password",
+    "create": "Create user",
+    "creating": "Creating…",
+    "userCreated": "User created",
+    "usersTitle": "Users",
+    "vehicles": "vehicles",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "errors": {
+      "invalidUsername": "Invalid username",
+      "passwordTooShort": "Password too short",
+      "usernameTaken": "Username taken",
+      "failed": "Failed"
+    }
+  }
+}

@@ -1,0 +1,4016 @@
+[
+  {
+    "slug": "acura",
+    "name": "Acura",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Integra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "TLX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MDX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RDX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "NSX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ILX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RLX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "TSX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RSX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Legend",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "alfa-romeo",
+    "name": "Alfa Romeo",
+    "country": "IT",
+    "models": [
+      {
+        "name": "Giulia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Stelvio",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tonale",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MiTo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Giulietta",
+        "yearFrom": 1990
+      },
+      {
+        "name": "159",
+        "yearFrom": 1990
+      },
+      {
+        "name": "147",
+        "yearFrom": 1990
+      },
+      {
+        "name": "156",
+        "yearFrom": 1990
+      },
+      {
+        "name": "166",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Spider",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Brera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GT",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "alpine",
+    "name": "Alpine",
+    "country": "FR",
+    "models": [
+      {
+        "name": "A110",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A290",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A310",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GTA",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "aston-martin",
+    "name": "Aston Martin",
+    "country": "GB",
+    "models": [
+      {
+        "name": "DB11",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DB12",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vantage",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DBS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DBX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rapide",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vanquish",
+        "yearFrom": 1990
+      },
+      {
+        "name": "One-77",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "audi",
+    "name": "Audi",
+    "country": "DE",
+    "models": [
+      {
+        "name": "A1",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "A8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q4 e-tron",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "TT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "R8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "e-tron",
+        "yearFrom": 1990
+      },
+      {
+        "name": "e-tron GT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RS3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RS4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RS6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S5",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "bentley",
+    "name": "Bentley",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Continental GT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Flying Spur",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bentayga",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mulsanne",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Arnage",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Azure",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "bmw",
+    "name": "BMW",
+    "country": "DE",
+    "models": [
+      {
+        "name": "116i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "118i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "120d",
+        "yearFrom": 1990
+      },
+      {
+        "name": "320d",
+        "yearFrom": 1990
+      },
+      {
+        "name": "320i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "330i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "330d",
+        "yearFrom": 1990
+      },
+      {
+        "name": "420d",
+        "yearFrom": 1990
+      },
+      {
+        "name": "430i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "520d",
+        "yearFrom": 1990
+      },
+      {
+        "name": "530i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "540i",
+        "yearFrom": 1990
+      },
+      {
+        "name": "730d",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X1",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "i3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "i4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "iX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "iX3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "M2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "M3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "M4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Z4",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "bugatti",
+    "name": "Bugatti",
+    "country": "FR",
+    "models": [
+      {
+        "name": "Veyron",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Chiron",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Divo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Centodieci",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bolide",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mistral",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "buick",
+    "name": "Buick",
+    "country": "US",
+    "models": [
+      {
+        "name": "Encore",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Envision",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Enclave",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Regal",
+        "yearFrom": 1990
+      },
+      {
+        "name": "LaCrosse",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Verano",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Century",
+        "yearFrom": 1990
+      },
+      {
+        "name": "LeSabre",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "byd",
+    "name": "BYD",
+    "country": "CN",
+    "models": [
+      {
+        "name": "Atto 3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Dolphin",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Seal",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Han",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tang",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Song Plus",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Yuan Plus",
+        "yearFrom": 1990
+      },
+      {
+        "name": "e6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "F3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S6",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "cadillac",
+    "name": "Cadillac",
+    "country": "US",
+    "models": [
+      {
+        "name": "CT4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CT5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CT6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XT4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XT5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XT6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Escalade",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Lyriq",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ATS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CTS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "SRX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DeVille",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "caterham",
+    "name": "Caterham",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Seven 170",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Seven 270",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Seven 310",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Seven 420",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Seven 620",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "chery",
+    "name": "Chery",
+    "country": "CN",
+    "models": [
+      {
+        "name": "Tiggo 2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tiggo 4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tiggo 7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tiggo 8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Omoda 5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Arrizo 5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Arrizo 6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QQ",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "chevrolet",
+    "name": "Chevrolet",
+    "country": "US",
+    "models": [
+      {
+        "name": "Spark",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Aveo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cruze",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Malibu",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Camaro",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Corvette",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Trax",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Equinox",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Blazer",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tahoe",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Suburban",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Silverado",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Colorado",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bolt EV",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "chrysler",
+    "name": "Chrysler",
+    "country": "US",
+    "models": [
+      {
+        "name": "300C",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Pacifica",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Voyager",
+        "yearFrom": 1990
+      },
+      {
+        "name": "PT Cruiser",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sebring",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Crossfire",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Neon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Grand Voyager",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "citroen",
+    "name": "Citroën",
+    "country": "FR",
+    "models": [
+      {
+        "name": "C1",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C5 Aircross",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Berlingo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "SpaceTourer",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ami",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DS3 Crossback",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Xsara",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Saxo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Xantia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C-Elysee",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "cupra",
+    "name": "Cupra",
+    "country": "ES",
+    "models": [
+      {
+        "name": "Born",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Formentor",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Leon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ateca",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tavascan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Terramar",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "dacia",
+    "name": "Dacia",
+    "country": "RO",
+    "models": [
+      {
+        "name": "Sandero",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Duster",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Logan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Spring",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jogger",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Lodgy",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Dokker",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Pick-Up",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Solenza",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "daewoo",
+    "name": "Daewoo",
+    "country": "KR",
+    "models": [
+      {
+        "name": "Matiz",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Lanos",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Nubira",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Leganza",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tacuma",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kalos",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Evanda",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Lacetti",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "dodge",
+    "name": "Dodge",
+    "country": "US",
+    "models": [
+      {
+        "name": "Charger",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Challenger",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Durango",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Journey",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Nitro",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Caliber",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Viper",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ram 1500",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Neon",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "ds-automobiles",
+    "name": "DS Automobiles",
+    "country": "FR",
+    "models": [
+      {
+        "name": "DS 3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DS 4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DS 7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DS 9",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DS 5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "DS 6",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "ferrari",
+    "name": "Ferrari",
+    "country": "IT",
+    "models": [
+      {
+        "name": "488",
+        "yearFrom": 1990
+      },
+      {
+        "name": "F8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Roma",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Portofino",
+        "yearFrom": 1990
+      },
+      {
+        "name": "SF90",
+        "yearFrom": 1990
+      },
+      {
+        "name": "296 GTB",
+        "yearFrom": 1990
+      },
+      {
+        "name": "812 Superfast",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Purosangue",
+        "yearFrom": 1990
+      },
+      {
+        "name": "California",
+        "yearFrom": 1990
+      },
+      {
+        "name": "458",
+        "yearFrom": 1990
+      },
+      {
+        "name": "360",
+        "yearFrom": 1990
+      },
+      {
+        "name": "F430",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "fiat",
+    "name": "Fiat",
+    "country": "IT",
+    "models": [
+      {
+        "name": "500",
+        "yearFrom": 1990
+      },
+      {
+        "name": "500X",
+        "yearFrom": 1990
+      },
+      {
+        "name": "500L",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Panda",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Punto",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tipo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Doblo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ducato",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bravo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Stilo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Multipla",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Uno",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Croma",
+        "yearFrom": 1990
+      },
+      {
+        "name": "124 Spider",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "force-motors",
+    "name": "Force Motors",
+    "country": "IN",
+    "models": [
+      {
+        "name": "Gurkha",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Traveller",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Trax",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tempo Traveller",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "ford",
+    "name": "Ford",
+    "country": "US",
+    "models": [
+      {
+        "name": "Fiesta",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Focus",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mondeo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mustang",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Puma",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kuga",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Explorer",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ranger",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Transit",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Galaxy",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S-Max",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EcoSport",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Edge",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bronco",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mach-E",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Capri",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "gaz",
+    "name": "GAZ",
+    "country": "RU",
+    "models": [
+      {
+        "name": "Volga",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Gazelle",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sobol",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Valdai",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "geely",
+    "name": "Geely",
+    "country": "CN",
+    "models": [
+      {
+        "name": "Coolray",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Atlas",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Emgrand",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Geometry C",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tugella",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Monjaro",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Boyue",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Preface",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "genesis",
+    "name": "Genesis",
+    "country": "KR",
+    "models": [
+      {
+        "name": "G70",
+        "yearFrom": 1990
+      },
+      {
+        "name": "G80",
+        "yearFrom": 1990
+      },
+      {
+        "name": "G90",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GV60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GV70",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GV80",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Electrified G80",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Electrified GV70",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "gmc",
+    "name": "GMC",
+    "country": "US",
+    "models": [
+      {
+        "name": "Terrain",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Acadia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Yukon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sierra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Canyon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Savana",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Envoy",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jimmy",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "great-wall",
+    "name": "Great Wall",
+    "country": "CN",
+    "models": [
+      {
+        "name": "Haval H2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Haval H6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Haval Jolion",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Wingle",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Steed",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Poer",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ora Good Cat",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ora Funky Cat",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "holden",
+    "name": "Holden",
+    "country": "AU",
+    "models": [
+      {
+        "name": "Commodore",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Astra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Captiva",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Colorado",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cruze",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Barina",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Monaro",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ute",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "holden-special-vehicles",
+    "name": "Holden Special Vehicles",
+    "country": "AU",
+    "models": [
+      {
+        "name": "ClubSport",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GTS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Maloo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Senator",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Grange",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "honda",
+    "name": "Honda",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Civic",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Accord",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jazz",
+        "yearFrom": 1990
+      },
+      {
+        "name": "HR-V",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CR-V",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Pilot",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Odyssey",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Insight",
+        "yearFrom": 1990
+      },
+      {
+        "name": "e",
+        "yearFrom": 1990
+      },
+      {
+        "name": "FR-V",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Legend",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S2000",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Prelude",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "hyundai",
+    "name": "Hyundai",
+    "country": "KR",
+    "models": [
+      {
+        "name": "i10",
+        "yearFrom": 1990
+      },
+      {
+        "name": "i20",
+        "yearFrom": 1990
+      },
+      {
+        "name": "i30",
+        "yearFrom": 1990
+      },
+      {
+        "name": "i40",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ioniq",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ioniq 5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ioniq 6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kona",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tucson",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Santa Fe",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bayon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Nexo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Veloster",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Genesis Coupe",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Staria",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "ineos",
+    "name": "Ineos",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Grenadier",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Quartermaster",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "infiniti",
+    "name": "Infiniti",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Q30",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q50",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Q70",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QX30",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QX50",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QX55",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QX60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QX70",
+        "yearFrom": 1990
+      },
+      {
+        "name": "QX80",
+        "yearFrom": 1990
+      },
+      {
+        "name": "G37",
+        "yearFrom": 1990
+      },
+      {
+        "name": "FX",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "isuzu",
+    "name": "Isuzu",
+    "country": "JP",
+    "models": [
+      {
+        "name": "D-Max",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MU-X",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Trooper",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rodeo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Gemini",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Piazza",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "jaguar",
+    "name": "Jaguar",
+    "country": "GB",
+    "models": [
+      {
+        "name": "XE",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XF",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XJ",
+        "yearFrom": 1990
+      },
+      {
+        "name": "F-Pace",
+        "yearFrom": 1990
+      },
+      {
+        "name": "E-Pace",
+        "yearFrom": 1990
+      },
+      {
+        "name": "I-Pace",
+        "yearFrom": 1990
+      },
+      {
+        "name": "F-Type",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S-Type",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X-Type",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XK",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "jeep",
+    "name": "Jeep",
+    "country": "US",
+    "models": [
+      {
+        "name": "Wrangler",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Grand Cherokee",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cherokee",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Compass",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Renegade",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Gladiator",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Commander",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Patriot",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Wagoneer",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "kia",
+    "name": "Kia",
+    "country": "KR",
+    "models": [
+      {
+        "name": "Picanto",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rio",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ceed",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ProCeed",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XCeed",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Stonic",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Niro",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sportage",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sorento",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EV6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EV9",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Soul",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Optima",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Stinger",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Carnival",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "koenigsegg",
+    "name": "Koenigsegg",
+    "country": "SE",
+    "models": [
+      {
+        "name": "Agera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Regera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jesko",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Gemera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CC850",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lada",
+    "name": "Lada",
+    "country": "RU",
+    "models": [
+      {
+        "name": "Granta",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vesta",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Niva",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Niva Travel",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Largus",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XRAY",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kalina",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Priora",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Samara",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lamborghini",
+    "name": "Lamborghini",
+    "country": "IT",
+    "models": [
+      {
+        "name": "Huracán",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Aventador",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Urus",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Revuelto",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Gallardo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Murciélago",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Countach",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lancia",
+    "name": "Lancia",
+    "country": "IT",
+    "models": [
+      {
+        "name": "Ypsilon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Delta",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Thema",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Musa",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Phedra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Lybra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kappa",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "land-rover",
+    "name": "Land Rover",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Defender",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Discovery",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Discovery Sport",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Range Rover",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Range Rover Sport",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Range Rover Evoque",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Range Rover Velar",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Freelander",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lexus",
+    "name": "Lexus",
+    "country": "JP",
+    "models": [
+      {
+        "name": "CT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "IS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ES",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "LS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "UX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "NX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "LX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "LC",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RC",
+        "yearFrom": 1990
+      },
+      {
+        "name": "LFA",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RZ",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "li-auto",
+    "name": "Li Auto",
+    "country": "CN",
+    "models": [
+      {
+        "name": "L6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "L7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "L8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "L9",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mega",
+        "yearFrom": 1990
+      },
+      {
+        "name": "One",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lincoln",
+    "name": "Lincoln",
+    "country": "US",
+    "models": [
+      {
+        "name": "Navigator",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Aviator",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Nautilus",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Corsair",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Continental",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MKZ",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MKX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Town Car",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lotus",
+    "name": "Lotus",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Elise",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Exige",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Evora",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Emira",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Eletre",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Esprit",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Evija",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "lucid",
+    "name": "Lucid",
+    "country": "US",
+    "models": [
+      {
+        "name": "Air",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Gravity",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mahindra",
+    "name": "Mahindra",
+    "country": "IN",
+    "models": [
+      {
+        "name": "Scorpio",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XUV700",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XUV300",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Thar",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bolero",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Marazzo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "KUV100",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Verito",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "maruti-suzuki",
+    "name": "Maruti Suzuki",
+    "country": "IN",
+    "models": [
+      {
+        "name": "Swift",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Baleno",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Dzire",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Wagon R",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Alto",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Brezza",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ertiga",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Celerio",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ignis",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Fronx",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jimny",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "maserati",
+    "name": "Maserati",
+    "country": "IT",
+    "models": [
+      {
+        "name": "Ghibli",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Quattroporte",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Levante",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Grecale",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GranTurismo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GranCabrio",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MC20",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mazda",
+    "name": "Mazda",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Mazda2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mazda3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mazda6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CX-3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CX-30",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CX-5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CX-60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CX-80",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MX-5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MX-30",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RX-8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Premacy",
+        "yearFrom": 1990
+      },
+      {
+        "name": "BT-50",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mclaren",
+    "name": "McLaren",
+    "country": "GB",
+    "models": [
+      {
+        "name": "540C",
+        "yearFrom": 1990
+      },
+      {
+        "name": "570S",
+        "yearFrom": 1990
+      },
+      {
+        "name": "600LT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "720S",
+        "yearFrom": 1990
+      },
+      {
+        "name": "765LT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Artura",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "P1",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Senna",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Elva",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mercedes-benz",
+    "name": "Mercedes-Benz",
+    "country": "DE",
+    "models": [
+      {
+        "name": "A-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "B-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "E-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CLA",
+        "yearFrom": 1990
+      },
+      {
+        "name": "CLS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GLA",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GLB",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GLC",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GLE",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GLS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "G-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EQA",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EQB",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EQC",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EQE",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EQS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "V-Class",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sprinter",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vito",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Citan",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mg",
+    "name": "MG",
+    "country": "CN",
+    "models": [
+      {
+        "name": "MG3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MG4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "MG5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ZS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "HS",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Marvel R",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cyberster",
+        "yearFrom": 1990
+      },
+      {
+        "name": "TF",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ZR",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ZT",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mini",
+    "name": "Mini",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Cooper",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cooper S",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Clubman",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Countryman",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Paceman",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Convertible",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Electric",
+        "yearFrom": 1990
+      },
+      {
+        "name": "One",
+        "yearFrom": 1990
+      },
+      {
+        "name": "John Cooper Works",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "mitsubishi",
+    "name": "Mitsubishi",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Space Star",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Colt",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ASX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Eclipse Cross",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Outlander",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Pajero",
+        "yearFrom": 1990
+      },
+      {
+        "name": "L200",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Lancer",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Galant",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Carisma",
+        "yearFrom": 1990
+      },
+      {
+        "name": "i-MiEV",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "morgan",
+    "name": "Morgan",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Plus Four",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Plus Six",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Super 3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Aero 8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Roadster",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "nio",
+    "name": "NIO",
+    "country": "CN",
+    "models": [
+      {
+        "name": "ET5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ET7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ES6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ES7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ES8",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EC6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EC7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EL6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EL7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EL8",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "nissan",
+    "name": "Nissan",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Micra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Juke",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Qashqai",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X-Trail",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Leaf",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ariya",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Navara",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Note",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Pulsar",
+        "yearFrom": 1990
+      },
+      {
+        "name": "370Z",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GT-R",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Patrol",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Primera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Almera",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "opel",
+    "name": "Opel",
+    "country": "DE",
+    "models": [
+      {
+        "name": "Corsa",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Astra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Insignia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mokka",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Crossland",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Grandland",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Combo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vivaro",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Zafira",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Adam",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Meriva",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vectra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Omega",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Karl",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ampera-e",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "pagani",
+    "name": "Pagani",
+    "country": "IT",
+    "models": [
+      {
+        "name": "Huayra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Zonda",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Utopia",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "perodua",
+    "name": "Perodua",
+    "country": "MY",
+    "models": [
+      {
+        "name": "Axia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bezza",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Myvi",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Alza",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ativa",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Aruz",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kelisa",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kancil",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Viva",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "peugeot",
+    "name": "Peugeot",
+    "country": "FR",
+    "models": [
+      {
+        "name": "208",
+        "yearFrom": 1990
+      },
+      {
+        "name": "308",
+        "yearFrom": 1990
+      },
+      {
+        "name": "408",
+        "yearFrom": 1990
+      },
+      {
+        "name": "508",
+        "yearFrom": 1990
+      },
+      {
+        "name": "2008",
+        "yearFrom": 1990
+      },
+      {
+        "name": "3008",
+        "yearFrom": 1990
+      },
+      {
+        "name": "5008",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rifter",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Partner",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Traveller",
+        "yearFrom": 1990
+      },
+      {
+        "name": "108",
+        "yearFrom": 1990
+      },
+      {
+        "name": "206",
+        "yearFrom": 1990
+      },
+      {
+        "name": "207",
+        "yearFrom": 1990
+      },
+      {
+        "name": "307",
+        "yearFrom": 1990
+      },
+      {
+        "name": "407",
+        "yearFrom": 1990
+      },
+      {
+        "name": "807",
+        "yearFrom": 1990
+      },
+      {
+        "name": "e-208",
+        "yearFrom": 1990
+      },
+      {
+        "name": "e-2008",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "pininfarina",
+    "name": "Pininfarina",
+    "country": "IT",
+    "models": [
+      {
+        "name": "Battista",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "polestar",
+    "name": "Polestar",
+    "country": "SE",
+    "models": [
+      {
+        "name": "1",
+        "yearFrom": 1990
+      },
+      {
+        "name": "2",
+        "yearFrom": 1990
+      },
+      {
+        "name": "3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "6",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "porsche",
+    "name": "Porsche",
+    "country": "DE",
+    "models": [
+      {
+        "name": "911",
+        "yearFrom": 1990
+      },
+      {
+        "name": "718 Boxster",
+        "yearFrom": 1990
+      },
+      {
+        "name": "718 Cayman",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Panamera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Macan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cayenne",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Taycan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Carrera GT",
+        "yearFrom": 1990
+      },
+      {
+        "name": "918 Spyder",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "proton",
+    "name": "Proton",
+    "country": "MY",
+    "models": [
+      {
+        "name": "Saga",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Persona",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Iriz",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Exora",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Preve",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Suprima S",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Satria",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Wira",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Perdana",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "renault",
+    "name": "Renault",
+    "country": "FR",
+    "models": [
+      {
+        "name": "Clio",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Megane",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Captur",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kadjar",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Scenic",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Espace",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Talisman",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Zoe",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Twingo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kangoo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Trafic",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Master",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Arkana",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Austral",
+        "yearFrom": 1990
+      },
+      {
+        "name": "R5 E-Tech",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "rimac",
+    "name": "Rimac",
+    "country": "HR",
+    "models": [
+      {
+        "name": "Nevera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Concept One",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Concept Two",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "rivian",
+    "name": "Rivian",
+    "country": "US",
+    "models": [
+      {
+        "name": "R1T",
+        "yearFrom": 1990
+      },
+      {
+        "name": "R1S",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EDV",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "rolls-royce",
+    "name": "Rolls-Royce",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Ghost",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Phantom",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Wraith",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Dawn",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cullinan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Spectre",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Silver Shadow",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "saab",
+    "name": "Saab",
+    "country": "SE",
+    "models": [
+      {
+        "name": "9-3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "9-5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "900",
+        "yearFrom": 1990
+      },
+      {
+        "name": "9000",
+        "yearFrom": 1990
+      },
+      {
+        "name": "93",
+        "yearFrom": 1990
+      },
+      {
+        "name": "95",
+        "yearFrom": 1990
+      },
+      {
+        "name": "99",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "seat",
+    "name": "SEAT",
+    "country": "ES",
+    "models": [
+      {
+        "name": "Ibiza",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Leon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Arona",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ateca",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tarraco",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Alhambra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mii",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Toledo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cordoba",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Altea",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "skoda",
+    "name": "Škoda",
+    "country": "CZ",
+    "models": [
+      {
+        "name": "Fabia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Octavia",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Superb",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Scala",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kamiq",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Karoq",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kodiaq",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Enyaq",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rapid",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Roomster",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Yeti",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Citigo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Felicia",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "smart",
+    "name": "Smart",
+    "country": "DE",
+    "models": [
+      {
+        "name": "Fortwo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Forfour",
+        "yearFrom": 1990
+      },
+      {
+        "name": "#1",
+        "yearFrom": 1990
+      },
+      {
+        "name": "#3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Roadster",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Crossblade",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "ssangyong",
+    "name": "SsangYong",
+    "country": "KR",
+    "models": [
+      {
+        "name": "Tivoli",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Korando",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rexton",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Musso",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Rodius",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Kyron",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Actyon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Chairman",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "subaru",
+    "name": "Subaru",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Impreza",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Legacy",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Outback",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Forester",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XV",
+        "yearFrom": 1990
+      },
+      {
+        "name": "BRZ",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Levorg",
+        "yearFrom": 1990
+      },
+      {
+        "name": "WRX",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tribeca",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Justy",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "suzuki",
+    "name": "Suzuki",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Swift",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Baleno",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Ignis",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Vitara",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S-Cross",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jimny",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Across",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Alto",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Wagon R",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Grand Vitara",
+        "yearFrom": 1990
+      },
+      {
+        "name": "SX4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Samurai",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "tata",
+    "name": "Tata",
+    "country": "IN",
+    "models": [
+      {
+        "name": "Nexon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Punch",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Harrier",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Safari",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tiago",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tigor",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Altroz",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Indica",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Indigo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sumo",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "tesla",
+    "name": "Tesla",
+    "country": "US",
+    "models": [
+      {
+        "name": "Model 3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Model Y",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Model S",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Model X",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cybertruck",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Roadster",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "toyota",
+    "name": "Toyota",
+    "country": "JP",
+    "models": [
+      {
+        "name": "Corolla",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Yaris",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Camry",
+        "yearFrom": 1990
+      },
+      {
+        "name": "RAV4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Highlander",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Prius",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C-HR",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Aygo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Land Cruiser",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Hilux",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Supra",
+        "yearFrom": 1990
+      },
+      {
+        "name": "GR86",
+        "yearFrom": 1990
+      },
+      {
+        "name": "bZ4X",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Proace",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Verso",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Avensis",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Auris",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "tvr",
+    "name": "TVR",
+    "country": "GB",
+    "models": [
+      {
+        "name": "Griffith",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sagaris",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tuscan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Cerbera",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Chimaera",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "uaz",
+    "name": "UAZ",
+    "country": "RU",
+    "models": [
+      {
+        "name": "Patriot",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Hunter",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Pickup",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Profi",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Bukhanka",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "volkswagen",
+    "name": "Volkswagen",
+    "country": "DE",
+    "models": [
+      {
+        "name": "Golf",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Passat",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Polo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Tiguan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "T-Roc",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Touareg",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Arteon",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ID.3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ID.4",
+        "yearFrom": 1990
+      },
+      {
+        "name": "ID.5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Touran",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Caddy",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Transporter",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Up!",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Scirocco",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Jetta",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Beetle",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Sharan",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Taigo",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Amarok",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "volvo",
+    "name": "Volvo",
+    "country": "SE",
+    "models": [
+      {
+        "name": "XC40",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XC60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "XC90",
+        "yearFrom": 1990
+      },
+      {
+        "name": "V40",
+        "yearFrom": 1990
+      },
+      {
+        "name": "V60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "V90",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S60",
+        "yearFrom": 1990
+      },
+      {
+        "name": "S90",
+        "yearFrom": 1990
+      },
+      {
+        "name": "C40",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EX30",
+        "yearFrom": 1990
+      },
+      {
+        "name": "EX90",
+        "yearFrom": 1990
+      },
+      {
+        "name": "850",
+        "yearFrom": 1990
+      },
+      {
+        "name": "240",
+        "yearFrom": 1990
+      },
+      {
+        "name": "740",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "xpeng",
+    "name": "XPeng",
+    "country": "CN",
+    "models": [
+      {
+        "name": "G3",
+        "yearFrom": 1990
+      },
+      {
+        "name": "G6",
+        "yearFrom": 1990
+      },
+      {
+        "name": "G9",
+        "yearFrom": 1990
+      },
+      {
+        "name": "P5",
+        "yearFrom": 1990
+      },
+      {
+        "name": "P7",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X9",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mona M03",
+        "yearFrom": 1990
+      }
+    ]
+  },
+  {
+    "slug": "zeekr",
+    "name": "Zeekr",
+    "country": "CN",
+    "models": [
+      {
+        "name": "001",
+        "yearFrom": 1990
+      },
+      {
+        "name": "007",
+        "yearFrom": 1990
+      },
+      {
+        "name": "009",
+        "yearFrom": 1990
+      },
+      {
+        "name": "X",
+        "yearFrom": 1990
+      },
+      {
+        "name": "Mix",
+        "yearFrom": 1990
+      }
+    ]
+  }
+]

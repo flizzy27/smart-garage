@@ -1,0 +1,15 @@
+services:
+  smart-garage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smart-garage
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+    environment:
+      - DATABASE_URL=file:/data/smart-garage.db
+      - UPLOAD_DIR=/data/uploads
+      - NODE_ENV=production
+    restart: unless-stopped
