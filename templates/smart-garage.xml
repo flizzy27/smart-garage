@@ -32,6 +32,9 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
   <Changes>
+### 2026-06-20 — v0.3.3
+- Fix container startup: Prisma migrations run correctly on first boot (Unraid CA)
+
 ### 2026-06-19 — v0.3.0
 - Production release for Community Applications
 - Configurable web port and upload limits
