@@ -9,6 +9,13 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.1] - 2026-06-19
+
+### Fixed
+
+- **Slow/hanging catalog seed on first start** — batch SQLite writes (~31k model years in ~30–60s instead of many minutes); progress logged per manufacturer in container console
+- **Prisma deprecation warning** — moved seed config from `package.json` to `prisma.config.ts`
+
 ## [0.4.0] - 2026-06-19
 
 ### Added
