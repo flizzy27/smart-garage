@@ -1,62 +1,55 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
+All notable changes are documented here.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
 _Nothing yet._
 
-## [0.2.1] - 2026-06-19
+## [0.3.0] - 2026-06-19
+
+### Production release
+
+First public production release for Unraid Community Applications and self-hosting.
 
 ### Added
 
-- **Unraid Community Applications template** (`templates/smart-garage.xml`) with configurable port, AppData path, and upload size limits
-- `ca_profile.xml` and `icon.svg` for CA repository submission
-- GitHub Actions workflow to publish Docker image to `ghcr.io/flizzy27/smart-garage`
-- [docs/UNRAID-CA-SUBMIT.md](./docs/UNRAID-CA-SUBMIT.md) — how to list Smart Garage in the Unraid Apps store
+- Polished GitHub README with project purpose, features, and install guides
+- [docs/INSTALL.md](./docs/INSTALL.md) — backup, restore, updates
+- [docs/CA-SUBMISSION.md](./docs/CA-SUBMISSION.md) — complete CA submission packet for moderators
+- `/api/health` returns app `version`
+- `.dockerignore` for leaner image builds
+- GitHub issue templates
 
 ### Changed
 
-- Docker Compose uses a **named volume** (no manual `mkdir data` required)
-- `MAX_UPLOAD_SIZE_MB` is enforced at runtime in upload handlers (configurable in Unraid template)
-- Updated [docs/UNRAID.md](./docs/UNRAID.md) — install without `docker compose`
+- **Production focus:** removed internal dev docs, dev compose, AI agent files, and Next.js default assets
+- Docker Compose pulls pre-built `ghcr.io/flizzy27/smart-garage:latest` (no local build required)
+- GHCR workflow publishes `latest` on every `main` push and on version tags (auto-updates on Unraid)
+- Cleaned `.env.example` — production variables only, no PostgreSQL leftovers
+- Updated SECURITY.md and CONTRIBUTING.md for production accuracy
+
+### Removed
+
+- `docker-compose.dev.yml`, planning docs (ARCHITECTURE, ROADMAP, etc.), dev probe scripts
+
+## [0.2.1] - 2026-06-19
+
+- Unraid CA template, GHCR publish workflow, named Docker volume
 
 ## [0.2.0] - 2026-06-19
 
-### Added
-
-- **Authentication** — login, open self-registration, sessions, remember-me, per-user data isolation
-- **Vehicles** — CRUD, catalog import, specs, images, vehicle hub
-- **Maintenance** — schedules, service records, due/overdue logic, km sync
-- **Expenses** — manual costs linked to maintenance
-- **Fuel tracking** — fill-up log, dashboard quick-add (amount + price/L + auto liters/date)
-- **Fuel analytics** — avg consumption, price/L, cost per 100 km, projected annual consumption & cost, SVG charts
-- **Documents** — upload and library per vehicle
-- **Reminders** — overdue and due-soon maintenance list
-- **Settings** — theme, accent, background image, locale, notifications
-- **Admin** — user list, activate/deactivate, create users
-- **UI** — collapsible sidebar, header date/time, EN/DE i18n, Smart Garage branding
-- **Docker** — single all-in-one image (Next.js standalone + SQLite on `/data` volume)
-- **CI** — GitHub Actions: lint, typecheck, build
-- **Docs** — Unraid guide (`docs/UNRAID.md`), updated README
-
-### Changed
-
-- Database strategy for V1: **SQLite** in one container (simpler for NAS/homelab) instead of separate Postgres stack
-- README and deployment docs aligned with current Docker setup
+- Full application: auth, vehicles, maintenance, fuel analytics, Docker
 
 ## [0.1.0] - 2026-06-19
 
-### Added
+- Initial Next.js scaffold
 
-- Initial Next.js 16 scaffold with TypeScript and Tailwind CSS 4
-- Project documentation (architecture, database design, roadmap)
-- MIT License
-
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/flizzy27/smart-garage/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/flizzy27/smart-garage/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/flizzy27/smart-garage/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/flizzy27/smart-garage/releases/tag/v0.1.0

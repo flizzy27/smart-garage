@@ -1,63 +1,33 @@
-# Contributing to Smart Garage
+# Contributing
 
-Thank you for your interest in contributing. Smart Garage is an open-source, self-hosted project — clear conventions help everyone.
+Thanks for helping improve Smart Garage.
 
-## Before you start
+## Before a pull request
 
-1. Read [PROJECT.md](../PROJECT.md) for product scope
-2. Read [ARCHITECTURE.md](../ARCHITECTURE.md) for system design
-3. Check [ROADMAP.md](../ROADMAP.md) for planned phases — open an issue before large changes
+1. Open an issue for larger changes
+2. Fork and branch from `main`
+3. From `frontend/`:
 
-## Development setup
-
-See the [README](../README.md#quick-start-development).
-
-## How to contribute
-
-1. **Fork** the repository
-2. **Create a branch** from `main` — use a descriptive name (`fix/login-redirect`, `docs/deployment`)
-3. **Make changes** following project conventions (see below)
-4. **Run checks** from `frontend/`:
    ```bash
+   npm ci
+   npx prisma generate
    npm run lint
    npm run typecheck
    npm run build
    ```
-5. **Open a pull request** against `main` with a clear description
 
-## Code conventions
+4. Keep PRs focused; note breaking changes for self-hosters (migrations, env vars, Docker)
 
-| Area | Convention |
-|------|------------|
-| Language | TypeScript only (no `.js` source files) |
-| Framework | Next.js App Router in `frontend/` |
-| Styling | Tailwind CSS |
-| Components | Reusable; default to Server Components |
-| Business logic | `frontend/lib/domain/` and `frontend/lib/services/` — no React imports |
-| Database | Prisma schema changes need review; see [DATABASE.md](../DATABASE.md) |
-| Docs | Update relevant `.md` files for architectural changes |
+## Conventions
 
-## Pull request guidelines
+- TypeScript, Next.js App Router, Tailwind CSS
+- Business logic in `frontend/lib/services/` (no React imports)
+- Prisma schema changes need a migration
 
-- Keep PRs focused — one concern per PR when possible
-- Link related issues
-- Note breaking changes for self-hosters (env vars, migrations, Docker)
-- Do not commit `.env`, secrets, or `data/` directory contents
-- Schema migrations require a description of upgrade impact
+## Security
 
-## Reporting bugs
-
-Open a [GitHub issue](https://github.com/flizzy27/smart_garage/issues) with:
-
-- Smart Garage version or commit hash
-- Steps to reproduce
-- Expected vs actual behavior
-- Environment (OS, Docker, browser)
-
-## Security issues
-
-Do **not** open public issues for vulnerabilities. See [SECURITY.md](../SECURITY.md).
+See [SECURITY.md](SECURITY.md) — no public issues for vulnerabilities.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the [MIT License](../LICENSE).
+Contributions are licensed under [MIT](LICENSE).

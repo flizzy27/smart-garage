@@ -1,8 +1,6 @@
+# Pull the published image (recommended). To build locally: docker compose up -d --build
 services:
   smart-garage:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: ghcr.io/flizzy27/smart-garage:latest
     container_name: smart-garage
     ports:
