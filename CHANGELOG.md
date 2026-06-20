@@ -9,6 +9,14 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.3.2] - 2026-06-20
+
+### Fixed
+
+- **GitHub Actions `npm ci`** — Linux-synced `package-lock.json` (optional deps `@emnapi/*`, `@swc/helpers`)
+- **Docker image build** — `npm ci --ignore-scripts` in Dockerfile deps stage so Prisma postinstall does not run before `schema.prisma` is copied
+- **`:latest` stable image** — republished so Unraid and GHCR stable channel match the green CI build
+
 ## [0.3.1] - 2026-06-19
 
 ### Fixed
@@ -62,7 +70,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/flizzy27/smart-garage/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/flizzy27/smart-garage/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/flizzy27/smart-garage/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/flizzy27/smart-garage/compare/v0.2.0...v0.2.1

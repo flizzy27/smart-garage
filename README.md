@@ -99,7 +99,7 @@ Image: `ghcr.io/flizzy27/smart-garage:latest`
 
 **Promote to stable:** when a dev build is approved, tag a release (`git tag v0.3.1 && git push origin v0.3.1`). That publishes `:latest`.
 
-Pin a version: `ghcr.io/flizzy27/smart-garage:v0.3.1`
+Pin a version: `ghcr.io/flizzy27/smart-garage:v0.3.2`
 
 ## 💾 Backup
 
