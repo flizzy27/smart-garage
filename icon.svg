@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Smart Garage">
+  <rect width="128" height="128" rx="24" fill="#0f172a"/>
+  <rect x="20" y="52" width="88" height="52" rx="6" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+  <path d="M20 52 L64 24 L108 52" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="44" y="68" width="40" height="36" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="3"/>
+  <circle cx="64" cy="86" r="4" fill="#38bdf8"/>
+</svg>
