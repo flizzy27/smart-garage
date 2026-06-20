@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node .cursor/hooks/session-start.mjs"
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "node .cursor/hooks/audit-shell.mjs"
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "node .cursor/hooks/subagent-stop.mjs",
+        "loop_limit": 2
+      }
+    ]
+  }
+}

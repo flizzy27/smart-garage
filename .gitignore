@@ -42,7 +42,11 @@ Desktop.ini
 
 # IDE (optional local settings)
 .idea/
-.cursor/
+.cursor/*
+!.cursor/hooks.json
+!.cursor/hooks/**
+.cursor/hooks/state/
+!.cursor/rules/**
 *.swp
 *.swo
 
