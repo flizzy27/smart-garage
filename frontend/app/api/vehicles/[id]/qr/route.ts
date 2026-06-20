@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { getCurrentUserId } from "@/lib/auth/current-user";
+import { requireApiUser } from "@/lib/auth/api-auth";
 import { resolveVehicleAccess } from "@/lib/vehicles/access";
 
 function buildQrSvg(text: string, size = 200): string {
@@ -45,27 +45,25 @@ function encodeQrModules(text: string): boolean[][] {
 type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_request: Request, context: RouteContext) {
-  try {
-    const { id } = await context.params;
-    const userId = await getCurrentUserId();
-    const access = await resolveVehicleAccess(userId, id);
-    if (!access) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
+  const auth = await requireApiUser();
+  if (!auth.ok) return auth.response;
 
-    const h = await headers();
-    const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-    const proto = h.get("x-forwarded-proto") ?? "http";
-    const url = `${proto}://${host}/vehicles/${id}`;
-
-    const svg = await encodeQrSvg(url);
-    return new NextResponse(svg, {
-      headers: {
-        "Content-Type": "image/svg+xml",
-        "Cache-Control": "private, max-age=3600",
-      },
-    });
-  } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await context.params;
+  const access = await resolveVehicleAccess(auth.userId, id);
+  if (!access) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const url = `${proto}://${host}/vehicles/${id}`;
+
+  const svg = await encodeQrSvg(url);
+  return new NextResponse(svg, {
+    headers: {
+      "Content-Type": "image/svg+xml",
+      "Cache-Control": "private, max-age=3600",
+    },
+  });
 }

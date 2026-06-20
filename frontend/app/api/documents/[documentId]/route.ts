@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserId } from "@/lib/auth/current-user";
+import { requireApiUser } from "@/lib/auth/api-auth";
 import { getDocumentForDownload } from "@/lib/services/documents";
 import { readStoredFile } from "@/lib/storage/local";
 import { isViewableInline } from "@/lib/storage/paths";
@@ -11,9 +11,11 @@ type RouteContext = {
 };
 
 export async function GET(request: Request, context: RouteContext) {
+  const auth = await requireApiUser();
+  if (!auth.ok) return auth.response;
+
   const { documentId } = await context.params;
-  const ownerUserId = await getCurrentUserId();
-  const document = await getDocumentForDownload(documentId, ownerUserId);
+  const document = await getDocumentForDownload(documentId, auth.userId);
 
   if (!document) {
     return new NextResponse(null, { status: 404 });

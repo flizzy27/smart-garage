@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserId } from "@/lib/auth/current-user";
+import { requireApiUser } from "@/lib/auth/api-auth";
 import { buildUserExport, expensesToCsv } from "@/lib/export/backup";
 import { prisma } from "@/lib/prisma";
 import { vehicleAccessWhere } from "@/lib/vehicles/access";
 
 export async function GET(request: Request) {
-  try {
-    const userId = await getCurrentUserId();
-    const { searchParams } = new URL(request.url);
-    const format = searchParams.get("format") ?? "json";
+  const auth = await requireApiUser();
+  if (!auth.ok) return auth.response;
 
+  const userId = auth.userId;
+  const { searchParams } = new URL(request.url);
+  const format = searchParams.get("format") ?? "json";
+
+  try {
     if (format === "csv") {
       const expenses = await prisma.expense.findMany({
         where: { vehicle: vehicleAccessWhere(userId) },
@@ -41,6 +44,6 @@ export async function GET(request: Request) {
       },
     });
   } catch {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Export failed" }, { status: 500 });
   }
 }

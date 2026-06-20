@@ -9,6 +9,16 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.4] - 2026-06-20
+
+### Fixed
+
+- **Docker smoke test / container startup** — Next.js standalone traced `prisma.config.ts` into the image; Prisma CLI failed with `Cannot find module 'prisma/config'`. Excluded from standalone trace, removed in Dockerfile, and stripped in entrypoint.
+- **API auth** — protected routes return 401 instead of 500 when unauthenticated
+- **ESLint** — zero warnings; unused imports cleaned up
+- **Docker** — HEALTHCHECK in Dockerfile and docker-compose
+- **`csv-parse`** moved to devDependencies (catalog import scripts only)
+
 ## [0.4.3] - 2026-06-20
 
 ### Fixed
@@ -141,7 +151,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/flizzy27/smart-garage/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/flizzy27/smart-garage/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/flizzy27/smart-garage/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/flizzy27/smart-garage/compare/v0.4.0...v0.4.1

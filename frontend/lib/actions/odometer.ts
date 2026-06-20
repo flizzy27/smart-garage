@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentUserId } from "@/lib/auth/current-user";
 import { updateOdometerForCurrentUser } from "@/lib/services/vehicles";
 
 export type OdometerActionResult = {

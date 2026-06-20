@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { LogMaintenanceForm } from "@/components/maintenance/LogMaintenanceForm";
 import { MaintenanceHistoryTimeline } from "@/components/maintenance/MaintenanceHistoryTimeline";
 import { MaintenanceReceiptUpload } from "@/components/maintenance/MaintenanceReceiptUpload";
