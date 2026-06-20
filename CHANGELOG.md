@@ -9,6 +9,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.3.5] - 2026-06-20
+
+### Fixed
+
+- **Session on HTTP and HTTPS** — default cookies work on both without configuration; optional `SESSION_COOKIE_SECURE=auto` for HTTPS-only secure cookies behind a reverse proxy; logout clears both cookie variants
+
 ## [0.3.4] - 2026-06-20
 
 ### Fixed
@@ -82,7 +88,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.4...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.5...HEAD
+[0.3.5]: https://github.com/flizzy27/smart-garage/compare/v0.3.4...v0.3.5
 [0.3.4]: https://github.com/flizzy27/smart-garage/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/flizzy27/smart-garage/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/flizzy27/smart-garage/compare/v0.3.1...v0.3.2

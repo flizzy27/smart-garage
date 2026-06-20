@@ -1,19 +1,45 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 
 export const SESSION_COOKIE = "sg_session";
 
-/** Set SESSION_COOKIE_SECURE=true only when the app is served over HTTPS. */
-export function sessionCookieSecure(): boolean {
-  return process.env.SESSION_COOKIE_SECURE === "true";
+/**
+ * Session cookie `Secure` flag.
+ *
+ * Default (unset): `false` — works on **both** `http://` (Unraid LAN) and `https://`
+ * (reverse proxy). Browsers send non-Secure cookies on HTTPS too.
+ *
+ * Override only for HTTPS-only deployments: SESSION_COOKIE_SECURE=true
+ */
+export function sessionCookieSecure(requestProto?: string | null): boolean {
+  const override = process.env.SESSION_COOKIE_SECURE?.trim().toLowerCase();
+  if (override === "true" || override === "1") return true;
+  if (override === "false" || override === "0") return false;
+
+  // Optional auto: secure when the login request arrived over HTTPS (proxy header).
+  if (override === "auto" && requestProto === "https") return true;
+
+  return false;
 }
 
-export function sessionCookieOptions() {
+function requestProtoFromHeaders(headerList: Headers): string | null {
+  const forwarded = headerList.get("x-forwarded-proto");
+  if (forwarded) {
+    return forwarded.split(",")[0]?.trim().toLowerCase() ?? null;
+  }
+  const forwardedSsl = headerList.get("x-forwarded-ssl");
+  if (forwardedSsl === "on") return "https";
+  return null;
+}
+
+export async function sessionCookieOptions() {
+  const headerList = await headers();
+  const proto = requestProtoFromHeaders(headerList);
   return {
     httpOnly: true,
     sameSite: "lax" as const,
-    secure: sessionCookieSecure(),
+    secure: sessionCookieSecure(proto),
     path: "/",
   };
 }
@@ -74,7 +100,7 @@ export async function getSessionTokenFromCookies(): Promise<string | null> {
 
 export async function setSessionCookie(token: string, remember: boolean) {
   const jar = await cookies();
-  const base = sessionCookieOptions();
+  const base = await sessionCookieOptions();
 
   if (remember) {
     jar.set(SESSION_COOKIE, token, {
@@ -82,12 +108,14 @@ export async function setSessionCookie(token: string, remember: boolean) {
       expires: sessionExpiresAt(true),
     });
   } else {
-    // Session cookie — cleared when the browser closes.
     jar.set(SESSION_COOKIE, token, base);
   }
 }
 
 export async function clearSessionCookie() {
   const jar = await cookies();
-  jar.delete({ name: SESSION_COOKIE, ...sessionCookieOptions() });
+  const base = { name: SESSION_COOKIE, path: "/", httpOnly: true, sameSite: "lax" as const };
+  // Clear both variants in case the user switched between HTTP and HTTPS access.
+  jar.delete({ ...base, secure: false });
+  jar.delete({ ...base, secure: true });
 }
