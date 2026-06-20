@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 
 const SOURCE = "OPEN_VEHICLE_DB";
+const MODEL_YEAR_BATCH_SIZE = 1000;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const catalogPath = path.join(__dirname, "..", "prisma", "seed", "catalog.generated.json");
 
@@ -20,44 +21,71 @@ function slugify(text) {
     .replace(/^-|-$/g, "");
 }
 
-async function ensureBaseVariantEngine(prisma, generationId) {
-  let variant = await prisma.catalogVariant.findFirst({
-    where: { generationId, name: "Standard" },
-  });
-  if (!variant) {
-    variant = await prisma.catalogVariant.create({
-      data: { generationId, name: "Standard", source: SOURCE },
-    });
+function estimateModelYears(catalog, currentYear) {
+  let total = 0;
+  for (const entry of catalog) {
+    for (const model of entry.models) {
+      const yearFrom = model.yearFrom ?? 1990;
+      const yearTo = model.yearTo ?? currentYear;
+      total += Math.max(0, yearTo - yearFrom + 1);
+    }
   }
+  return total;
+}
 
-  let engine = await prisma.catalogEngine.findFirst({
-    where: { variantId: variant.id, name: "Base" },
-  });
-  if (!engine) {
-    engine = await prisma.catalogEngine.create({
-      data: { variantId: variant.id, name: "Base", source: SOURCE },
-    });
+async function flushModelYearBatch(prisma, batch) {
+  if (batch.length === 0) return;
+
+  const chunkSize = 100;
+  for (let i = 0; i < batch.length; i += chunkSize) {
+    const chunk = batch.slice(i, i + chunkSize);
+    await prisma.$transaction(
+      chunk.map((row) =>
+        prisma.catalogModelYear.upsert({
+          where: {
+            variantId_engineId_year: {
+              variantId: row.variantId,
+              engineId: row.engineId,
+              year: row.year,
+            },
+          },
+          create: row,
+          update: {},
+        }),
+      ),
+    );
   }
-
-  return { variantId: variant.id, engineId: engine.id };
+  batch.length = 0;
 }
 
 async function main() {
   const prisma = new PrismaClient();
+  const startedAt = Date.now();
+
   try {
     const existing = await prisma.catalogModelYear.count();
     if (existing > 0) {
-      console.log(`Catalog already has ${existing} model years — skipping seed`);
+      console.log(`[catalog] Already seeded (${existing.toLocaleString()} model years) — skipping`);
       return;
     }
 
+    console.log("[catalog] Loading bundled catalog JSON…");
     const catalog = JSON.parse(readFileSync(catalogPath, "utf-8"));
     const currentYear = new Date().getFullYear();
+    const estimatedYears = estimateModelYears(catalog, currentYear);
     let modelYears = 0;
 
-    console.log(`Seeding bundled catalog (${catalog.length} manufacturers)…`);
+    const variantEngineByGeneration = new Map();
+    const generationBySeriesYears = new Map();
+    const modelYearBatch = [];
 
-    for (const entry of catalog) {
+    console.log(
+      `[catalog] Seeding ${catalog.length} manufacturers (~${estimatedYears.toLocaleString()} model years)…`,
+    );
+
+    for (let mIndex = 0; mIndex < catalog.length; mIndex++) {
+      const entry = catalog[mIndex];
+
       const manufacturer = await prisma.catalogManufacturer.upsert({
         where: { slug: entry.slug },
         create: {
@@ -88,39 +116,80 @@ async function main() {
 
         const yearFrom = model.yearFrom ?? 1990;
         const yearTo = model.yearTo ?? currentYear;
+        const generationKey = `${series.id}:${yearFrom}:${yearTo}`;
 
-        let generation = await prisma.catalogGeneration.findFirst({
-          where: { seriesId: series.id, yearFrom, yearTo },
-        });
-        if (!generation) {
-          generation = await prisma.catalogGeneration.create({
-            data: {
-              seriesId: series.id,
-              name: `${yearFrom}–${yearTo}`,
-              yearFrom,
-              yearTo,
-              source: SOURCE,
-            },
+        let generationId = generationBySeriesYears.get(generationKey);
+        if (!generationId) {
+          let generation = await prisma.catalogGeneration.findFirst({
+            where: { seriesId: series.id, yearFrom, yearTo },
+            select: { id: true },
           });
+          if (!generation) {
+            generation = await prisma.catalogGeneration.create({
+              data: {
+                seriesId: series.id,
+                name: `${yearFrom}–${yearTo}`,
+                yearFrom,
+                yearTo,
+                source: SOURCE,
+              },
+              select: { id: true },
+            });
+          }
+          generationId = generation.id;
+          generationBySeriesYears.set(generationKey, generationId);
         }
 
-        const { variantId, engineId } = await ensureBaseVariantEngine(
-          prisma,
-          generation.id,
-        );
+        let variantEngine = variantEngineByGeneration.get(generationId);
+        if (!variantEngine) {
+          let variant = await prisma.catalogVariant.findFirst({
+            where: { generationId, name: "Standard" },
+            select: { id: true },
+          });
+          if (!variant) {
+            variant = await prisma.catalogVariant.create({
+              data: { generationId, name: "Standard", source: SOURCE },
+              select: { id: true },
+            });
+          }
+
+          let engine = await prisma.catalogEngine.findFirst({
+            where: { variantId: variant.id, name: "Base" },
+            select: { id: true },
+          });
+          if (!engine) {
+            engine = await prisma.catalogEngine.create({
+              data: { variantId: variant.id, name: "Base", source: SOURCE },
+              select: { id: true },
+            });
+          }
+
+          variantEngine = { variantId: variant.id, engineId: engine.id };
+          variantEngineByGeneration.set(generationId, variantEngine);
+        }
 
         for (let year = yearFrom; year <= yearTo; year++) {
-          await prisma.catalogModelYear.upsert({
-            where: {
-              variantId_engineId_year: { variantId, engineId, year },
-            },
-            create: { variantId, engineId, year, source: SOURCE },
-            update: {},
+          modelYearBatch.push({
+            variantId: variantEngine.variantId,
+            engineId: variantEngine.engineId,
+            year,
+            source: SOURCE,
           });
           modelYears++;
+
+          if (modelYearBatch.length >= MODEL_YEAR_BATCH_SIZE) {
+            await flushModelYearBatch(prisma, modelYearBatch);
+          }
         }
       }
+
+      const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
+      console.log(
+        `[catalog] ${mIndex + 1}/${catalog.length} ${entry.name} — ${modelYears.toLocaleString()} model years (${elapsedSec}s)`,
+      );
     }
+
+    await flushModelYearBatch(prisma, modelYearBatch);
 
     await prisma.catalogSyncState.upsert({
       where: { source: SOURCE },
@@ -135,8 +204,9 @@ async function main() {
       },
     });
 
+    const totalSec = Math.round((Date.now() - startedAt) / 1000);
     console.log(
-      `Catalog seed complete: ${catalog.length} manufacturers, ${modelYears} model years`,
+      `[catalog] Done: ${catalog.length} manufacturers, ${modelYears.toLocaleString()} model years in ${totalSec}s`,
     );
   } finally {
     await prisma.$disconnect();
@@ -144,6 +214,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error("Catalog seed failed:", error);
+  console.error("[catalog] Seed failed:", error);
   process.exit(1);
 });

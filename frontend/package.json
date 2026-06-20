@@ -1,6 +1,6 @@
 {
   "name": "smart-garage-frontend",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "description": "Smart Garage — self-hosted vehicle management (Next.js)",
   "scripts": {
@@ -25,9 +25,6 @@
     "catalog:dedup": "tsx scripts/catalog-dedup.ts",
     "catalog:validate": "tsx scripts/catalog-validate.ts",
     "catalog:sync": "tsx scripts/catalog-import.ts --force"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
