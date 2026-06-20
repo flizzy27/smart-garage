@@ -1,0 +1,38 @@
+name: Bug report
+description: Report a problem with Smart Garage
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Steps to reproduce and what you expected.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Image tag or /api/health version (e.g. 0.3.0, latest)
+      placeholder: "0.3.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Unraid
+        - Docker (Linux)
+        - Docker (Windows)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Container logs (optional)
+      description: Relevant lines from Unraid Docker logs
+    validations:
+      required: false

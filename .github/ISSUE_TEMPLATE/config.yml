@@ -1,0 +1,7 @@
+blank_issues: false
+
+contact_links:
+  - name: Unraid install guide
+    url: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
+  - name: Security advisory
+    url: https://github.com/flizzy27/smart-garage/security/advisories/new

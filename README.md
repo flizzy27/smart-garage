@@ -1,105 +1,135 @@
+<div align="center">
+
+<img src="templates/icon.png" alt="Smart Garage" width="128" />
+
 # Smart Garage
 
-Self-hosted vehicle management for homelab and NAS users. Track maintenance, expenses, fuel consumption, documents, and reminders — in one Docker container.
+**Your vehicles. Your data. Your NAS.**
 
-**Version:** 0.2.1 · [Changelog](./CHANGELOG.md) · MIT License
+Self-hosted vehicle management for **Unraid** and homelab — maintenance, fuel, costs, and documents in one Docker container.
 
-## Features (v0.2)
+[![Release](https://img.shields.io/github/v/release/flizzy27/smart-garage?style=flat-square)](https://github.com/flizzy27/smart-garage/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![GHCR](https://img.shields.io/badge/image-ghcr.io-blue?style=flat-square)](https://github.com/flizzy27/smart-garage/pkgs/container/smart-garage)
 
-- **Open registration** — unlimited local accounts (first user becomes admin)
-- **Vehicles** — profiles, specs, images, odometer sync
-- **Maintenance** — schedules, service log, due/overdue dashboard
-- **Expenses & fuel** — cost tracking, quick fill-up on dashboard, analytics & charts
-- **Documents** — invoices and PDFs per vehicle
-- **Reminders** — upcoming and overdue maintenance
-- **Settings** — theme, accent color, background image, EN/DE UI
-- **Admin** — user management
-- **Single-container Docker** — SQLite database + uploads on one volume (`/data`)
+[Install on Unraid](#-install-on-unraid) · [Features](#-features) · [Updates](#-updates) · [Changelog](CHANGELOG.md) · [Report issue](https://github.com/flizzy27/smart-garage/issues)
 
-## Quick start (Docker — recommended)
+</div>
 
-Works on **Unraid**, Linux, Windows, and macOS. You only need Docker on the machine that runs the container.
+---
 
-```bash
-git clone https://github.com/flizzy27/smart-garage.git
-cd smart-garage
-docker compose up -d --build
-```
+## Why Smart Garage?
 
-No manual `data` folder needed — Docker creates a named volume automatically.
+Most vehicle apps live in the cloud — your service history, receipts, and fuel data on someone else's server. **Smart Garage** runs entirely on your **Unraid box or homelab**: one container, one data folder, no subscription.
 
-Open **http://your-server-ip:3000** → register your account → add a vehicle.
+Built for people who want a clean garage dashboard without handing their data to a third party.
 
-Data persists in the Docker volume `smart-garage-data`. On Unraid, use the [CA template](./templates/smart-garage.xml) instead (appdata path `/mnt/user/appdata/smart-garage`).
+## ✨ Features
 
-### Unraid (no compose required)
+| | |
+|---|---|
+| 🚗 **Vehicles** | Profiles, photos, specs, odometer sync |
+| 🔧 **Maintenance** | Schedules, service log, overdue/due-soon dashboard |
+| ⛽ **Fuel** | Quick fill-up, consumption analytics, projected annual usage, charts |
+| 💶 **Expenses** | Track costs across vehicles, linked to maintenance |
+| 📄 **Documents** | Store invoices and PDFs per vehicle |
+| 🔔 **Reminders** | Upcoming and overdue maintenance at a glance |
+| 🎨 **Personal** | Dark/light mode, accent color, custom background |
+| 🌍 **Languages** | English & German |
+| 👤 **Multi-user** | Open local registration, per-user data isolation |
+| 📦 **Simple ops** | Single Docker image, SQLite on `/data`, no extra database container |
 
-1. **Docker** → **Add Container** → install from template URL:
-   `https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml`
-2. Set port, AppData path, and upload limits in the UI
-3. See **[docs/UNRAID.md](./docs/UNRAID.md)** for details
-4. To list in the **Apps** store search: submit the repo via [docs/UNRAID-CA-SUBMIT.md](./docs/UNRAID-CA-SUBMIT.md)
+## 🖥️ Install on Unraid
 
-## Development (local, without Docker app image)
+**No `docker compose` needed** — Unraid uses the Docker UI and Community Applications.
 
-```bash
-git clone https://github.com/flizzy27/smart-garage.git
-cd smart-garage/frontend
-cp .env.example .env
-npm install
-npm run db:repair    # migrate + generate Prisma client
-npm run dev
-```
+### Option A — Template URL (works immediately)
 
-Open http://localhost:3000
+1. **Docker** → **Add Container**
+2. **Install another application's template** (link at the bottom)
+3. Paste:
 
-## Tech stack
+   ```
+   https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml
+   ```
 
-| Layer | Technology |
-|-------|------------|
-| App | Next.js 16, React 19, TypeScript |
-| Styling | Tailwind CSS 4 |
-| i18n | next-intl (EN + DE) |
-| Database | SQLite (single-file, in `/data`) |
-| ORM | Prisma |
-| Deploy | One Docker image (Next.js standalone) |
+4. Configure **port**, **AppData path**, and **upload limits** → **Apply**
+5. Open `http://<unraid-ip>:<port>/` → register → add a vehicle
 
-## Documentation
+AppData is created automatically at `/mnt/user/appdata/smart-garage` by default.
 
-| Document | Description |
-|----------|-------------|
-| [CHANGELOG.md](./CHANGELOG.md) | Version history |
-| [docs/UNRAID.md](./docs/UNRAID.md) | Unraid install guide |
-| [DEPLOYMENT.md](./DEPLOYMENT.md) | Deployment concepts & backups |
-| [DEVELOPMENT.md](./DEVELOPMENT.md) | Contributor workflow |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design |
-| [PROJECT.md](./PROJECT.md) | Product vision |
+### Option B — Community Applications store
 
-## Releases
+After the repo is approved at [ca.unraid.net](https://ca.unraid.net/submit/new), search **Apps** for **Smart Garage**.
 
-Tagged releases follow [Semantic Versioning](https://semver.org/):
+→ Full guide: **[docs/UNRAID.md](docs/UNRAID.md)**
 
-| Tag | Summary |
-|-----|---------|
-| `v0.2.1` | Unraid CA template, GHCR image publish, no manual data folder |
-| `v0.2.0` | Full V1 app: auth, vehicles, maintenance, fuel analytics, Docker |
-| `v0.1.0` | Initial Next.js scaffold |
+## 🐳 Docker (Linux / NAS)
 
 ```bash
-git checkout v0.2.0
-docker compose up -d --build
+docker run -d \
+  --name smart-garage \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  -v smart-garage-data:/data \
+  -e MAX_UPLOAD_SIZE_MB=25 \
+  -e MAX_IMAGE_SIZE_MB=10 \
+  ghcr.io/flizzy27/smart-garage:latest
 ```
 
-## Backup
+Or with Compose:
 
-Copy the entire `data` directory (or Unraid appdata path):
+```bash
+docker compose up -d
+```
+
+Image: `ghcr.io/flizzy27/smart-garage:latest`
+
+## 🔄 Updates
+
+| Platform | How |
+|----------|-----|
+| **Unraid** | Docker tab → **smart-garage** → **Force Update** → restart |
+| **Docker** | `docker pull ghcr.io/flizzy27/smart-garage:latest` → recreate container |
+
+The `:latest` tag is rebuilt automatically on every release. Database migrations run on container start.
+
+Pin a version: `ghcr.io/flizzy27/smart-garage:v0.3.0`
+
+## 💾 Backup
+
+Archive your AppData / volume:
 
 ```
-data/
-├── smart-garage.db    # SQLite database
+/data/
+├── smart-garage.db    # all app data
 └── uploads/           # images & documents
 ```
 
-## License
+On Unraid: `/mnt/user/appdata/smart-garage`
 
-[MIT](./LICENSE) — Copyright (c) 2026 [flizzy27](https://github.com/flizzy27)
+## 📚 Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [docs/UNRAID.md](docs/UNRAID.md) | Unraid install & troubleshooting |
+| [docs/INSTALL.md](docs/INSTALL.md) | Backup, restore, updates |
+| [docs/CA-SUBMISSION.md](docs/CA-SUBMISSION.md) | Community Applications submission packet |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
+| [SECURITY.md](SECURITY.md) | Security policy |
+
+## 🏗️ Tech
+
+Next.js 16 · React 19 · SQLite · Prisma · Tailwind CSS 4 · next-intl
+
+Single **standalone** Docker image (~production-ready for homelab scale).
+
+## 📄 License
+
+[MIT](LICENSE) — Copyright (c) 2026 [flizzy27](https://github.com/flizzy27)
+
+---
+
+<div align="center">
+<sub>Made for homelab & Unraid · No cloud required</sub>
+</div>
