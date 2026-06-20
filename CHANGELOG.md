@@ -9,6 +9,12 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.3.4] - 2026-06-20
+
+### Fixed
+
+- **Login session lost on navigation** — session cookies no longer require HTTPS by default; fixes logout loop on Unraid when using `http://` on the LAN. Set `SESSION_COOKIE_SECURE=true` only behind HTTPS.
+
 ## [0.3.3] - 2026-06-20
 
 ### Fixed
@@ -76,7 +82,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.3.4...HEAD
+[0.3.4]: https://github.com/flizzy27/smart-garage/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/flizzy27/smart-garage/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/flizzy27/smart-garage/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/flizzy27/smart-garage/compare/v0.3.0...v0.3.1
