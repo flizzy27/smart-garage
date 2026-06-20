@@ -1,0 +1,21 @@
+# Local development database only.
+# Production stack: see DEPLOYMENT.md (Phase 7).
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: smart-garage-db-dev
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: smartgarage
+      POSTGRES_PASSWORD: smartgarage
+      POSTGRES_DB: smartgarage
+    volumes:
+      - ../data/postgres-dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartgarage -d smartgarage"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
