@@ -5,7 +5,7 @@ mkdir -p /data/uploads
 
 if [ -d ./prisma/migrations ]; then
   echo "[startup] Running database migrations…"
-  prisma migrate deploy
+  prisma migrate deploy --schema=./prisma/schema.prisma
   echo "[startup] Migrations complete"
 fi
 

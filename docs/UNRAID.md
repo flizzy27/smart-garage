@@ -44,6 +44,7 @@ To appear in **Apps** search, submit the repo: [CA-SUBMISSION.md](./CA-SUBMISSIO
 |---------|----------|
 | `compose` unknown | Use template above — no compose on Unraid |
 | Pull error | Make GHCR package public (GitHub → Packages) |
+| Container exits on start (`prisma/config`) | Update to **v0.4.3+** via Force Update |
 | Port conflict | Use 3001 or another free port |
 
 More: [INSTALL.md](./INSTALL.md)

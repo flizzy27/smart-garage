@@ -9,6 +9,16 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.3] - 2026-06-20
+
+### Fixed
+
+- **Container startup crash** — `prisma.config.ts` was copied into the production image but the `prisma` npm package was not; Prisma CLI failed with `Cannot find module 'prisma/config'`. Production now uses `prisma migrate deploy --schema=./prisma/schema.prisma` without the dev config file.
+
+### Added
+
+- **Docker smoke test** — `scripts/docker-smoke.sh` builds the image, runs migrations + catalog seed, and checks `/api/health` in CI before any image is pushed to GHCR.
+
 ## [0.4.2] - 2026-06-20
 
 ### Fixed
@@ -131,7 +141,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/flizzy27/smart-garage/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/flizzy27/smart-garage/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/flizzy27/smart-garage/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/flizzy27/smart-garage/compare/v0.3.6...v0.4.0
