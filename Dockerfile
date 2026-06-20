@@ -8,7 +8,8 @@ ENV APP_VERSION=${APP_VERSION}
 
 FROM base AS deps
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci
+# postinstall runs prisma generate; schema is copied in the builder stage
+RUN npm ci --ignore-scripts
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
