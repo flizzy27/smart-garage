@@ -41,6 +41,16 @@ export const logMaintenanceSchema = z.object({
   note: z.string().max(2000).optional(),
 });
 
+export const setupWarningSchema = z.object({
+  scheduleId: z.string().min(1),
+  vehicleId: z.string().min(1),
+  action: z.enum(["done", "circa", "unknown", "skip"]),
+  performedAt: z.string().optional(),
+  circaMonthsAgo: z.coerce.number().int().min(1).max(120).optional(),
+});
+
+export type SetupWarningInput = z.infer<typeof setupWarningSchema>;
+
 export type CreateScheduleInput = z.infer<typeof createScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof updateScheduleSchema>;
 export type LogMaintenanceInput = z.infer<typeof logMaintenanceSchema>;

@@ -7,12 +7,15 @@ import {
   createMaintenanceSchedule,
   deleteMaintenanceSchedule,
   logMaintenanceService,
+  applyWarningSetup,
   updateMaintenanceSchedule,
 } from "@/lib/services/maintenance";
 import {
   createScheduleSchema,
   logMaintenanceSchema,
+  setupWarningSchema,
   updateScheduleSchema,
+  type SetupWarningInput,
 } from "@/lib/validations/maintenance";
 
 export type MaintenanceActionResult = {
@@ -23,6 +26,7 @@ export type MaintenanceActionResult = {
 function revalidateMaintenancePaths(vehicleId?: string, scheduleId?: string) {
   revalidatePath("/");
   revalidatePath("/maintenance");
+  revalidatePath("/reminders");
   revalidatePath("/history");
   if (scheduleId) {
     revalidatePath(`/maintenance/${scheduleId}`);
@@ -83,7 +87,10 @@ export async function updateScheduleAction(
 
     const schedule = await updateMaintenanceSchedule(parsed);
     void schedule;
-    revalidateMaintenancePaths(formData.get("vehicleId")?.toString());
+    revalidateMaintenancePaths(
+      formData.get("vehicleId")?.toString(),
+      parsed.scheduleId,
+    );
     return { ok: true };
   } catch (error) {
     return {
@@ -137,4 +144,20 @@ export async function deleteScheduleAction(scheduleId: string, vehicleId: string
 
 export async function getActionLocale(): Promise<Locale> {
   return (await getLocale()) as Locale;
+}
+
+export async function setupWarningAction(
+  input: SetupWarningInput,
+): Promise<MaintenanceActionResult> {
+  try {
+    const parsed = setupWarningSchema.parse(input);
+    await applyWarningSetup(parsed);
+    revalidateMaintenancePaths(parsed.vehicleId, parsed.scheduleId);
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Setup failed",
+    };
+  }
 }

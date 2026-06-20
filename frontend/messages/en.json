@@ -843,7 +843,36 @@
     "dueInDays": "in {days} days",
     "dueInKm": "in {km} km",
     "inspectionsTitle": "TÜV / inspections",
-    "inspectionDue": "Due {date}"
+    "inspectionDue": "Due {date}",
+    "setup": {
+      "prompt": "Quick setup",
+      "promptHint": "{count, plural, one {# item needs your input} other {# items need your input}}",
+      "start": "Start quick setup",
+      "title": "Quick warning setup",
+      "progress": "Item {current} of {total}",
+      "complete": "All items reviewed — you're done!",
+      "close": "Close",
+      "exactDate": "Last service on this date",
+      "done": "Save date",
+      "circaTitle": "Approximately (still get reminders)",
+      "circaMonths": {
+        "3": "~3 months ago",
+        "6": "~6 months ago",
+        "12": "~1 year ago",
+        "24": "~2 years ago"
+      },
+      "unknown": "Not sure — estimate",
+      "unknownHint": "\"Not sure\" assumes the service was about halfway through the interval — you'll still get reminders when it's due.",
+      "later": "Later",
+      "skipService": "Don't track this",
+      "editIntervals": "Edit intervals",
+      "hideIntervals": "Hide intervals",
+      "logService": "Log service",
+      "statusOverdue": "Overdue",
+      "statusDueSoon": "Due soon",
+      "statusUnset": "Not set up yet",
+      "error": "Could not save — try again"
+    }
   },
   "costs": {
     "title": "Cost overview",

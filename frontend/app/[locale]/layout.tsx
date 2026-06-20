@@ -25,6 +25,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
