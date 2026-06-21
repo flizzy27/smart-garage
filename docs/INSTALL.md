@@ -10,12 +10,27 @@ Production guide for self-hosters.
 
 ## First start
 
-1. Install via [Unraid template](../templates/smart-garage.xml) or `docker compose up -d`
+1. Install via **Unraid Apps** (search *Smart Garage*) — see [UNRAID.md](./UNRAID.md) — or [Docker below](#docker-linux-nas-homelab)
 2. Open the web UI
 3. **Register** your account (first user = admin)
 4. Add a vehicle and start logging data
 
 No default password is shipped. No demo data is created in production.
+
+## Docker (Linux, NAS, homelab)
+
+```bash
+docker run -d \
+  --name smart-garage \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  -v smart-garage-data:/data \
+  -e DATABASE_URL=file:/data/smart-garage.db \
+  -e UPLOAD_DIR=/data/uploads \
+  ghcr.io/flizzy27/smart-garage:latest
+```
+
+Or from this repo: `docker compose up -d` (see [docker-compose.yml](../docker-compose.yml)).
 
 ## Environment variables
 
