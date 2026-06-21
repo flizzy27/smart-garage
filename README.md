@@ -12,7 +12,7 @@ Self-hosted vehicle management for **Unraid** and homelab — maintenance, fuel,
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![GHCR](https://img.shields.io/badge/image-ghcr.io-blue?style=flat-square)](https://github.com/flizzy27/smart-garage/pkgs/container/smart-garage)
 
-[Install on Unraid](#-install-on-unraid) · [Features](#-features) · [Updates](#-updates) · [Changelog](CHANGELOG.md) · [Report issue](https://github.com/flizzy27/smart-garage/issues)
+[Install](#-install) · [Features](#-features) · [Updates](#-updates) · [Changelog](CHANGELOG.md) · [Report issue](https://github.com/flizzy27/smart-garage/issues)
 
 </div>
 
@@ -44,32 +44,30 @@ Built for people who want a clean garage dashboard without handing their data to
 | 👤 **Multi-user** | Open local registration, per-user data + sharing |
 | 📦 **Simple ops** | Single Docker image, SQLite on `/data`, no extra database container |
 
-## 🖥️ Install on Unraid
+## 🖥️ Install
 
-**No `docker compose` needed** — Unraid uses the Docker UI and Community Applications.
+### Unraid — Community Applications
 
-### Option A — Template URL (works immediately)
+Smart Garage is available in the **Unraid Community Applications** store. No `docker compose` required.
 
-1. **Docker** → **Add Container**
-2. **Install another application's template** (link at the bottom)
-3. Paste:
+1. Open the **Apps** tab (Community Applications must be installed).
+2. Search for **Smart Garage**.
+3. Click **Install** and review the template settings:
+   - **Web UI port** — default `3000` (change if that port is in use)
+   - **AppData** — default `/mnt/user/appdata/smart-garage` (database + uploads; created automatically)
+   - **Upload limits** — optional, defaults are fine for most users
+4. Click **Apply**, then open the WebUI (or `http://<unraid-ip>:<port>/`).
+5. **Register** your account (first user becomes admin) and add your first vehicle.
 
-   ```
-   https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml
-   ```
+**Updates:** Docker → **smart-garage** → **Force Update** (pulls `ghcr.io/flizzy27/smart-garage:latest`).
 
-4. Configure **port**, **AppData path**, and **upload limits** → **Apply**
-5. Open `http://<unraid-ip>:<port>/` → register → add a vehicle
+More detail: **[docs/UNRAID.md](docs/UNRAID.md)**
 
-AppData is created automatically at `/mnt/user/appdata/smart-garage` by default.
+### Docker — Linux, NAS, homelab (no Unraid)
 
-### Option B — Community Applications store
+Use the pre-built image from GitHub Container Registry. You need a persistent volume mounted at `/data` inside the container.
 
-After the repo is approved at [ca.unraid.net](https://ca.unraid.net/submit/new), search **Apps** for **Smart Garage**.
-
-→ Full guide: **[docs/UNRAID.md](docs/UNRAID.md)**
-
-## 🐳 Docker (Linux / NAS)
+**`docker run`:**
 
 ```bash
 docker run -d \
@@ -77,18 +75,26 @@ docker run -d \
   --restart unless-stopped \
   -p 3000:3000 \
   -v smart-garage-data:/data \
+  -e DATABASE_URL=file:/data/smart-garage.db \
+  -e UPLOAD_DIR=/data/uploads \
   -e MAX_UPLOAD_SIZE_MB=25 \
   -e MAX_IMAGE_SIZE_MB=10 \
   ghcr.io/flizzy27/smart-garage:latest
 ```
 
-Or with Compose:
+Open `http://localhost:3000/` (or your host IP), register, and add a vehicle.
+
+**Docker Compose** (optional):
 
 ```bash
 docker compose up -d
 ```
 
+Uses the same image and a named volume — see [docker-compose.yml](docker-compose.yml).
+
 Image: `ghcr.io/flizzy27/smart-garage:latest`
+
+Full ops guide: **[docs/INSTALL.md](docs/INSTALL.md)**
 
 ## Updates
 

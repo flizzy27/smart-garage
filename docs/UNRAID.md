@@ -1,19 +1,17 @@
 # Unraid
 
-Install **Smart Garage** without `docker compose`.
+Install **Smart Garage** from the Community Applications store — no `docker compose` required.
 
-## Quick install
+## Install
 
-1. **Docker** → **Add Container**
-2. **Install another application's template**
-3. URL:
-
-   ```
-   https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml
-   ```
-
-4. Set port, AppData, upload limits → **Apply**
-5. Open WebUI → register → add vehicle
+1. Open the **Apps** tab (install **Community Applications** first if you have not already).
+2. Search for **Smart Garage**.
+3. Click **Install**.
+4. Review the template:
+   - **Web UI port** — default `3000`
+   - **AppData** — default `/mnt/user/appdata/smart-garage` (SQLite DB + uploads)
+   - **Max upload / image size** — optional
+5. Click **Apply**, open the WebUI, **register**, add a vehicle.
 
 ## Settings
 
@@ -32,19 +30,15 @@ Uses `ghcr.io/flizzy27/smart-garage:latest`.
 
 ## Backup
 
-Copy `/mnt/user/appdata/smart-garage` (entire folder).
-
-## Community Applications store
-
-To appear in **Apps** search, submit the repo: [CA-SUBMISSION.md](./CA-SUBMISSION.md)
+Copy `/mnt/user/appdata/smart-garage` (entire folder), or use **Settings → Data & export** in the app.
 
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
-| `compose` unknown | Use template above — no compose on Unraid |
-| Pull error | Make GHCR package public (GitHub → Packages) |
-| Container exits on start (`prisma/config`) | Update to **v0.4.3+** via Force Update |
-| Port conflict | Use 3001 or another free port |
+| App not in **Apps** search | Update Community Applications, then search again |
+| Pull error | Ensure GHCR package is public (GitHub → Packages) |
+| Port conflict | Use 3001 or another free port in the template |
+| Container exits on start | Update to latest via **Force Update** (`v0.4.4+`) |
 
 More: [INSTALL.md](./INSTALL.md)
