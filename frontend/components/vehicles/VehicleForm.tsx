@@ -327,26 +327,27 @@ export function VehicleForm({
 
   useEffect(() => {
     if (!seriesId || !selectedYear || showDetailedCatalog) return;
-    if (catalogModelYearId) return;
+    // Only fetch if configs haven't been loaded yet for this year.
+    // configsForYear is reset to null whenever the year changes (in onValueChange).
+    if (configsForYear !== null) return;
 
     let cancelled = false;
     void fetchConfigsForYear(seriesId, selectedYear).then((configs) => {
       if (cancelled) return;
       setConfigsForYear(configs);
       if (configs.length === 1) {
+        // Always call selectConfig for single-config years so generationId/variantId/engineId
+        // are properly linked, even if catalogModelYearId was already set from the year combobox.
         selectConfig(configs[0]);
-      } else {
-        setCatalogModelYearId(null);
-        setGenerationId(null);
-        setVariantId(null);
-        setEngineId(null);
       }
+      // For multiple configs: picker renders, catalogModelYearId (already set from year combobox)
+      // is highlighted. User can pick a different config to change the selection.
     });
 
     return () => {
       cancelled = true;
     };
-  }, [seriesId, selectedYear, showDetailedCatalog, catalogModelYearId, selectConfig]);
+  }, [seriesId, selectedYear, showDetailedCatalog, configsForYear, selectConfig]);
 
   const displaySpec = catalogModelYearId ? spec : null;
   const specLoading = Boolean(
@@ -355,8 +356,7 @@ export function VehicleForm({
   const configsLoading =
     !showDetailedCatalog &&
     selectedYear !== null &&
-    configsForYear === null &&
-    !catalogModelYearId;
+    configsForYear === null;
 
   const errorCode =
     state && "success" in state && !state.success ? state.error.code : null;
@@ -600,19 +600,26 @@ export function VehicleForm({
                 }
                 initialOption={
                   selectedYear
-                    ? { id: String(selectedYear), label: String(selectedYear) }
+                    ? {
+                        id: catalogModelYearId ?? String(selectedYear),
+                        label: String(selectedYear),
+                      }
                     : null
                 }
                 onValueChange={(option) => {
                   if (option) {
-                    const yr = parseInt(option.id, 10);
-                    if (!Number.isNaN(yr) && yr !== selectedYear) {
-                      setCatalogModelYearId(null);
+                    // option.id is the CatalogModelYear cuid (first config for this year)
+                    // option.label is the year number as string
+                    const yr = parseInt(option.label, 10);
+                    if (!Number.isNaN(yr)) {
                       setGenerationId(null);
                       setVariantId(null);
                       setEngineId(null);
                       setConfigsForYear(null);
                       setSelectedYear(yr);
+                      // Set catalogModelYearId immediately so the form is submittable
+                      // right away without waiting for the async config disambiguation fetch.
+                      setCatalogModelYearId(option.id);
                     }
                   } else {
                     setSelectedYear(null);

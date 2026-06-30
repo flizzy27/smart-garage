@@ -9,6 +9,14 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.8] - 2026-06-30
+
+### Fixed
+
+- **Year selection — race condition** — selecting a year in the simple catalog flow now sets `catalogModelYearId` immediately (synchronously), so the form can be submitted right away without waiting for the async engine-disambiguation fetch to complete
+- **Engine picker not appearing** — switching the config-fetch effect guard from `catalogModelYearId` to `configsForYear` means the picker now always loads on initial render, including for previously saved vehicles that already have a `catalogModelYearId`; this fixes editing existing catalog vehicles
+- **`years-by-series` option id** — the API now returns the actual `CatalogModelYear` row id as the option value (instead of the plain year number), so selecting a year immediately yields a valid catalog reference
+
 ## [0.4.7] - 2026-06-30
 
 ### Added
