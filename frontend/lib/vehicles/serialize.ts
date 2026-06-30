@@ -19,6 +19,9 @@ export type SerializedVehicleSpec = {
   torqueNm: number | null;
   fuelType: FuelType | null;
   displacementCc: number | null;
+  cylinders: number | null;
+  doors: number | null;
+  seats: number | null;
   bodyType: BodyType | null;
   driveType: DriveType | null;
 };
@@ -87,6 +90,9 @@ function serializeSpec(
         torqueNm: number | null;
         fuelType: FuelType | null;
         displacementCc: number | null;
+        cylinders?: number | null;
+        doors?: number | null;
+        seats?: number | null;
         bodyType: BodyType | null;
         driveType: DriveType | null;
       }
@@ -102,6 +108,9 @@ function serializeSpec(
     torqueNm: spec.torqueNm,
     fuelType: spec.fuelType,
     displacementCc: spec.displacementCc,
+    cylinders: spec.cylinders ?? null,
+    doors: spec.doors ?? null,
+    seats: spec.seats ?? null,
     bodyType: spec.bodyType,
     driveType: spec.driveType,
   };

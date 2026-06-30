@@ -117,6 +117,9 @@ export type VehicleSpecInput = {
   torqueNm?: number | null;
   fuelType?: FuelType | null;
   displacementCc?: number | null;
+  cylinders?: number | null;
+  doors?: number | null;
+  seats?: number | null;
   bodyType?: BodyType | null;
   driveType?: DriveType | null;
   transmissionTypes?: string[] | null;
@@ -243,6 +246,9 @@ function mapFactorySpec(spec: VehicleSpecInput) {
     torqueNm: spec.torqueNm ?? null,
     fuelType: spec.fuelType ?? null,
     displacementCc: spec.displacementCc ?? null,
+    cylinders: spec.cylinders ?? null,
+    doors: spec.doors ?? null,
+    seats: spec.seats ?? null,
     bodyType: spec.bodyType ?? null,
     driveType: spec.driveType ?? null,
     transmissionTypes: spec.transmissionTypes ?? undefined,
@@ -261,6 +267,9 @@ function mapCurrentSpec(spec: VehicleSpecInput) {
     torqueNm: spec.torqueNm ?? null,
     fuelType: spec.fuelType ?? null,
     displacementCc: spec.displacementCc ?? null,
+    cylinders: spec.cylinders ?? null,
+    doors: spec.doors ?? null,
+    seats: spec.seats ?? null,
     bodyType: spec.bodyType ?? null,
     driveType: spec.driveType ?? null,
     transmissionTypes: spec.transmissionTypes ?? undefined,

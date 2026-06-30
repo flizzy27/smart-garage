@@ -25,8 +25,12 @@ export type ResolvedCatalogSpec = {
   torqueNm: number | null;
   fuelType: FuelType | null;
   displacementCc: number | null;
+  cylinders: number | null;
+  doors: number | null;
+  seats: number | null;
   bodyType: BodyType | null;
   driveType: DriveType | null;
+  aspiration: string | null;
   transmissionTypes: string[] | null;
   productionYearFrom: number;
   productionYearTo: number | null;
@@ -86,8 +90,12 @@ export async function resolveCatalogModelYear(
     torqueNm: row.engine.torqueNm,
     fuelType: row.engine.fuelType,
     displacementCc: row.engine.displacementCc,
+    cylinders: row.engine.cylinders,
+    doors: variant.doors,
+    seats: variant.seats,
     bodyType: variant.bodyType,
     driveType: variant.driveType,
+    aspiration: row.engine.aspiration,
     transmissionTypes,
     productionYearFrom: generation.yearFrom,
     productionYearTo: generation.yearTo,
@@ -99,6 +107,10 @@ export async function resolveCatalogModelYear(
       variant: variant.name,
       engine: row.engine.name,
       year: row.year,
+      cylinders: row.engine.cylinders,
+      doors: variant.doors,
+      seats: variant.seats,
+      aspiration: row.engine.aspiration,
     },
   };
 }

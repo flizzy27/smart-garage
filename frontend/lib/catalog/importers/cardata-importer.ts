@@ -16,7 +16,9 @@ import {
   mapCardataBodyType,
   mapCardataDriveType,
   mapCardataFuelType,
+  parseCardataAspiration,
   parseCardataDisplacementCc,
+  parseCardataInt,
   parseCardataPower,
   parseCardataTorque,
   parseCardataYear,
@@ -93,7 +95,7 @@ export async function importCardataWiki(
       const displayName = makeSlugToDisplayName(makeSlug);
       log(`Loading ${displayName} (${makeSlug}) from cardata.wiki…`);
 
-      if (options.replaceExisting !== false) {
+      if (options.replaceExisting === true) {
         await clearManufacturerBySlug(prisma, makeSlug);
       }
 
@@ -160,6 +162,8 @@ export async function importCardataWiki(
             name: variantLabel,
             bodyType: mapCardataBodyType(row),
             driveType: mapCardataDriveType(row),
+            doors: parseCardataInt(row.doors),
+            seats: parseCardataInt(row.seats),
             externalId: slugify(`${seriesKey}-${variantLabel}`).slice(0, 120),
           });
           variantCache.set(variantKey, variantId);
@@ -179,6 +183,9 @@ export async function importCardataWiki(
             powerKw,
             powerPs,
             torqueNm: parseCardataTorque(row),
+            cylinders: parseCardataInt(row.engineCylinders),
+            valves: parseCardataInt(row.engineValves),
+            aspiration: parseCardataAspiration(row),
             transmissionTypes: buildTransmissionTypes(row),
             externalId: slugify(`${variantLabel}-${engineLabel}`).slice(0, 120),
           });
@@ -384,13 +391,27 @@ async function upsertVariant(
     name: string;
     bodyType: BodyType | null;
     driveType: DriveType | null;
+    doors: number | null;
+    seats: number | null;
     externalId: string;
   },
 ): Promise<string> {
   const existing = await prisma.catalogVariant.findFirst({
     where: { generationId, name: data.name },
+    select: { id: true, bodyType: true, driveType: true, doors: true, seats: true },
   });
-  if (existing) return existing.id;
+
+  if (existing) {
+    const updates: Prisma.CatalogVariantUpdateInput = {};
+    if (existing.bodyType == null && data.bodyType != null) updates.bodyType = data.bodyType;
+    if (existing.driveType == null && data.driveType != null) updates.driveType = data.driveType;
+    if (existing.doors == null && data.doors != null) updates.doors = data.doors;
+    if (existing.seats == null && data.seats != null) updates.seats = data.seats;
+    if (Object.keys(updates).length > 0) {
+      await prisma.catalogVariant.update({ where: { id: existing.id }, data: updates });
+    }
+    return existing.id;
+  }
 
   return prisma.catalogVariant
     .create({
@@ -399,6 +420,8 @@ async function upsertVariant(
         name: data.name,
         bodyType: data.bodyType,
         driveType: data.driveType,
+        doors: data.doors,
+        seats: data.seats,
         externalId: data.externalId,
         source: SOURCE,
       },
@@ -417,14 +440,38 @@ async function upsertEngine(
     powerKw: number | null;
     powerPs: number | null;
     torqueNm: number | null;
+    cylinders: number | null;
+    valves: number | null;
+    aspiration: string | null;
     transmissionTypes: string[] | null;
     externalId: string;
   },
 ): Promise<string> {
   const existing = await prisma.catalogEngine.findFirst({
     where: { variantId, name: data.name },
+    select: {
+      id: true, code: true, displacementCc: true, fuelType: true,
+      powerKw: true, powerPs: true, torqueNm: true,
+      cylinders: true, valves: true, aspiration: true,
+    },
   });
-  if (existing) return existing.id;
+
+  if (existing) {
+    const updates: Prisma.CatalogEngineUpdateInput = {};
+    if (existing.code == null && data.code != null) updates.code = data.code;
+    if (existing.displacementCc == null && data.displacementCc != null) updates.displacementCc = data.displacementCc;
+    if (existing.fuelType == null && data.fuelType != null) updates.fuelType = data.fuelType;
+    if (existing.powerKw == null && data.powerKw != null) updates.powerKw = data.powerKw;
+    if (existing.powerPs == null && data.powerPs != null) updates.powerPs = data.powerPs;
+    if (existing.torqueNm == null && data.torqueNm != null) updates.torqueNm = data.torqueNm;
+    if (existing.cylinders == null && data.cylinders != null) updates.cylinders = data.cylinders;
+    if (existing.valves == null && data.valves != null) updates.valves = data.valves;
+    if (existing.aspiration == null && data.aspiration != null) updates.aspiration = data.aspiration;
+    if (Object.keys(updates).length > 0) {
+      await prisma.catalogEngine.update({ where: { id: existing.id }, data: updates });
+    }
+    return existing.id;
+  }
 
   return prisma.catalogEngine
     .create({
@@ -437,6 +484,9 @@ async function upsertEngine(
         powerKw: data.powerKw,
         powerPs: data.powerPs,
         torqueNm: data.torqueNm,
+        cylinders: data.cylinders,
+        valves: data.valves,
+        aspiration: data.aspiration,
         transmissionTypes: data.transmissionTypes ?? undefined,
         externalId: data.externalId,
         source: SOURCE,
