@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const variantId = searchParams.get("variantId");
   const engineId = searchParams.get("engineId");
   const q = searchParams.get("q") ?? "";
-  const limit = Number(searchParams.get("limit") ?? 25);
+  const limit = Number(searchParams.get("limit") ?? 120);
 
   if (!variantId || !engineId) {
     return NextResponse.json(

@@ -9,6 +9,7 @@ import { PrismaClient } from "@prisma/client";
 
 const SOURCE = "OPEN_VEHICLE_DB";
 const MODEL_YEAR_BATCH_SIZE = 1000;
+const BUNDLED_CATALOG_DATASET_VERSION = "bundled-catalog.ovd-2026-06";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const catalogPath = path.join(__dirname, "..", "prisma", "seed", "catalog.generated.json");
 
@@ -25,12 +26,56 @@ function estimateModelYears(catalog, currentYear) {
   let total = 0;
   for (const entry of catalog) {
     for (const model of entry.models) {
+      if (model.years?.length) {
+        total += model.years.length;
+        continue;
+      }
       const yearFrom = model.yearFrom ?? 1990;
       const yearTo = model.yearTo ?? currentYear;
       total += Math.max(0, yearTo - yearFrom + 1);
     }
   }
   return total;
+}
+
+function modelProductionYears(model, currentYear) {
+  if (model.years?.length) {
+    return [...new Set(model.years)].sort((a, b) => a - b);
+  }
+  const yearFrom = model.yearFrom ?? 1990;
+  const yearTo = model.yearTo ?? currentYear;
+  const years = [];
+  for (let year = yearFrom; year <= yearTo; year++) {
+    years.push(year);
+  }
+  return years;
+}
+
+/** Split production years into generation ranges (gap > 2 years starts a new generation). */
+function groupYearsIntoGenerations(years) {
+  if (years.length === 0) return [];
+
+  const sorted = [...new Set(years)].sort((a, b) => a - b);
+  const ranges = [];
+  let from = sorted[0];
+  let prev = sorted[0];
+
+  for (let i = 1; i < sorted.length; i++) {
+    const year = sorted[i];
+    if (year - prev > 2) {
+      ranges.push({ from, to: prev });
+      from = year;
+    }
+    prev = year;
+  }
+
+  ranges.push({ from, to: prev });
+  return ranges;
+}
+
+function formatGenerationName(range) {
+  if (range.from === range.to) return String(range.from);
+  return `${range.from}–${range.to}`;
 }
 
 async function flushModelYearBatch(prisma, batch) {
@@ -114,71 +159,79 @@ async function main() {
           update: { name: model.name },
         });
 
-        const yearFrom = model.yearFrom ?? 1990;
-        const yearTo = model.yearTo ?? currentYear;
-        const generationKey = `${series.id}:${yearFrom}:${yearTo}`;
+        const productionYears = modelProductionYears(model, currentYear);
+        if (productionYears.length === 0) continue;
 
-        let generationId = generationBySeriesYears.get(generationKey);
-        if (!generationId) {
-          let generation = await prisma.catalogGeneration.findFirst({
-            where: { seriesId: series.id, yearFrom, yearTo },
-            select: { id: true },
-          });
-          if (!generation) {
-            generation = await prisma.catalogGeneration.create({
-              data: {
-                seriesId: series.id,
-                name: `${yearFrom}–${yearTo}`,
-                yearFrom,
-                yearTo,
-                source: SOURCE,
-              },
+        const yearRanges = groupYearsIntoGenerations(productionYears);
+
+        for (const range of yearRanges) {
+          const generationKey = `${series.id}:${range.from}:${range.to}`;
+
+          let generationId = generationBySeriesYears.get(generationKey);
+          if (!generationId) {
+            const generationName = formatGenerationName(range);
+            let generation = await prisma.catalogGeneration.findFirst({
+              where: { seriesId: series.id, yearFrom: range.from, yearTo: range.to },
               select: { id: true },
             });
+            if (!generation) {
+              generation = await prisma.catalogGeneration.create({
+                data: {
+                  seriesId: series.id,
+                  name: generationName,
+                  yearFrom: range.from,
+                  yearTo: range.to,
+                  source: SOURCE,
+                },
+                select: { id: true },
+              });
+            }
+            generationId = generation.id;
+            generationBySeriesYears.set(generationKey, generationId);
           }
-          generationId = generation.id;
-          generationBySeriesYears.set(generationKey, generationId);
-        }
 
-        let variantEngine = variantEngineByGeneration.get(generationId);
-        if (!variantEngine) {
-          let variant = await prisma.catalogVariant.findFirst({
-            where: { generationId, name: "Standard" },
-            select: { id: true },
-          });
-          if (!variant) {
-            variant = await prisma.catalogVariant.create({
-              data: { generationId, name: "Standard", source: SOURCE },
+          let variantEngine = variantEngineByGeneration.get(generationId);
+          if (!variantEngine) {
+            let variant = await prisma.catalogVariant.findFirst({
+              where: { generationId, name: "Standard" },
               select: { id: true },
             });
-          }
+            if (!variant) {
+              variant = await prisma.catalogVariant.create({
+                data: { generationId, name: "Standard", source: SOURCE },
+                select: { id: true },
+              });
+            }
 
-          let engine = await prisma.catalogEngine.findFirst({
-            where: { variantId: variant.id, name: "Base" },
-            select: { id: true },
-          });
-          if (!engine) {
-            engine = await prisma.catalogEngine.create({
-              data: { variantId: variant.id, name: "Base", source: SOURCE },
+            let engine = await prisma.catalogEngine.findFirst({
+              where: { variantId: variant.id, name: "Base" },
               select: { id: true },
             });
+            if (!engine) {
+              engine = await prisma.catalogEngine.create({
+                data: { variantId: variant.id, name: "Base", source: SOURCE },
+                select: { id: true },
+              });
+            }
+
+            variantEngine = { variantId: variant.id, engineId: engine.id };
+            variantEngineByGeneration.set(generationId, variantEngine);
           }
 
-          variantEngine = { variantId: variant.id, engineId: engine.id };
-          variantEngineByGeneration.set(generationId, variantEngine);
-        }
+          for (const year of productionYears) {
+            if (year < range.from || year > range.to) continue;
 
-        for (let year = yearFrom; year <= yearTo; year++) {
-          modelYearBatch.push({
-            variantId: variantEngine.variantId,
-            engineId: variantEngine.engineId,
-            year,
-            source: SOURCE,
-          });
-          modelYears++;
+            modelYearBatch.push({
+              variantId: variantEngine.variantId,
+              engineId: variantEngine.engineId,
+              year,
+              source: SOURCE,
+            });
+            modelYears++;
 
-          if (modelYearBatch.length >= MODEL_YEAR_BATCH_SIZE) {
-            await flushModelYearBatch(prisma, modelYearBatch);
+            if (modelYearBatch.length >= MODEL_YEAR_BATCH_SIZE) {
+              await flushModelYearBatch(prisma, modelYearBatch);
+            }
           }
         }
       }
@@ -196,11 +249,11 @@ async function main() {
       create: {
         source: SOURCE,
         lastSyncAt: new Date(),
-        datasetVersion: "bundled-catalog.generated.json",
+        datasetVersion: BUNDLED_CATALOG_DATASET_VERSION,
       },
       update: {
         lastSyncAt: new Date(),
-        datasetVersion: "bundled-catalog.generated.json",
+        datasetVersion: BUNDLED_CATALOG_DATASET_VERSION,
       },
     });
 

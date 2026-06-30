@@ -32,6 +32,11 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
   <Changes>
+### 2026-06-19 — v0.4.6
+- Service anpassen on maintenance detail pages (interval, last service, km)
+- Vehicle catalog: pick individual production years after model selection
+- Regenerated catalog with correct model years (e.g. VW Scirocco)
+
 ### 2026-06-20 — v0.4.4
 - Fix Prisma startup: exclude prisma.config.ts from Docker image (standalone trace)
 

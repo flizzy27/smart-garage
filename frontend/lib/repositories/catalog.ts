@@ -166,6 +166,37 @@ export async function searchCatalogYears(
   });
 }
 
+export async function searchCatalogYearsForSeries(
+  seriesId: string,
+  query: string,
+  limit?: number,
+) {
+  const trimmed = query.trim();
+  const take = clampLimit("years", limit, trimmed.length > 0);
+  const yearFilter = trimmed ? Number(trimmed) : null;
+
+  const rows = await prisma.catalogModelYear.findMany({
+    where: {
+      variant: { generation: { seriesId } },
+      ...(yearFilter && !Number.isNaN(yearFilter) ? { year: yearFilter } : {}),
+    },
+    orderBy: [{ year: "desc" }, { id: "asc" }],
+    select: { id: true, year: true },
+    take: take * 4,
+  });
+
+  const byYear = new Map<number, { id: string; year: number }>();
+  for (const row of rows) {
+    if (!byYear.has(row.year)) {
+      byYear.set(row.year, row);
+    }
+  }
+
+  return Array.from(byYear.values())
+    .sort((a, b) => b.year - a.year)
+    .slice(0, take);
+}
+
 export async function findCatalogManufacturerById(id: string) {
   return prisma.catalogManufacturer.findUnique({
     where: { id },

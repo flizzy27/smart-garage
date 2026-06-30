@@ -156,6 +156,21 @@ async function fetchYears(
   }));
 }
 
+async function fetchYearsBySeries(
+  seriesId: string,
+  query: string,
+): Promise<ComboboxOption[]> {
+  const results = await fetchCatalog<{ id: string; year: number }>(
+    "/api/catalog/years-by-series",
+    { seriesId, q: query },
+    "120",
+  );
+  return results.map((item) => ({
+    id: item.id,
+    label: String(item.year),
+  }));
+}
+
 async function fetchResolvedSpec(
   modelYearId: string,
 ): Promise<ResolvedSpec | null> {
@@ -209,6 +224,13 @@ export function VehicleForm({
   const [catalogModelYearId, setCatalogModelYearId] = useState<string | null>(
     initialSelections.modelYear?.id ?? initialVehicle?.catalogModelYearId ?? null,
   );
+  const [showDetailedCatalog, setShowDetailedCatalog] = useState(
+    Boolean(
+      initialSelections.generation?.id ||
+        initialSelections.variant?.id ||
+        initialSelections.engine?.id,
+    ),
+  );
 
   const [spec, setSpec] = useState<ResolvedSpec | null>(null);
   const [loadedSpecYearId, setLoadedSpecYearId] = useState<string | null>(null);
@@ -261,6 +283,7 @@ export function VehicleForm({
       setVariantId(null);
       setEngineId(null);
       setCatalogModelYearId(null);
+      setShowDetailedCatalog(false);
     } else if (level === "generation") {
       setVariantId(null);
       setEngineId(null);
@@ -356,6 +379,32 @@ export function VehicleForm({
               resetBelow("series");
             }}
           />
+          {seriesId ? (
+            <div className="sm:col-span-2">
+              <button
+                type="button"
+                className="text-xs font-medium text-primary underline-offset-2 hover:underline"
+                onClick={() => {
+                  setShowDetailedCatalog((value) => !value);
+                  if (showDetailedCatalog) {
+                    setGenerationId(null);
+                    setVariantId(null);
+                    setEngineId(null);
+                    setCatalogModelYearId(null);
+                  }
+                }}
+              >
+                {showDetailedCatalog
+                  ? t("hideDetailedCatalog")
+                  : t("showDetailedCatalog")}
+              </button>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("detailedCatalogHint")}
+              </p>
+            </div>
+          ) : null}
+          {showDetailedCatalog ? (
+            <>
           <SearchCombobox
             key={`gen-${seriesId ?? "none"}`}
             name="generationId"
@@ -433,6 +482,27 @@ export function VehicleForm({
               setCatalogModelYearId(option?.id ?? null);
             }}
           />
+            </>
+          ) : (
+          <SearchCombobox
+            key={`year-series-${seriesId ?? "none"}`}
+            name="catalogModelYearId"
+            label={t("productionYear")}
+            required
+            disabled={!seriesId}
+            placeholder={t("selectYear")}
+            searchPlaceholder={t("searchYear")}
+            emptyMessage={t("noYears")}
+            loadingMessage={t("loading")}
+            fetchOptions={(q) =>
+              seriesId ? fetchYearsBySeries(seriesId, q) : Promise.resolve([])
+            }
+            initialOption={initialSelections.modelYear ?? null}
+            onValueChange={(option) => {
+              setCatalogModelYearId(option?.id ?? null);
+            }}
+          />
+          )}
             </>
           ) : (
             <>

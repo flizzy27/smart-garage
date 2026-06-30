@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LogMaintenanceForm } from "@/components/maintenance/LogMaintenanceForm";
+import { ScheduleDetailAdjust } from "@/components/maintenance/ScheduleDetailAdjust";
 import { MaintenanceHistoryTimeline } from "@/components/maintenance/MaintenanceHistoryTimeline";
 import { MaintenanceReceiptUpload } from "@/components/maintenance/MaintenanceReceiptUpload";
 import { ScheduleDetailHeader } from "@/components/maintenance/ScheduleDetailHeader";
@@ -42,6 +43,8 @@ export default async function ScheduleDetailPage({ params }: Props) {
         recordCount={records.length}
         locale={locale}
       />
+
+      <ScheduleDetailAdjust schedule={schedule} locale={locale as "en" | "de"} />
 
       <LogMaintenanceForm
         scheduleId={schedule.id}
