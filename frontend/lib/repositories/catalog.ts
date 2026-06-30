@@ -211,23 +211,24 @@ export async function searchCatalogYearsForSeries(
       ...(yearFilter && !Number.isNaN(yearFilter) ? { year: yearFilter } : {}),
     },
     orderBy: [{ year: "desc" }, { id: "asc" }],
-    select: { year: true },
+    select: { id: true, year: true },
     take: take * 8,
   });
 
+  // Deduplicate by year, keeping the first (lowest-id) model year row per year.
+  // The returned id is used as the immediate catalogModelYearId when user selects a year.
   const seen = new Set<number>();
-  const unique: number[] = [];
+  const unique: Array<{ id: string; year: number }> = [];
   for (const row of rows) {
     if (!seen.has(row.year)) {
       seen.add(row.year);
-      unique.push(row.year);
+      unique.push({ id: row.id, year: row.year });
     }
   }
 
   return unique
-    .sort((a, b) => b - a)
-    .slice(0, take)
-    .map((year) => ({ id: String(year), year }));
+    .sort((a, b) => b.year - a.year)
+    .slice(0, take);
 }
 
 export type CatalogConfigEntry = {
