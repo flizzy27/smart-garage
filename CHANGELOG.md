@@ -9,6 +9,19 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.6] - 2026-06-19
+
+### Added
+
+- **Service anpassen** on maintenance detail pages — edit interval, last service date, and odometer
+- **Simplified vehicle catalog** — after choosing model, pick production year directly (individual years)
+- **Catalog API** — `/api/catalog/years-by-series` for year lists per model
+
+### Fixed
+
+- **Bundled vehicle catalog** — regenerated from open-vehicle-db + cardata; correct production years per model (e.g. VW Scirocco no longer shows a single `1990–2026` range)
+- **Catalog seeding** — generations split at production gaps; bundled dataset version bumped
+
 ## [0.4.5] - 2026-06-20
 
 ### Added
@@ -158,7 +171,8 @@ First public production release for Unraid Community Applications and self-hosti
 
 - Initial Next.js scaffold
 
-[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.5...HEAD
+[Unreleased]: https://github.com/flizzy27/smart-garage/compare/v0.4.6...HEAD
+[0.4.6]: https://github.com/flizzy27/smart-garage/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/flizzy27/smart-garage/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/flizzy27/smart-garage/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/flizzy27/smart-garage/compare/v0.4.2...v0.4.3
