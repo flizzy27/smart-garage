@@ -9,6 +9,21 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.4.7] - 2026-06-30
+
+### Added
+
+- **Intelligent vehicle autofill** — after selecting model + year, the app auto-resolves the catalog configuration: if there is only one option (e.g. bundled catalog), specs are filled automatically; if multiple engines exist, an engine/PS picker is shown
+- **Manufacturer alias search** — typing "VW", "MB", "Mercedes", "Merc", "Benz", "Chevy", "Alfa", etc. now resolves to the correct manufacturer
+- **Catalog detail fields** — `doors`, `seats`, `cylinders`, `valves`, `aspiration` stored from cardata.wiki; passed through to vehicle factory and current specs
+- **Additive catalog import** — cardata.wiki import now fills-null-only (no more destructive delete on re-import); new `replaceExisting: true` flag to force a clean reimport
+- **New API** — `/api/catalog/configs-by-year?seriesId=&year=` returns all engine configurations for a given model + year, enabling disambiguation
+
+### Changed
+
+- Validation no longer requires `generationId`/`variantId`/`engineId` when a `catalogModelYearId` is present (simplified catalog flow fills them automatically)
+- `years-by-series` API now returns the production year as the option `id` (instead of a random `CatalogModelYear` cuid) — enables correct year-to-config lookup
+
 ## [0.4.6] - 2026-06-19
 
 ### Added

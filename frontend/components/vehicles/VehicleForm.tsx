@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { BodyType, DriveType, FuelType } from "@prisma/client";
 import { Alert } from "@/components/ui/Alert";
@@ -42,6 +42,25 @@ type ResolvedSpec = {
   bodyType: BodyType | null;
   driveType: DriveType | null;
   productionYear: number;
+};
+
+type ConfigEntry = {
+  modelYearId: string;
+  generationId: string;
+  variantId: string;
+  engineId: string;
+  variantName: string;
+  engineName: string;
+  powerPs: number | null;
+  powerKw: number | null;
+  fuelType: string | null;
+  bodyType: string | null;
+  driveType: string | null;
+  displacementCc: number | null;
+  engineCode: string | null;
+  cylinders: number | null;
+  doors: number | null;
+  seats: number | null;
 };
 
 type VehicleFormProps = {
@@ -171,6 +190,18 @@ async function fetchYearsBySeries(
   }));
 }
 
+async function fetchConfigsForYear(
+  seriesId: string,
+  year: number,
+): Promise<ConfigEntry[]> {
+  const response = await fetch(
+    `/api/catalog/configs-by-year?seriesId=${encodeURIComponent(seriesId)}&year=${year}`,
+  );
+  if (!response.ok) return [];
+  const data = (await response.json()) as { configs: ConfigEntry[] };
+  return data.configs;
+}
+
 async function fetchResolvedSpec(
   modelYearId: string,
 ): Promise<ResolvedSpec | null> {
@@ -178,6 +209,32 @@ async function fetchResolvedSpec(
   if (!response.ok) return null;
   const data = (await response.json()) as { spec: ResolvedSpec };
   return data.spec;
+}
+
+function buildConfigLabel(
+  config: ConfigEntry,
+  tFuel: (k: string) => string,
+): string {
+  const parts: string[] = [];
+  if (config.powerPs) {
+    parts.push(`${config.powerPs} PS`);
+  } else if (config.powerKw) {
+    parts.push(`${config.powerKw} kW`);
+  }
+  if (config.displacementCc) {
+    parts.push(`${(config.displacementCc / 1000).toFixed(1)}L`);
+  }
+  if (config.fuelType) {
+    try {
+      parts.push(tFuel(config.fuelType));
+    } catch {
+      parts.push(config.fuelType);
+    }
+  }
+  if (config.engineName && config.engineName !== "Base" && config.engineName !== "Standard") {
+    parts.push(config.engineName);
+  }
+  return parts.join(" · ") || config.variantName || "Standard";
 }
 
 export function VehicleForm({
@@ -234,6 +291,10 @@ export function VehicleForm({
 
   const [spec, setSpec] = useState<ResolvedSpec | null>(null);
   const [loadedSpecYearId, setLoadedSpecYearId] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(
+    initialVehicle?.productionYear ?? null,
+  );
+  const [configsForYear, setConfigsForYear] = useState<ConfigEntry[] | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     getVehicleImageUrl(initialVehicle?.imageDocumentId ?? null),
   );
@@ -257,10 +318,45 @@ export function VehicleForm({
     };
   }, [catalogModelYearId]);
 
+  const selectConfig = useCallback((config: ConfigEntry) => {
+    setGenerationId(config.generationId);
+    setVariantId(config.variantId);
+    setEngineId(config.engineId);
+    setCatalogModelYearId(config.modelYearId);
+  }, []);
+
+  useEffect(() => {
+    if (!seriesId || !selectedYear || showDetailedCatalog) return;
+    if (catalogModelYearId) return;
+
+    let cancelled = false;
+    void fetchConfigsForYear(seriesId, selectedYear).then((configs) => {
+      if (cancelled) return;
+      setConfigsForYear(configs);
+      if (configs.length === 1) {
+        selectConfig(configs[0]);
+      } else {
+        setCatalogModelYearId(null);
+        setGenerationId(null);
+        setVariantId(null);
+        setEngineId(null);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [seriesId, selectedYear, showDetailedCatalog, catalogModelYearId, selectConfig]);
+
   const displaySpec = catalogModelYearId ? spec : null;
   const specLoading = Boolean(
     catalogModelYearId && loadedSpecYearId !== catalogModelYearId,
   );
+  const configsLoading =
+    !showDetailedCatalog &&
+    selectedYear !== null &&
+    configsForYear === null &&
+    !catalogModelYearId;
 
   const errorCode =
     state && "success" in state && !state.success ? state.error.code : null;
@@ -278,11 +374,15 @@ export function VehicleForm({
       setVariantId(null);
       setEngineId(null);
       setCatalogModelYearId(null);
+      setSelectedYear(null);
+      setConfigsForYear(null);
     } else if (level === "series") {
       setGenerationId(null);
       setVariantId(null);
       setEngineId(null);
       setCatalogModelYearId(null);
+      setSelectedYear(null);
+      setConfigsForYear(null);
       setShowDetailedCatalog(false);
     } else if (level === "generation") {
       setVariantId(null);
@@ -386,12 +486,12 @@ export function VehicleForm({
                 className="text-xs font-medium text-primary underline-offset-2 hover:underline"
                 onClick={() => {
                   setShowDetailedCatalog((value) => !value);
-                  if (showDetailedCatalog) {
-                    setGenerationId(null);
-                    setVariantId(null);
-                    setEngineId(null);
-                    setCatalogModelYearId(null);
-                  }
+                  setGenerationId(null);
+                  setVariantId(null);
+                  setEngineId(null);
+                  setCatalogModelYearId(null);
+                  setSelectedYear(null);
+                  setConfigsForYear(null);
                 }}
               >
                 {showDetailedCatalog
@@ -484,24 +584,93 @@ export function VehicleForm({
           />
             </>
           ) : (
-          <SearchCombobox
-            key={`year-series-${seriesId ?? "none"}`}
-            name="catalogModelYearId"
-            label={t("productionYear")}
-            required
-            disabled={!seriesId}
-            placeholder={t("selectYear")}
-            searchPlaceholder={t("searchYear")}
-            emptyMessage={t("noYears")}
-            loadingMessage={t("loading")}
-            fetchOptions={(q) =>
-              seriesId ? fetchYearsBySeries(seriesId, q) : Promise.resolve([])
-            }
-            initialOption={initialSelections.modelYear ?? null}
-            onValueChange={(option) => {
-              setCatalogModelYearId(option?.id ?? null);
-            }}
-          />
+            <>
+              <SearchCombobox
+                key={`year-series-${seriesId ?? "none"}`}
+                name="yearSelector"
+                label={t("productionYear")}
+                required
+                disabled={!seriesId}
+                placeholder={t("selectYear")}
+                searchPlaceholder={t("searchYear")}
+                emptyMessage={t("noYears")}
+                loadingMessage={t("loading")}
+                fetchOptions={(q) =>
+                  seriesId ? fetchYearsBySeries(seriesId, q) : Promise.resolve([])
+                }
+                initialOption={
+                  selectedYear
+                    ? { id: String(selectedYear), label: String(selectedYear) }
+                    : null
+                }
+                onValueChange={(option) => {
+                  if (option) {
+                    const yr = parseInt(option.id, 10);
+                    if (!Number.isNaN(yr) && yr !== selectedYear) {
+                      setCatalogModelYearId(null);
+                      setGenerationId(null);
+                      setVariantId(null);
+                      setEngineId(null);
+                      setConfigsForYear(null);
+                      setSelectedYear(yr);
+                    }
+                  } else {
+                    setSelectedYear(null);
+                    setConfigsForYear(null);
+                    setCatalogModelYearId(null);
+                    setGenerationId(null);
+                    setVariantId(null);
+                    setEngineId(null);
+                  }
+                }}
+              />
+              {selectedYear && configsLoading && (
+                <div className="sm:col-span-2">
+                  <p className="text-xs text-muted-foreground">{t("loadingConfigs")}</p>
+                </div>
+              )}
+              {selectedYear && !configsLoading && configsForYear?.length === 0 && (
+                <div className="sm:col-span-2">
+                  <p className="text-xs text-amber-600 dark:text-amber-400">{t("noConfigsForYear")}</p>
+                </div>
+              )}
+              {configsForYear && configsForYear.length > 1 && (
+                <div className="sm:col-span-2 space-y-2">
+                  <Label>{t("selectConfig")}</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {configsForYear.map((config) => (
+                      <button
+                        key={config.modelYearId}
+                        type="button"
+                        className={`rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                          catalogModelYearId === config.modelYearId
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border text-foreground hover:bg-muted"
+                        }`}
+                        onClick={() => selectConfig(config)}
+                      >
+                        {buildConfigLabel(
+                          config,
+                          tFuel as (k: string) => string,
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  {!catalogModelYearId && (
+                    <p className="text-xs text-muted-foreground">{t("selectConfigHint")}</p>
+                  )}
+                </div>
+              )}
+              {configsForYear && configsForYear.length === 1 && catalogModelYearId && (
+                <div className="sm:col-span-2">
+                  <p className="text-xs text-muted-foreground">{t("configAutoSelected")}</p>
+                </div>
+              )}
+              <input type="hidden" name="generationId" value={generationId ?? ""} />
+              <input type="hidden" name="variantId" value={variantId ?? ""} />
+              <input type="hidden" name="engineId" value={engineId ?? ""} />
+              <input type="hidden" name="catalogModelYearId" value={catalogModelYearId ?? ""} />
+            </>
           )}
             </>
           ) : (
@@ -629,7 +798,7 @@ export function VehicleForm({
           <input
             type="hidden"
             name="productionYear"
-            value={spec?.productionYear ?? initialVehicle?.productionYear ?? ""}
+            value={spec?.productionYear ?? selectedYear ?? initialVehicle?.productionYear ?? ""}
           />
         ) : null}
         <div className="grid gap-4 sm:grid-cols-2">

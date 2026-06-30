@@ -158,3 +158,15 @@ export function buildEngineName(row: CardataRow): string {
   const name = row.variant?.trim();
   return name && name.length > 0 ? name : "Base";
 }
+
+export function parseCardataInt(value: string | undefined): number | null {
+  if (!value?.trim()) return null;
+  const n = parseInt(value.trim(), 10);
+  return Number.isNaN(n) || n <= 0 ? null : n;
+}
+
+export function parseCardataAspiration(row: CardataRow): string | null {
+  const raw = row.engineAspiration?.trim();
+  if (!raw || raw.toLowerCase() === "naturally aspirated" || raw.toLowerCase() === "na") return null;
+  return raw || null;
+}

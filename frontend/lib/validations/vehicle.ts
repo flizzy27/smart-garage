@@ -77,9 +77,6 @@ export const vehicleFormSchema = z
       const required: Array<[keyof typeof data, string]> = [
         ["manufacturerId", "manufacturerRequired"],
         ["seriesId", "seriesRequired"],
-        ["generationId", "generationRequired"],
-        ["variantId", "variantRequired"],
-        ["engineId", "engineRequired"],
         ["catalogModelYearId", "yearRequired"],
       ];
       for (const [field, message] of required) {

@@ -315,6 +315,8 @@ model CatalogVariant {
   trim         String?
   bodyType     BodyType?
   driveType    DriveType?
+  doors        Int?
+  seats        Int?
   source       CatalogDataSource @default(NHTSA_VPIC)
   externalId   String?
   createdAt    DateTime          @default(now())
@@ -338,6 +340,9 @@ model CatalogEngine {
   powerKw            Int?
   powerPs            Int?
   torqueNm           Int?
+  cylinders          Int?
+  valves             Int?
+  aspiration         String?
   transmissionTypes  Json?
   metadata           Json?
   source             CatalogDataSource @default(NHTSA_VPIC)
@@ -424,6 +429,9 @@ model VehicleFactorySpec {
   torqueNm           Int?
   fuelType           FuelType?
   displacementCc     Int?
+  cylinders          Int?
+  doors              Int?
+  seats              Int?
   bodyType           BodyType?
   driveType          DriveType?
   transmissionTypes  Json?
@@ -444,6 +452,9 @@ model VehicleCurrentSpec {
   torqueNm          Int?
   fuelType          FuelType?
   displacementCc    Int?
+  cylinders         Int?
+  doors             Int?
+  seats             Int?
   bodyType          BodyType?
   driveType         DriveType?
   transmissionTypes Json?
