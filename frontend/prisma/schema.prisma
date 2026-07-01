@@ -191,16 +191,18 @@ model Session {
 }
 
 model UserPreferences {
-  userId              String   @id
-  theme               String   @default("system")
-  locale              String   @default("de")
-  timezone            String   @default("Europe/Berlin")
-  currency            String   @default("EUR")
-  designPreset        String   @default("default")
-  backgroundBlurPx    Int      @default(8)
-  backgroundImageKey  String?
-  backgroundMimeType  String?
-  updatedAt           DateTime @updatedAt
+  userId                 String   @id
+  theme                  String   @default("system")
+  locale                 String   @default("de")
+  timezone               String   @default("Europe/Berlin")
+  currency               String   @default("EUR")
+  designPreset           String   @default("default")
+  backgroundBlurPx       Int      @default(8)
+  backgroundImageKey     String?
+  backgroundMimeType     String?
+  maintenanceDueSoonKm   Int      @default(1500)
+  maintenanceDueSoonDays Int      @default(30)
+  updatedAt              DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

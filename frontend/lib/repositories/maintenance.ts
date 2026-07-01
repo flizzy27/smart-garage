@@ -5,8 +5,13 @@ import type {
   PrismaClient,
 } from "@prisma/client";
 import type { Locale } from "@/lib/i18n/routing";
-import { computeNextDue } from "@/lib/maintenance/scheduler";
+import {
+  computeNextDue,
+  DEFAULT_MAINTENANCE_THRESHOLDS,
+  type MaintenanceThresholds,
+} from "@/lib/maintenance/scheduler";
 import { scheduleDisplayName } from "@/lib/maintenance/display";
+import { getMaintenanceThresholds } from "@/lib/repositories/preferences";
 import { prisma } from "@/lib/prisma";
 
 const scheduleInclude = {
@@ -61,6 +66,7 @@ export async function findScheduleById(scheduleId: string, ownerUserId: string) 
 export async function refreshScheduleDueStatus(
   client: PrismaClient,
   scheduleId: string,
+  thresholds: MaintenanceThresholds = DEFAULT_MAINTENANCE_THRESHOLDS,
 ): Promise<void> {
   const schedule = await client.vehicleMaintenanceSchedule.findUnique({
     where: { id: scheduleId },
@@ -78,6 +84,8 @@ export async function refreshScheduleDueStatus(
       odometerKm: schedule.lastOdometerKm,
     },
     schedule.vehicle.currentOdometerKm,
+    new Date(),
+    thresholds,
   );
 
   await client.vehicleMaintenanceSchedule.update({
@@ -90,7 +98,12 @@ export async function refreshScheduleDueStatus(
   });
 }
 
-export async function refreshAllScheduleDueStatuses(ownerUserId: string) {
+export async function refreshAllScheduleDueStatuses(
+  ownerUserId: string,
+  thresholds?: MaintenanceThresholds,
+) {
+  const effectiveThresholds =
+    thresholds ?? (await getMaintenanceThresholds(ownerUserId));
   const schedules = await prisma.vehicleMaintenanceSchedule.findMany({
     where: {
       isActive: true,
@@ -100,7 +113,7 @@ export async function refreshAllScheduleDueStatuses(ownerUserId: string) {
   });
 
   for (const schedule of schedules) {
-    await refreshScheduleDueStatus(prisma, schedule.id);
+    await refreshScheduleDueStatus(prisma, schedule.id, effectiveThresholds);
   }
 }
 
@@ -130,6 +143,7 @@ export type SerializedSchedule = {
 export function serializeSchedule(
   schedule: Prisma.VehicleMaintenanceScheduleGetPayload<{ include: typeof scheduleInclude }>,
   locale: Locale,
+  thresholds: MaintenanceThresholds = DEFAULT_MAINTENANCE_THRESHOLDS,
 ): SerializedSchedule {
   const computed = computeNextDue(
     {
@@ -141,6 +155,8 @@ export function serializeSchedule(
       odometerKm: schedule.lastOdometerKm,
     },
     schedule.vehicle.currentOdometerKm,
+    new Date(),
+    thresholds,
   );
 
   const vehicleName = [schedule.vehicle.make, schedule.vehicle.model]
@@ -178,7 +194,8 @@ export async function getUpcomingSchedulesForOwner(
   locale: Locale,
   limit = 10,
 ) {
-  await refreshAllScheduleDueStatuses(ownerUserId);
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
+  await refreshAllScheduleDueStatuses(ownerUserId, thresholds);
 
   const schedules = await prisma.vehicleMaintenanceSchedule.findMany({
     where: {
@@ -191,7 +208,7 @@ export async function getUpcomingSchedulesForOwner(
   });
 
   return schedules
-    .map((schedule) => serializeSchedule(schedule, locale))
+    .map((schedule) => serializeSchedule(schedule, locale, thresholds))
     .sort((a, b) => {
       const statusOrder = { OVERDUE: 0, DUE_SOON: 1, OK: 2 };
       const diff = statusOrder[a.dueStatus] - statusOrder[b.dueStatus];

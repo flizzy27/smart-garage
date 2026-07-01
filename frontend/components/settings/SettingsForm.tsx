@@ -1,11 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/lib/i18n/navigation";
 import type { Locale } from "@/lib/i18n/routing";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { CurrencyCode, ThemeMode } from "@/lib/settings/types";
-import { CURRENCY_OPTIONS, TIMEZONE_OPTIONS } from "@/lib/settings/types";
+import {
+  CURRENCY_OPTIONS,
+  MAINTENANCE_DUE_SOON_DAYS_OPTIONS,
+  MAINTENANCE_DUE_SOON_KM_OPTIONS,
+  TIMEZONE_OPTIONS,
+  clampMaintenanceDueSoonDays,
+  clampMaintenanceDueSoonKm,
+} from "@/lib/settings/types";
 
 function SelectField({
   id,
@@ -107,6 +115,124 @@ export function RegionalSettings() {
         value={settings.currency}
         onChange={(value) => setCurrency(value as CurrencyCode)}
         options={CURRENCY_OPTIONS.map((code) => ({ value: code, label: code }))}
+      />
+    </div>
+  );
+}
+
+function ThresholdField({
+  id,
+  label,
+  hint,
+  value,
+  unit,
+  options,
+  min,
+  max,
+  step,
+  clamp,
+  onCommit,
+}: {
+  id: string;
+  label: string;
+  hint: string;
+  value: number;
+  unit: string;
+  options: readonly number[];
+  min: number;
+  max: number;
+  step: number;
+  clamp: (value: number) => number;
+  onCommit: (value: number) => void;
+}) {
+  // Draft is seeded from the committed value. The parent remounts this field
+  // (via key) whenever the value changes externally, so no effect sync is needed.
+  const [draft, setDraft] = useState(String(value));
+
+  const commit = (raw: string) => {
+    const parsed = Number.parseInt(raw, 10);
+    const next = clamp(Number.isNaN(parsed) ? value : parsed);
+    setDraft(String(next));
+    if (next !== value) onCommit(next);
+  };
+
+  return (
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      <div className="sm:max-w-sm">
+        <label htmlFor={id} className="text-sm font-medium text-foreground">
+          {label}
+        </label>
+        <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <input
+            id={id}
+            type="number"
+            inputMode="numeric"
+            min={min}
+            max={max}
+            step={step}
+            list={`${id}-presets`}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={(e) => commit(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commit((e.target as HTMLInputElement).value);
+              }
+            }}
+            className="w-28 rounded-lg border border-border bg-card py-2 pl-3 pr-12 text-sm text-foreground shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+          />
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+            {unit}
+          </span>
+        </div>
+        <datalist id={`${id}-presets`}>
+          {options.map((opt) => (
+            <option key={opt} value={opt} />
+          ))}
+        </datalist>
+      </div>
+    </div>
+  );
+}
+
+export function MaintenanceReminderSettings() {
+  const t = useTranslations("pages.settings.maintenance");
+  const { settings, setMaintenanceDueSoonKm, setMaintenanceDueSoonDays } =
+    useUserSettings();
+
+  return (
+    <div className="space-y-5">
+      <ThresholdField
+        key={`km-${settings.maintenanceDueSoonKm}`}
+        id="maintenanceDueSoonKm"
+        label={t("dueSoonKm")}
+        hint={t("dueSoonKmHint")}
+        value={settings.maintenanceDueSoonKm}
+        unit={t("unitKm")}
+        options={MAINTENANCE_DUE_SOON_KM_OPTIONS}
+        min={0}
+        max={50000}
+        step={50}
+        clamp={clampMaintenanceDueSoonKm}
+        onCommit={setMaintenanceDueSoonKm}
+      />
+      <ThresholdField
+        key={`days-${settings.maintenanceDueSoonDays}`}
+        id="maintenanceDueSoonDays"
+        label={t("dueSoonDays")}
+        hint={t("dueSoonDaysHint")}
+        value={settings.maintenanceDueSoonDays}
+        unit={t("unitDays")}
+        options={MAINTENANCE_DUE_SOON_DAYS_OPTIONS}
+        min={0}
+        max={365}
+        step={1}
+        clamp={clampMaintenanceDueSoonDays}
+        onCommit={setMaintenanceDueSoonDays}
       />
     </div>
   );

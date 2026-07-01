@@ -134,6 +134,16 @@
         "title": "Appearance",
         "description": "Theme and display preferences"
       },
+      "maintenance": {
+        "title": "Maintenance reminders",
+        "description": "Choose how early a service should be flagged as \"Soon due\" before it becomes overdue.",
+        "dueSoonKm": "Mileage warning",
+        "dueSoonKmHint": "Flag a service as soon due once it is within this many kilometres of the next interval.",
+        "dueSoonDays": "Date warning",
+        "dueSoonDaysHint": "Flag a service as soon due once it is within this many days of the next interval.",
+        "unitKm": "km",
+        "unitDays": "days"
+      },
       "design": {
         "title": "Design preset",
         "description": "Color themes for sidebar and accent colors",
@@ -238,7 +248,7 @@
         "eventMaintenanceOverdue": "Maintenance overdue",
         "eventMaintenanceOverdueHint": "When a service is past its due date or mileage",
         "eventMaintenanceDueSoon": "Maintenance due soon",
-        "eventMaintenanceDueSoonHint": "Within 30 days or 1,500 km of the next service",
+        "eventMaintenanceDueSoonHint": "When a service approaches your configured warning threshold",
         "eventMaintenanceLogged": "Service logged",
         "eventMaintenanceLoggedHint": "Coming soon — when a service entry is saved",
         "eventExpenseAdded": "New expense",

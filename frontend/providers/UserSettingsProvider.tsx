@@ -32,6 +32,8 @@ type UserSettingsContextValue = {
   setCurrency: (currency: CurrencyCode) => void;
   setDesignPreset: (preset: UserSettings["designPreset"]) => void;
   setBackgroundBlurPx: (px: number) => void;
+  setMaintenanceDueSoonKm: (km: number) => void;
+  setMaintenanceDueSoonDays: (days: number) => void;
 };
 
 const UserSettingsContext = createContext<UserSettingsContextValue | null>(
@@ -125,6 +127,20 @@ export function UserSettingsProvider({
     [persist],
   );
 
+  const setMaintenanceDueSoonKm = useCallback(
+    (maintenanceDueSoonKm: number) => {
+      persist({ ...readSettings(), maintenanceDueSoonKm });
+    },
+    [persist],
+  );
+
+  const setMaintenanceDueSoonDays = useCallback(
+    (maintenanceDueSoonDays: number) => {
+      persist({ ...readSettings(), maintenanceDueSoonDays });
+    },
+    [persist],
+  );
+
   const value = useMemo(
     () => ({
       settings,
@@ -134,8 +150,20 @@ export function UserSettingsProvider({
       setCurrency,
       setDesignPreset,
       setBackgroundBlurPx,
+      setMaintenanceDueSoonKm,
+      setMaintenanceDueSoonDays,
     }),
-    [settings, setTheme, setLocale, setTimezone, setCurrency, setDesignPreset, setBackgroundBlurPx],
+    [
+      settings,
+      setTheme,
+      setLocale,
+      setTimezone,
+      setCurrency,
+      setDesignPreset,
+      setBackgroundBlurPx,
+      setMaintenanceDueSoonKm,
+      setMaintenanceDueSoonDays,
+    ],
   );
 
   return (

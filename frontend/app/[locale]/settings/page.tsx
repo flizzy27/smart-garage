@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import {
   AppearanceSettings,
   LanguageSettings,
+  MaintenanceReminderSettings,
 } from "@/components/settings/SettingsForm";
 import { BackgroundSettings } from "@/components/settings/BackgroundSettings";
 import {
@@ -40,6 +41,13 @@ export default async function GeneralSettingsPage({ params }: Props) {
         description={t("appearance.description")}
       >
         <AppearanceSettings />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t("maintenance.title")}
+        description={t("maintenance.description")}
+      >
+        <MaintenanceReminderSettings />
       </SettingsSection>
 
       <SettingsSection

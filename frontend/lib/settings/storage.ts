@@ -23,6 +23,10 @@ export function readSettings(): UserSettings {
       currency: parsed.currency ?? DEFAULT_SETTINGS.currency,
       designPreset: parsed.designPreset ?? DEFAULT_SETTINGS.designPreset,
       backgroundBlurPx: parsed.backgroundBlurPx ?? DEFAULT_SETTINGS.backgroundBlurPx,
+      maintenanceDueSoonKm:
+        parsed.maintenanceDueSoonKm ?? DEFAULT_SETTINGS.maintenanceDueSoonKm,
+      maintenanceDueSoonDays:
+        parsed.maintenanceDueSoonDays ?? DEFAULT_SETTINGS.maintenanceDueSoonDays,
     };
   } catch {
     return DEFAULT_SETTINGS;

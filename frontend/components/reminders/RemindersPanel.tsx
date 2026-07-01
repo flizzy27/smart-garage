@@ -13,12 +13,10 @@ import { ScheduleIntervalForm } from "@/components/maintenance/ScheduleIntervalF
 import { RemindersSetupWizard } from "@/components/reminders/RemindersSetupWizard";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-
-const statusStyles = {
-  OVERDUE: "border-danger/40 bg-danger-muted/30",
-  DUE_SOON: "border-warning/40 bg-warning-muted/20",
-  OK: "border-border bg-card",
-} as const;
+import {
+  MAINTENANCE_STATUS_BADGE_CLASS,
+  MAINTENANCE_STATUS_CARD_CLASS,
+} from "@/lib/maintenance/status-style";
 
 type Props = {
   schedules: SerializedSchedule[];
@@ -67,7 +65,7 @@ export function RemindersPanel({ schedules }: Props) {
             const editing = editingId === item.id;
             return (
               <li key={item.id}>
-                <Card className={statusStyles[item.dueStatus]}>
+                <Card className={MAINTENANCE_STATUS_CARD_CLASS[item.dueStatus]}>
                   <CardContent className="py-4">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
@@ -90,11 +88,7 @@ export function RemindersPanel({ schedules }: Props) {
                         </p>
                       </div>
                       <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-                          item.dueStatus === "OVERDUE"
-                            ? "bg-danger-muted text-danger"
-                            : "bg-warning-muted text-warning"
-                        }`}
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${MAINTENANCE_STATUS_BADGE_CLASS[item.dueStatus]}`}
                       >
                         {item.dueStatus === "OVERDUE" ? t("overdue") : t("dueSoon")}
                       </span>
