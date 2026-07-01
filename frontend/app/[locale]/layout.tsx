@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { geistMono, geistSans } from "@/lib/fonts";
 import { THEME_INIT_SCRIPT } from "@/lib/theme/init-script";
 import { routing } from "@/lib/i18n/routing";
@@ -17,17 +17,32 @@ import { findAppearanceForUser } from "@/lib/repositories/preferences";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+  applicationName: "Smart Garage",
   title: "Smart Garage",
   description: "Self-hosted vehicle management and maintenance tracking",
   icons: {
     icon: "/brand/smart-garage-logo.png",
     apple: "/brand/smart-garage-logo.png",
   },
+  // App-like behavior on iOS home-screen launch (not marketing/SEO).
+  appleWebApp: {
+    capable: true,
+    title: "Smart Garage",
+    statusBarStyle: "default",
+  },
+  // Stop iOS from turning numbers (e.g. mileage, VINs) into tap-to-call links.
+  formatDetection: { telephone: false },
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Extend under the notch / home indicator so safe-area insets take effect.
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f6f9" },
+    { media: "(prefers-color-scheme: dark)", color: "#090e1a" },
+  ],
 };
 
 type Props = {

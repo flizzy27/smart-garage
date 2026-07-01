@@ -9,6 +9,20 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.5.1] - 2026-07-01
+
+### Added
+
+- **Installable app experience (PWA manifest)** — `app/manifest.ts` provides a standalone Web App Manifest so Smart Garage can be added to a phone home screen and launched like a native app (self-hosted use, not app-store/SEO).
+- **Safe-area support** — `viewport-fit=cover` plus safe-area padding on the header, mobile sidebar drawer, and main content so the UI no longer sits under the notch or home indicator on modern phones.
+- **Mobile web-app metadata** — `appleWebApp` (home-screen launch), `themeColor` (light/dark browser chrome), and `formatDetection: telephone off` (stops iOS turning mileage/VIN numbers into call links).
+
+### Fixed
+
+- **No more accidental zoom on input focus (iOS)** — form controls are forced to 16px on small screens, which prevents iOS Safari's auto-zoom when focusing a field. Pinch-to-zoom stays available for accessibility.
+- **Horizontal-scroll guard** — the main content area clips horizontal overflow to avoid stray sideways scrolling on narrow screens.
+- **App-like tap feedback** — removed the grey tap-highlight flash on touch devices.
+
 ## [0.5.0] - 2026-07-01
 
 ### Added
