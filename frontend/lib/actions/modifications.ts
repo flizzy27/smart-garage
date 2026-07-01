@@ -6,6 +6,7 @@ import { getCurrentUserId } from "@/lib/auth/current-user";
 import {
   createModification,
   deleteModification,
+  updateModification,
 } from "@/lib/repositories/modifications";
 import { findVehicleById } from "@/lib/repositories/vehicles";
 import { z } from "zod";
@@ -74,15 +75,63 @@ export async function createModificationAction(
   }
 }
 
-export async function deleteModificationFormAction(
+export async function updateModificationAction(
   vehicleId: string,
   modificationId: string,
-): Promise<void> {
+  _prev: ModificationActionResult | null,
+  formData: FormData,
+): Promise<ModificationActionResult> {
+  try {
+    const ownerUserId = await getCurrentUserId();
+    const vehicle = await findVehicleById(vehicleId, ownerUserId);
+    if (!vehicle) return { success: false, error: "notFound" };
+
+    const parsed = modificationSchema.parse({
+      category: formData.get("category"),
+      name: formData.get("name"),
+      description: formData.get("description") || null,
+      installedAt: formData.get("installedAt") || null,
+      costCents: formData.get("costEuros") || null,
+      addedPowerKw: formData.get("addedPowerKw") || null,
+      addedPowerPs: formData.get("addedPowerPs") || null,
+      addedTorqueNm: formData.get("addedTorqueNm") || null,
+      notes: formData.get("notes") || null,
+      isCustom: formData.get("isCustom") === "true",
+    });
+
+    const result = await updateModification(modificationId, vehicleId, {
+      category: parsed.category,
+      name: parsed.name,
+      description: parsed.description,
+      installedAt: parsed.installedAt ? new Date(parsed.installedAt) : null,
+      costCents: parsed.costCents != null ? BigInt(parsed.costCents) : null,
+      addedPowerKw: parsed.addedPowerKw,
+      addedPowerPs: parsed.addedPowerPs,
+      addedTorqueNm: parsed.addedTorqueNm,
+      notes: parsed.notes,
+      isCustom: parsed.isCustom ?? false,
+    });
+
+    if (result.count === 0) return { success: false, error: "notFound" };
+
+    revalidatePath(`/vehicles/${vehicleId}`);
+    revalidatePath(`/vehicles/${vehicleId}/edit`);
+    return { success: true };
+  } catch {
+    return { success: false, error: "validationFailed" };
+  }
+}
+
+export async function deleteModificationAction(
+  vehicleId: string,
+  modificationId: string,
+): Promise<ModificationActionResult> {
   const ownerUserId = await getCurrentUserId();
   const vehicle = await findVehicleById(vehicleId, ownerUserId);
-  if (!vehicle) return;
+  if (!vehicle) return { success: false, error: "notFound" };
 
   await deleteModification(modificationId, vehicleId);
   revalidatePath(`/vehicles/${vehicleId}`);
   revalidatePath(`/vehicles/${vehicleId}/edit`);
+  return { success: true };
 }

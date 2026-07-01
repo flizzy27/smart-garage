@@ -12,10 +12,8 @@ import type { Locale } from "@/lib/i18n/routing";
 import {
   applyThemeToDocument,
   readSettings,
-  resolveThemeClass,
   writeSettings,
 } from "@/lib/settings/storage";
-import { applyDesignPresetToDocument } from "@/lib/theme/presets";
 import { saveUserPreferences } from "@/lib/actions/preferences";
 import {
   DEFAULT_SETTINGS,
@@ -30,8 +28,7 @@ type UserSettingsContextValue = {
   setLocale: (locale: Locale) => void;
   setTimezone: (timezone: string) => void;
   setCurrency: (currency: CurrencyCode) => void;
-  setDesignPreset: (preset: UserSettings["designPreset"]) => void;
-  setBackgroundBlurPx: (px: number) => void;
+  setQuickFuelEnabled: (enabled: boolean) => void;
   setMaintenanceDueSoonKm: (km: number) => void;
   setMaintenanceDueSoonDays: (days: number) => void;
 };
@@ -53,12 +50,12 @@ export function UserSettingsProvider({
 
   useEffect(() => {
     const stored = readSettings();
-    const merged = initialSettings
-      ? { ...initialSettings, ...stored, theme: stored.theme ?? initialSettings.theme }
-      : stored;
+    // The DB (initialSettings, rendered by the server) is the source of truth
+    // for a signed-in user so preferences follow them across devices. The local
+    // cache only fills in when there is no server value.
+    const merged = initialSettings ? { ...stored, ...initialSettings } : stored;
+    writeSettings(merged);
     applyThemeToDocument(merged.theme);
-    const isDark = resolveThemeClass(merged.theme) === "dark";
-    applyDesignPresetToDocument(merged.designPreset, isDark);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount sync
     setSettings(merged);
 
@@ -78,10 +75,6 @@ export function UserSettingsProvider({
     setSettings(next);
     writeSettings(next);
     applyThemeToDocument(next.theme);
-    applyDesignPresetToDocument(
-      next.designPreset,
-      resolveThemeClass(next.theme) === "dark",
-    );
     void saveUserPreferences(next);
   }, []);
 
@@ -113,16 +106,9 @@ export function UserSettingsProvider({
     [persist],
   );
 
-  const setDesignPreset = useCallback(
-    (designPreset: UserSettings["designPreset"]) => {
-      persist({ ...readSettings(), designPreset });
-    },
-    [persist],
-  );
-
-  const setBackgroundBlurPx = useCallback(
-    (backgroundBlurPx: number) => {
-      persist({ ...readSettings(), backgroundBlurPx });
+  const setQuickFuelEnabled = useCallback(
+    (quickFuelEnabled: boolean) => {
+      persist({ ...readSettings(), quickFuelEnabled });
     },
     [persist],
   );
@@ -148,8 +134,7 @@ export function UserSettingsProvider({
       setLocale,
       setTimezone,
       setCurrency,
-      setDesignPreset,
-      setBackgroundBlurPx,
+      setQuickFuelEnabled,
       setMaintenanceDueSoonKm,
       setMaintenanceDueSoonDays,
     }),
@@ -159,8 +144,7 @@ export function UserSettingsProvider({
       setLocale,
       setTimezone,
       setCurrency,
-      setDesignPreset,
-      setBackgroundBlurPx,
+      setQuickFuelEnabled,
       setMaintenanceDueSoonKm,
       setMaintenanceDueSoonDays,
     ],

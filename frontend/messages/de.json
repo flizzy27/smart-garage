@@ -145,6 +145,12 @@
         "unitKm": "km",
         "unitDays": "Tage"
       },
+      "quickFuel": {
+        "title": "Schnelltanken",
+        "description": "Das Schnelltank-Widget auf dem Dashboard zum schnellen Erfassen von Tankvorgängen",
+        "label": "Schnelltank-Widget anzeigen",
+        "hint": "Wenn aktiviert, erscheint auf dem Dashboard ein einklappbares Schnelltank-Formular. Es bleibt eingeklappt, bis du es öffnest."
+      },
       "design": {
         "title": "Design-Vorlage",
         "description": "Farbthemen für Sidebar und Akzente",
@@ -160,7 +166,13 @@
           "midnight": "Midnight",
           "midnightDesc": "Tiefes Indigo und Violett",
           "rose": "Rose",
-          "roseDesc": "Pink- und Magenta-Akzente"
+          "roseDesc": "Pink- und Magenta-Akzente",
+          "aurora": "Aurora",
+          "auroraDesc": "Türkis und Cyan, ruhig und kühl",
+          "graphite": "Graphit",
+          "graphiteDesc": "Neutrales Schiefergrau — klar und minimal",
+          "crimson": "Karmin",
+          "crimsonDesc": "Kräftiges Rot mit warmen Akzenten"
         }
       },
       "export": {
@@ -354,6 +366,12 @@
     "dueInKm": "in {km} km",
     "edit": "Bearbeiten",
     "editRecord": "Serviceeintrag bearbeiten",
+    "deleteRecord": "Löschen",
+    "deleteRecordTitle": "Serviceeintrag löschen?",
+    "deleteRecordConfirm": "Dies entfernt diesen Serviceeintrag und alle damit erfassten Teile/Flüssigkeiten dauerhaft. Das kann nicht rückgängig gemacht werden.",
+    "confirmDelete": "Eintrag löschen",
+    "deleting": "Löschen…",
+    "cancel": "Abbrechen",
     "notePlaceholder": "Was wurde gemacht, verwendete Teile, Beobachtungen, nächste Schritte…",
     "saveAsDefault": "Diese Teile/Flüssigkeiten als Standard für diese Wartungsart merken",
     "status": {
@@ -646,7 +664,22 @@
       "add": "Modifikation hinzufügen",
       "adding": "Wird hinzugefügt…",
       "added": "Modifikation gespeichert.",
+      "addTitle": "Modifikation hinzufügen",
+      "edit": "Bearbeiten",
+      "editTitle": "Modifikation bearbeiten",
+      "save": "Änderungen speichern",
+      "saving": "Speichern…",
+      "saved": "Modifikation aktualisiert.",
+      "cancel": "Abbrechen",
       "remove": "Entfernen",
+      "deleteTitle": "Modifikation entfernen?",
+      "deleteConfirm": "Entfernt die Modifikation und reduziert die aktuelle Leistung des Fahrzeugs entsprechend.",
+      "confirmDelete": "Entfernen",
+      "deleting": "Entfernen…",
+      "currentList": "Verbaute Modifikationen",
+      "factory": "Werk",
+      "current": "Aktuell",
+      "gain": "Zuwachs",
       "error": "Modifikation konnte nicht gespeichert werden."
     },
     "modificationCategories": {
@@ -824,12 +857,6 @@
         "notFound": "Fahrzeug nicht gefunden.",
         "unknown": "Kilometerstand konnte nicht gespeichert werden."
       }
-    },
-    "qr": {
-      "title": "QR-Code",
-      "hint": "Scannen, um dieses Fahrzeug auf dem Handy zu öffnen",
-      "alt": "QR-Code für {name}",
-      "openLink": "Fahrzeugseite öffnen"
     },
     "inspections": {
       "title": "TÜV / HU & AU",

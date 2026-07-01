@@ -81,6 +81,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       lang={locale}
       suppressHydrationWarning
       data-design={appearance?.designPreset ?? "default"}
+      data-theme={initialSettings?.theme ?? "system"}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>

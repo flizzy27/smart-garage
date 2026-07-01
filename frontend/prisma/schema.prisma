@@ -236,6 +236,7 @@ model UserPreferences {
   backgroundBlurPx       Int      @default(8)
   backgroundImageKey     String?
   backgroundMimeType     String?
+  quickFuelEnabled       Boolean  @default(true)
   maintenanceDueSoonKm   Int      @default(1500)
   maintenanceDueSoonDays Int      @default(30)
   updatedAt              DateTime @updatedAt

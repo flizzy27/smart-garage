@@ -49,6 +49,48 @@ export async function createModification(data: CreateModificationData) {
   return mod;
 }
 
+export type UpdateModificationData = {
+  category: ModificationCategory;
+  name: string;
+  description?: string | null;
+  installedAt?: Date | null;
+  costCents?: bigint | null;
+  currency?: string | null;
+  addedPowerKw?: number | null;
+  addedPowerPs?: number | null;
+  addedTorqueNm?: number | null;
+  notes?: string | null;
+  isCustom?: boolean;
+};
+
+export async function updateModification(
+  id: string,
+  vehicleId: string,
+  data: UpdateModificationData,
+) {
+  const result = await prisma.vehicleModification.updateMany({
+    where: { id, vehicleId },
+    data: {
+      category: data.category,
+      name: data.name,
+      description: data.description ?? null,
+      installedAt: data.installedAt ?? null,
+      costCents: data.costCents ?? null,
+      currency: data.currency ?? "EUR",
+      addedPowerKw: data.addedPowerKw ?? null,
+      addedPowerPs: data.addedPowerPs ?? null,
+      addedTorqueNm: data.addedTorqueNm ?? null,
+      notes: data.notes ?? null,
+      ...(data.isCustom != null ? { isCustom: data.isCustom } : {}),
+    },
+  });
+
+  if (result.count > 0) {
+    await recalculateVehicleCurrentSpec(vehicleId);
+  }
+  return result;
+}
+
 export async function deleteModification(id: string, vehicleId: string) {
   const result = await prisma.vehicleModification.deleteMany({
     where: { id, vehicleId },
@@ -59,7 +101,7 @@ export async function deleteModification(id: string, vehicleId: string) {
   return result;
 }
 
-async function recalculateVehicleCurrentSpec(vehicleId: string) {
+export async function recalculateVehicleCurrentSpec(vehicleId: string) {
   const vehicle = await prisma.vehicle.findUnique({
     where: { id: vehicleId },
     include: {

@@ -70,6 +70,35 @@ export function AppearanceSettings() {
   );
 }
 
+export function QuickFuelSettings() {
+  const t = useTranslations("pages.settings.quickFuel");
+  const { settings, setQuickFuelEnabled } = useUserSettings();
+
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="sm:max-w-sm">
+        <p className="text-sm font-medium text-foreground">{t("label")}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{t("hint")}</p>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={settings.quickFuelEnabled}
+        onClick={() => setQuickFuelEnabled(!settings.quickFuelEnabled)}
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+          settings.quickFuelEnabled ? "bg-accent" : "bg-border"
+        }`}
+      >
+        <span
+          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+            settings.quickFuelEnabled ? "translate-x-5" : "translate-x-0.5"
+          }`}
+        />
+      </button>
+    </div>
+  );
+}
+
 export function LanguageSettings() {
   const t = useTranslations("pages.settings.language");
   const locale = useLocale();

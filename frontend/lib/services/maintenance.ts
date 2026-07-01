@@ -14,6 +14,7 @@ import {
   refreshAllScheduleDueStatuses,
 } from "@/lib/repositories/maintenance";
 import {
+  deleteMaintenanceRecord as deleteMaintenanceRecordRow,
   findRecordForOwner,
   listAllRecordsForOwner,
   listRecordsForSchedule,
@@ -54,8 +55,33 @@ export async function getMaintenancePageData(locale: Locale) {
 
   return {
     templates,
-    schedules: schedules.map((s) => serializeSchedule(s, locale, thresholds)),
+    schedules: sortSchedulesByPriority(
+      schedules.map((s) => serializeSchedule(s, locale, thresholds)),
+    ),
   };
+}
+
+/**
+ * Orders schedules so the most urgent work surfaces first:
+ * overdue → due soon → OK, then by soonest due (days, falling back to km).
+ */
+const DUE_STATUS_ORDER: Record<string, number> = {
+  OVERDUE: 0,
+  DUE_SOON: 1,
+  OK: 2,
+};
+
+function sortSchedulesByPriority<
+  T extends { dueStatus: string; dueInDays: number | null; dueInKm: number | null },
+>(schedules: T[]): T[] {
+  return [...schedules].sort((a, b) => {
+    const statusDiff =
+      (DUE_STATUS_ORDER[a.dueStatus] ?? 3) - (DUE_STATUS_ORDER[b.dueStatus] ?? 3);
+    if (statusDiff !== 0) return statusDiff;
+    const daysDiff = (a.dueInDays ?? Infinity) - (b.dueInDays ?? Infinity);
+    if (daysDiff !== 0) return daysDiff;
+    return (a.dueInKm ?? Infinity) - (b.dueInKm ?? Infinity);
+  });
 }
 
 export async function getScheduleDetailData(scheduleId: string, locale: Locale) {
@@ -114,7 +140,9 @@ export async function getVehicleMaintenanceData(vehicleId: string, locale: Local
   return {
     vehicle,
     templates,
-    schedules: schedules.map((s) => serializeSchedule(s, locale, thresholds)),
+    schedules: sortSchedulesByPriority(
+      schedules.map((s) => serializeSchedule(s, locale, thresholds)),
+    ),
   };
 }
 
@@ -416,6 +444,20 @@ export async function updateMaintenanceRecord(
     await refreshScheduleDueStatus(
       prisma,
       record.scheduleId,
+      await getMaintenanceThresholds(ownerUserId),
+    );
+  }
+}
+
+export async function deleteMaintenanceRecordEntry(recordId: string) {
+  const ownerUserId = await getCurrentUserId();
+  const deleted = await deleteMaintenanceRecordRow(recordId, ownerUserId);
+  if (!deleted) throw new Error("Record not found");
+
+  if (deleted.scheduleId) {
+    await refreshScheduleDueStatus(
+      prisma,
+      deleted.scheduleId,
       await getMaintenanceThresholds(ownerUserId),
     );
   }

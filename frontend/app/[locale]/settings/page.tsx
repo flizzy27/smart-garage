@@ -4,6 +4,7 @@ import {
   AppearanceSettings,
   LanguageSettings,
   MaintenanceReminderSettings,
+  QuickFuelSettings,
 } from "@/components/settings/SettingsForm";
 import { BackgroundSettings } from "@/components/settings/BackgroundSettings";
 import {
@@ -49,6 +50,13 @@ export default async function GeneralSettingsPage({ params }: Props) {
         description={t("maintenance.description")}
       >
         <MaintenanceReminderSettings />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t("quickFuel.title")}
+        description={t("quickFuel.description")}
+      >
+        <QuickFuelSettings />
       </SettingsSection>
 
       <SettingsSection

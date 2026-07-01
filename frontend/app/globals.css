@@ -54,6 +54,174 @@
   --sidebar-border: #1e293b;
 }
 
+/*
+ * Design presets. Colours are driven purely by the `data-design` attribute on
+ * <html> (set by the server from the DB and by AppearanceProvider on change).
+ * Because these are real CSS rules — not inline styles — switching presets,
+ * including back to "default", never leaves stale variables behind. Dark mode
+ * is layered via the `.dark` class, so each preset defines a light block and a
+ * `.dark` block.
+ */
+[data-design="space"] {
+  --background: #eef6ff;
+  --surface: #f8fbff;
+  --accent: #0284c7;
+  --accent-foreground: #ffffff;
+  --sidebar: #e0f2fe;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #0369a1;
+  --sidebar-gradient: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #8b5cf6 100%);
+}
+[data-design="space"].dark {
+  --background: #030712;
+  --surface: #0c1529;
+  --accent: #38bdf8;
+  --accent-foreground: #0c4a6e;
+  --sidebar: #0a1628;
+  --sidebar-active: #1e3a5f;
+  --sidebar-active-foreground: #7dd3fc;
+}
+
+[data-design="forest"] {
+  --background: #f0fdf4;
+  --surface: #f7fef9;
+  --accent: #059669;
+  --accent-foreground: #ffffff;
+  --sidebar: #ecfdf5;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #047857;
+  --sidebar-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+}
+[data-design="forest"].dark {
+  --background: #052e16;
+  --surface: #0a2e1a;
+  --accent: #34d399;
+  --accent-foreground: #064e3b;
+  --sidebar: #071f12;
+  --sidebar-active: #14532d;
+  --sidebar-active-foreground: #6ee7b7;
+}
+
+[data-design="sunset"] {
+  --background: #fff7ed;
+  --surface: #fffcf5;
+  --accent: #ea580c;
+  --accent-foreground: #ffffff;
+  --sidebar: #ffedd5;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #c2410c;
+  --sidebar-gradient: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fbbf24 100%);
+}
+[data-design="sunset"].dark {
+  --background: #1c0a00;
+  --surface: #2a1208;
+  --accent: #fb923c;
+  --accent-foreground: #431407;
+  --sidebar: #1a0f06;
+  --sidebar-active: #7c2d12;
+  --sidebar-active-foreground: #fdba74;
+}
+
+[data-design="midnight"] {
+  --background: #f5f3ff;
+  --surface: #faf9ff;
+  --accent: #4f46e5;
+  --accent-foreground: #ffffff;
+  --sidebar: #ede9fe;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #4338ca;
+  --sidebar-gradient: linear-gradient(135deg, #312e81 0%, #4338ca 50%, #6366f1 100%);
+}
+[data-design="midnight"].dark {
+  --background: #0f0a1e;
+  --surface: #1a1433;
+  --accent: #818cf8;
+  --accent-foreground: #1e1b4b;
+  --sidebar: #120e24;
+  --sidebar-active: #312e81;
+  --sidebar-active-foreground: #a5b4fc;
+}
+
+[data-design="rose"] {
+  --background: #fdf2f8;
+  --surface: #fffafd;
+  --accent: #db2777;
+  --accent-foreground: #ffffff;
+  --sidebar: #fce7f3;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #be185d;
+  --sidebar-gradient: linear-gradient(135deg, #be185d 0%, #db2777 50%, #f472b6 100%);
+}
+[data-design="rose"].dark {
+  --background: #1a0510;
+  --surface: #2a0a1a;
+  --accent: #f472b6;
+  --accent-foreground: #500724;
+  --sidebar: #1f0814;
+  --sidebar-active: #831843;
+  --sidebar-active-foreground: #fbcfe8;
+}
+
+[data-design="aurora"] {
+  --background: #ecfeff;
+  --surface: #f5feff;
+  --accent: #0d9488;
+  --accent-foreground: #ffffff;
+  --sidebar: #cffafe;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #0f766e;
+  --sidebar-gradient: linear-gradient(135deg, #0d9488 0%, #06b6d4 50%, #22d3ee 100%);
+}
+[data-design="aurora"].dark {
+  --background: #04141a;
+  --surface: #08222b;
+  --accent: #22d3ee;
+  --accent-foreground: #042f2e;
+  --sidebar: #06202a;
+  --sidebar-active: #155e75;
+  --sidebar-active-foreground: #67e8f9;
+}
+
+[data-design="graphite"] {
+  --background: #eef1f5;
+  --surface: #ffffff;
+  --accent: #475569;
+  --accent-foreground: #ffffff;
+  --sidebar: #e2e8f0;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #1e293b;
+  --sidebar-gradient: linear-gradient(135deg, #334155 0%, #64748b 50%, #94a3b8 100%);
+}
+[data-design="graphite"].dark {
+  --background: #0b0f17;
+  --surface: #131a26;
+  --accent: #94a3b8;
+  --accent-foreground: #0b0f17;
+  --sidebar: #0e1420;
+  --sidebar-active: #334155;
+  --sidebar-active-foreground: #cbd5e1;
+}
+
+[data-design="crimson"] {
+  --background: #fef2f2;
+  --surface: #fffafa;
+  --accent: #dc2626;
+  --accent-foreground: #ffffff;
+  --sidebar: #fee2e2;
+  --sidebar-active: #ffffff;
+  --sidebar-active-foreground: #b91c1c;
+  --sidebar-gradient: linear-gradient(135deg, #9f1239 0%, #dc2626 50%, #f87171 100%);
+}
+[data-design="crimson"].dark {
+  --background: #1a0606;
+  --surface: #2a0a0a;
+  --accent: #f87171;
+  --accent-foreground: #450a0a;
+  --sidebar: #200808;
+  --sidebar-active: #7f1d1d;
+  --sidebar-active-foreground: #fecaca;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -100,6 +268,24 @@ body {
 /* App-like tap feedback: remove the grey flash on tap for touch devices. */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * Main content surface. Blends the neutral surface colour with a subtle wash of
+ * the selected design's accent colour so the chosen palette reads across the
+ * whole app — not just buttons. The accent variable changes per design preset,
+ * so this integrates automatically.
+ */
+.app-main {
+  background-color: var(--surface);
+  background-image:
+    radial-gradient(
+      130% 90% at 50% -10%,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 55%
+    );
+  background-repeat: no-repeat;
+  background-attachment: local;
 }
 
 /*

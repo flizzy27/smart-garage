@@ -13,6 +13,7 @@ export type UserSettings = {
   currency: CurrencyCode;
   designPreset: DesignPresetId;
   backgroundBlurPx: number;
+  quickFuelEnabled: boolean;
   maintenanceDueSoonKm: number;
   maintenanceDueSoonDays: number;
 };
@@ -27,6 +28,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   currency: "EUR",
   designPreset: DEFAULT_DESIGN_PRESET,
   backgroundBlurPx: DEFAULT_BACKGROUND_BLUR_PX,
+  quickFuelEnabled: true,
   maintenanceDueSoonKm: DEFAULT_MAINTENANCE_DUE_SOON_KM,
   maintenanceDueSoonDays: DEFAULT_MAINTENANCE_DUE_SOON_DAYS,
 };

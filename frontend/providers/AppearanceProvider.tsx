@@ -12,8 +12,8 @@ import type { DesignPresetId } from "@/lib/theme/presets";
 import {
   applyDesignPresetToDocument,
   clampBackgroundBlur,
+  DEFAULT_BACKGROUND_BLUR_PX,
 } from "@/lib/theme/presets";
-import { resolveThemeClass } from "@/lib/settings/storage";
 
 export type AppearanceSettings = {
   designPreset: DesignPresetId;
@@ -23,7 +23,7 @@ export type AppearanceSettings = {
 
 const DEFAULT_APPEARANCE: AppearanceSettings = {
   designPreset: "default",
-  backgroundBlurPx: 8,
+  backgroundBlurPx: DEFAULT_BACKGROUND_BLUR_PX,
   hasBackground: false,
 };
 
@@ -48,27 +48,15 @@ export function AppearanceProvider({
   });
 
   useEffect(() => {
-    const isDark =
-      typeof document !== "undefined" &&
-      document.documentElement.classList.contains("dark");
-    applyDesignPresetToDocument(appearance.designPreset, isDark);
+    // Design colours are driven by CSS from the `data-design` attribute, so we
+    // only need to set the attribute — light/dark is handled independently by
+    // the `.dark` class. No dark-mode listener is required here anymore.
+    applyDesignPresetToDocument(appearance.designPreset);
     document.documentElement.style.setProperty(
       "--background-blur",
       `${clampBackgroundBlur(appearance.backgroundBlurPx)}px`,
     );
   }, [appearance.designPreset, appearance.backgroundBlurPx]);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const syncPreset = () => {
-      const isDark = resolveThemeClass(
-        document.documentElement.classList.contains("dark") ? "dark" : "light",
-      ) === "dark";
-      applyDesignPresetToDocument(appearance.designPreset, isDark);
-    };
-    media.addEventListener("change", syncPreset);
-    return () => media.removeEventListener("change", syncPreset);
-  }, [appearance.designPreset]);
 
   const setDesignPreset = useCallback((designPreset: DesignPresetId) => {
     setAppearance((prev) => ({ ...prev, designPreset }));
