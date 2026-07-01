@@ -5,10 +5,14 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ locale: string }> };
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ sessionExpired?: string }>;
+};
 
-export default async function LoginPage({ params }: Props) {
+export default async function LoginPage({ params, searchParams }: Props) {
   const { locale } = await params;
+  const { sessionExpired } = await searchParams;
   setRequestLocale(locale);
 
   let user = null;
@@ -22,5 +26,5 @@ export default async function LoginPage({ params }: Props) {
     redirect(`/${locale}`);
   }
 
-  return <LoginForm />;
+  return <LoginForm sessionExpired={sessionExpired === "1"} />;
 }

@@ -1,13 +1,17 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LogMaintenanceForm } from "@/components/maintenance/LogMaintenanceForm";
+import { ScheduleDefaultsPanel } from "@/components/maintenance/ScheduleDefaultsPanel";
 import { ScheduleDetailAdjust } from "@/components/maintenance/ScheduleDetailAdjust";
 import { MaintenanceHistoryTimeline } from "@/components/maintenance/MaintenanceHistoryTimeline";
 import { MaintenanceReceiptUpload } from "@/components/maintenance/MaintenanceReceiptUpload";
 import { ScheduleDetailHeader } from "@/components/maintenance/ScheduleDetailHeader";
+import { RelatedNotesCard } from "@/components/notes/RelatedNotesCard";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Link } from "@/lib/i18n/navigation";
+import { suggestedCategoriesForTemplateSlug } from "@/lib/maintenance/item-categories";
 import { getScheduleDetailData } from "@/lib/services/maintenance";
+import { listRelatedNotesForSchedule } from "@/lib/services/notes";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +29,13 @@ export default async function ScheduleDetailPage({ params }: Props) {
     notFound();
   }
 
-  const { schedule, records, currentOdometerKm } = data;
+  const { schedule, records, itemDefaults, currentOdometerKm } = data;
+  const suggestedCategories = suggestedCategoriesForTemplateSlug(schedule.templateSlug);
+  const relatedNotes = await listRelatedNotesForSchedule(
+    schedule.vehicleId,
+    schedule.templateId,
+    locale as "en" | "de",
+  );
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
@@ -46,10 +56,25 @@ export default async function ScheduleDetailPage({ params }: Props) {
 
       <ScheduleDetailAdjust schedule={schedule} locale={locale as "en" | "de"} />
 
+      <ScheduleDefaultsPanel
+        scheduleId={schedule.id}
+        defaults={itemDefaults}
+        suggestedCategories={suggestedCategories}
+      />
+
       <LogMaintenanceForm
         scheduleId={schedule.id}
         vehicleId={schedule.vehicleId}
         defaultOdometerKm={currentOdometerKm}
+        defaultItems={itemDefaults}
+        defaultNote={schedule.notes}
+        suggestedCategories={suggestedCategories}
+      />
+
+      <RelatedNotesCard
+        notes={relatedNotes}
+        locale={locale as "en" | "de"}
+        newNoteHref={`/notes/new?vehicleId=${schedule.vehicleId}`}
       />
 
       <MaintenanceReceiptUpload

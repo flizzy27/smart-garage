@@ -42,6 +42,7 @@ const vehicleInclude = {
       },
       modifications: true,
       fuelEntries: true,
+      linkedNotes: true,
     },
   },
 } satisfies Prisma.VehicleInclude;

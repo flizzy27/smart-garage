@@ -5,6 +5,7 @@ import {
   IconExpenses,
   IconHistory,
   IconMaintenance,
+  IconNotes,
   IconReminders,
   IconSettings,
   IconVehicles,
@@ -18,6 +19,7 @@ export type NavItem = {
     | "maintenance"
     | "history"
     | "documents"
+    | "notes"
     | "expenses"
     | "costs"
     | "fuel"
@@ -44,6 +46,7 @@ export const navGroups: NavGroup[] = [
       { href: "/maintenance", labelKey: "maintenance", icon: IconMaintenance },
       { href: "/history", labelKey: "history", icon: IconHistory },
       { href: "/documents", labelKey: "documents", icon: IconDocuments },
+      { href: "/notes", labelKey: "notes", icon: IconNotes },
     ],
   },
   {

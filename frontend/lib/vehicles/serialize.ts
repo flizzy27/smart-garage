@@ -77,6 +77,7 @@ export type SerializedVehicle = {
   documentCount: number;
   fuelCount: number;
   modificationCount: number;
+  notesCount: number;
   updatedAt: string;
 };
 
@@ -199,6 +200,7 @@ export function serializeVehicle(vehicle: VehicleWithRelations): SerializedVehic
     documentCount: vehicle._count.documents,
     fuelCount: vehicle._count.fuelEntries,
     modificationCount: vehicle._count.modifications,
+    notesCount: vehicle._count.linkedNotes,
     updatedAt: vehicle.updatedAt.toISOString(),
   };
 }

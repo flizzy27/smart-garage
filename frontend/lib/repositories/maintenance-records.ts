@@ -1,10 +1,16 @@
+import type { MaintenanceCategory, Prisma } from "@prisma/client";
 import type { Locale } from "@/lib/i18n/routing";
 import { scheduleDisplayName } from "@/lib/maintenance/display";
 import { prisma } from "@/lib/prisma";
+import {
+  listItemsForRecords,
+  type SerializedMaintenanceItem,
+} from "@/lib/repositories/maintenance-items";
 
 export type SerializedMaintenanceRecord = {
   id: string;
   scheduleId: string | null;
+  templateSlug: string | null;
   vehicleId: string;
   vehicleName: string;
   serviceName: string;
@@ -14,6 +20,7 @@ export type SerializedMaintenanceRecord = {
   currency: string;
   vendorName: string | null;
   note: string | null;
+  items: SerializedMaintenanceItem[];
 };
 
 const recordInclude = {
@@ -53,10 +60,12 @@ function serviceName(record: RecordRow, locale: Locale): string {
 export function serializeMaintenanceRecord(
   record: RecordRow,
   locale: Locale,
+  items: SerializedMaintenanceItem[] = [],
 ): SerializedMaintenanceRecord {
   return {
     id: record.id,
     scheduleId: record.scheduleId,
+    templateSlug: record.schedule?.template?.slug ?? null,
     vehicleId: record.vehicleId,
     vehicleName: vehicleLabel(record.vehicle),
     serviceName: serviceName(record, locale),
@@ -66,6 +75,7 @@ export function serializeMaintenanceRecord(
     currency: record.currency,
     vendorName: record.vendorName,
     note: record.note,
+    items,
   };
 }
 
@@ -83,7 +93,23 @@ export async function listRecordsForSchedule(
     orderBy: [{ performedAt: "desc" }, { createdAt: "desc" }],
   });
 
-  return records.map((record) => serializeMaintenanceRecord(record, locale));
+  const itemsByRecord = await listItemsForRecords(records.map((r) => r.id));
+  return records.map((record) =>
+    serializeMaintenanceRecord(record, locale, itemsByRecord.get(record.id) ?? []),
+  );
+}
+
+export async function findRecordForOwner(recordId: string, ownerUserId: string) {
+  return prisma.maintenanceRecord.findFirst({
+    where: {
+      id: recordId,
+      vehicle: { ownerUserId, deletedAt: null },
+    },
+    include: {
+      vehicle: { select: { id: true, currentOdometerKm: true } },
+      schedule: true,
+    },
+  });
 }
 
 export async function countRecordsForSchedule(
@@ -98,19 +124,68 @@ export async function countRecordsForSchedule(
   });
 }
 
+export type HistoryFilters = {
+  search?: string;
+  vehicleId?: string;
+  category?: string;
+  fromDate?: string;
+  toDate?: string;
+};
+
 export async function listAllRecordsForOwner(
   ownerUserId: string,
   locale: Locale,
   limit = 200,
+  filters: HistoryFilters = {},
 ) {
+  const search = filters.search?.trim();
+
+  const where: Prisma.MaintenanceRecordWhereInput = {
+    vehicle: { ownerUserId, deletedAt: null },
+  };
+
+  if (filters.vehicleId) {
+    where.vehicleId = filters.vehicleId;
+  }
+  if (filters.category) {
+    where.schedule = { category: filters.category as MaintenanceCategory };
+  }
+  if (filters.fromDate || filters.toDate) {
+    where.performedAt = {
+      ...(filters.fromDate ? { gte: new Date(filters.fromDate) } : {}),
+      ...(filters.toDate ? { lte: new Date(`${filters.toDate}T23:59:59`) } : {}),
+    };
+  }
+  if (search) {
+    where.OR = [
+      { title: { contains: search } },
+      { note: { contains: search } },
+      { vendorName: { contains: search } },
+      {
+        items: {
+          some: {
+            OR: [
+              { name: { contains: search } },
+              { brand: { contains: search } },
+              { productName: { contains: search } },
+              { partNumber: { contains: search } },
+              { specification: { contains: search } },
+            ],
+          },
+        },
+      },
+    ];
+  }
+
   const records = await prisma.maintenanceRecord.findMany({
-    where: {
-      vehicle: { ownerUserId, deletedAt: null },
-    },
+    where,
     include: recordInclude,
     orderBy: [{ performedAt: "desc" }, { createdAt: "desc" }],
     take: limit,
   });
 
-  return records.map((record) => serializeMaintenanceRecord(record, locale));
+  const itemsByRecord = await listItemsForRecords(records.map((r) => r.id));
+  return records.map((record) =>
+    serializeMaintenanceRecord(record, locale, itemsByRecord.get(record.id) ?? []),
+  );
 }

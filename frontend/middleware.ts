@@ -1,11 +1,19 @@
 import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "./lib/i18n/routing";
+import { isWellFormedSessionToken, SESSION_COOKIE } from "./lib/auth/session-token";
 
 const intlMiddleware = createMiddleware(routing);
-const SESSION_COOKIE = "sg_session";
 
 const PUBLIC_SUFFIXES = ["/login", "/register"];
+
+/**
+ * Cookie names this app has ever used for the session. Kept as a list (not a
+ * single constant) so that if the cookie is ever renamed in a future release,
+ * old-format cookies from a previous version can still be swept up here
+ * instead of lingering forever in users' browsers.
+ */
+const LEGACY_SESSION_COOKIE_NAMES: string[] = [];
 
 function stripLocale(pathname: string) {
   return pathname.replace(/^\/(de|en)/, "") || "/";
@@ -24,30 +32,42 @@ export default function middleware(request: NextRequest) {
 
   const localeFree = stripLocale(pathname);
   const locale = pathname.match(/^\/(de|en)/)?.[1] ?? routing.defaultLocale;
+  const isPublic = PUBLIC_SUFFIXES.some((suffix) => localeFree === suffix);
 
-  const isPublic =
-    PUBLIC_SUFFIXES.some((suffix) => localeFree === suffix);
+  const rawValue = request.cookies.get(SESSION_COOKIE)?.value;
+  const hasCookie = Boolean(rawValue);
+  // Middleware can't hit the database, but it can reject cookies that are
+  // structurally impossible to be a real session token (wrong shape, corrupted,
+  // JSON, from an older/incompatible app version, etc.) without ever reading them.
+  const isMalformed = hasCookie && !isWellFormedSessionToken(rawValue);
+  const hasValidLookingSession = hasCookie && !isMalformed;
 
-  if (!isPublic) {
-    const session = request.cookies.get(SESSION_COOKIE);
-    if (!session?.value) {
-      if (localeFree === "/register") {
-        return intlMiddleware(request);
+  function cleanupCookies(response: NextResponse) {
+    if (isMalformed) {
+      response.cookies.delete(SESSION_COOKIE);
+    }
+    for (const legacyName of LEGACY_SESSION_COOKIE_NAMES) {
+      if (request.cookies.get(legacyName)) {
+        response.cookies.delete(legacyName);
       }
-      const loginUrl = new URL(`/${locale}/login`, request.url);
-      loginUrl.searchParams.set("from", pathname);
-      return NextResponse.redirect(loginUrl);
     }
+    return response;
   }
 
-  if (localeFree === "/register") {
-    const session = request.cookies.get(SESSION_COOKIE);
-    if (session?.value) {
-      return NextResponse.redirect(new URL(`/${locale}`, request.url));
+  if (!isPublic && !hasValidLookingSession) {
+    if (localeFree === "/register") {
+      return cleanupCookies(intlMiddleware(request));
     }
+    const loginUrl = new URL(`/${locale}/login`, request.url);
+    loginUrl.searchParams.set("from", pathname);
+    return cleanupCookies(NextResponse.redirect(loginUrl));
   }
 
-  return intlMiddleware(request);
+  if (localeFree === "/register" && hasValidLookingSession) {
+    return cleanupCookies(NextResponse.redirect(new URL(`/${locale}`, request.url)));
+  }
+
+  return cleanupCookies(intlMiddleware(request));
 }
 
 export const config = {

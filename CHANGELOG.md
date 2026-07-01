@@ -9,6 +9,52 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.6.0] - 2026-07-02
+
+### Added
+
+- **Parts, fluids & materials tracking on maintenance records** — a maintenance record can now store a structured list of the items actually used (engine oil, oil/air/cabin/fuel filter, spark/glow plugs, brake fluid, coolant, transmission/DSG/differential oil, brake pads/discs/sensor, tires, wipers, battery, belt, gasket, or a free-form "custom" item), each with brand, product name, part number, specification, quantity, unit (liters, milliliters, pieces, sets, kg, grams, custom), cost, supplier/shop, and notes. New `MaintenanceItem` model (one row per used item, owned by a `MaintenanceRecord`).
+- **Per-vehicle, per-maintenance-type defaults** — on a schedule's detail page, a new "Defaults" panel lets you define the parts/fluids that are always used for that vehicle + maintenance type (e.g. "Oil change → 5.7 L Motul 8100 Power 5W-40 + Mann Filter HU 6002 z"). New `MaintenanceItemDefault` model, one set per `VehicleMaintenanceSchedule`. Defaults automatically prefill the "Log maintenance" form, remain fully editable per record, and can be saved/updated ("save as new default" checkbox) or cleared independently at any time.
+- **Historical snapshots are preserved** — `MaintenanceItem` rows are an independent copy made at record-creation/edit time, not a reference to the default. Changing a schedule's default oil/filter later never rewrites older maintenance records — verified with an end-to-end scripted test (create record → change defaults → confirm the old record still shows the original items, new records use the new defaults).
+- **Template-aware suggestions** — the items editor shows quick-add buttons suggesting the relevant categories for the maintenance type being logged (e.g. oil change suggests engine oil + oil filter; brake service suggests pads/discs/sensor/cleaner; tire change suggests tire/size/DOT/pressure), based on the existing maintenance template catalog. Fully generic — any category can still be added manually to any maintenance type.
+- **Markdown notes on maintenance records** — the free-text note on a maintenance record is now edited with a small Markdown editor (bold, italic, headings, bullet/numbered lists, links) with a live write/preview toggle, and rendered as safe formatted HTML in the history timeline (a dependency-free renderer that escapes all input and only allows `http(s)` links — no raw HTML is ever stored or rendered).
+- **Edit existing maintenance records** — history entries now have an "Edit" action opening a dialog to correct the date, mileage, cost, vendor, notes, and items list of a past record, without needing to delete and re-log it.
+- **Maintenance history filters** — the history page gained search (part name, brand, product, part number, notes), plus vehicle, category, and date-range filters, all reflected in the URL.
+- **New Notes module** — a dedicated "Notes" item in the sidebar opens a full notes manager: create/edit/delete, search title+content, filter by vehicle/tag/pinned, pin favorites, comma-separated tags, and created/updated timestamps. The editor uses the same Markdown editor as maintenance notes. New `Note` and `NoteTag` models, owned per-user.
+- **Notes linking** — a note can be global, or linked to a vehicle, a maintenance type, and/or a specific maintenance record (independently combinable). "Related notes" widgets now appear on the vehicle page and on a maintenance schedule's detail page, pre-filtered to notes relevant to that context, with a "New note" shortcut that pre-links the right vehicle/type.
+- Vehicle hub page gained a "Notes" tile showing the linked note count for that vehicle.
+
+### Database
+
+- New enums `MaintenanceItemCategory`, `MaintenanceItemUnit`.
+- New models: `MaintenanceItem` (on `MaintenanceRecord`), `MaintenanceItemDefault` (on `VehicleMaintenanceSchedule`), `Note`, `NoteTag` (both owned by `User`, optionally linked to `Vehicle` / `MaintenanceTemplate` / `MaintenanceRecord`).
+- Migration `20260701203533_maintenance_items_and_notes` — purely additive (new tables/indexes only); existing vehicles, schedules, and maintenance records are untouched and continue to display normally with an empty items/notes list.
+
+### Notes
+
+- All new server actions and repository queries scope reads/writes to the authenticated user's own vehicles, schedules, records, notes, and tags — a user can never read or modify another user's data (covered by a scripted ownership-isolation test).
+- No changes to the notification system's logic; "soon due"/"overdue" thresholds, mileage/date interval computation, and de-duplication are unaffected by this feature.
+- All new UI text was added to both `messages/en.json` and `messages/de.json`.
+
+## [0.5.2] - 2026-07-02
+
+### Fixed
+
+- **"This page couldn't load" crash after a stale/invalid session cookie** — if the session cookie referenced a session that no longer existed in the database (e.g. after a `/data` restore, DB reset, or a deactivated account), the app threw an uncaught `UNAUTHORIZED` error while rendering the page. With no error boundary anywhere in the app, this bubbled up to Next.js's generic fatal error page — the only fix was manually deleting cookies. Added `app/[locale]/error.tsx` and `app/global-error.tsx` boundaries: auth errors now automatically clear the stale cookie (via a Server Action, `recoverFromInvalidSession`) and redirect to `/login` with a "Your session has expired, please sign in again" notice; any other unexpected error shows a friendly "try again" card instead of the raw framework error page.
+- **Malformed/corrupted session cookies rejected before they reach the database** — `middleware.ts` and `getSessionTokenFromCookies()` now validate that the `sg_session` cookie value matches the exact shape a real session token can have (64 lowercase hex characters). Garbage, truncated, JSON-injected, or otherwise corrupted cookie values are treated as "logged out" and cleared immediately instead of being handed to a database lookup.
+- **Defensive fallback for corrupted preference values** — `UserPreferences` rows read from the database (theme, locale, currency, design preset) are now validated against known allow-lists and fall back to sane defaults instead of being cast blindly, matching how localStorage/cookie preference values were already handled.
+
+### Added
+
+- Safe, low-cardinality server-side logging (`[auth] session rejected: …`) for stale/orphaned/expired sessions and deactivated-user logins — logs the reason and route only, never the cookie/token value or other sensitive data.
+- Unit tests (new `vitest` setup) covering the session token validator, the preference sanitizers, and maintenance-threshold clamping; wired into CI as a new `Unit tests` step.
+- `SESSION_COOKIE_SECURE` documented in `docs/INSTALL.md` with concrete guidance for local IP + Cloudflare/reverse-proxy access.
+
+### Notes
+
+- **No database migration required.** User preferences (theme, locale, notification settings, maintenance thresholds, etc.) were already stored in the database (`UserPreferences`, `UserNotificationSettings`), keyed by user, not in cookies — confirmed during this audit. The only cookie in the app is the `sg_session` auth cookie.
+- **No user action required.** Existing valid sessions are unaffected; only sessions that were already broken (and previously required a manual cookie deletion) now recover automatically.
+
 ## [0.5.1] - 2026-07-01
 
 ### Added

@@ -41,8 +41,34 @@ Or from this repo: `docker compose up -d` (see [docker-compose.yml](../docker-co
 | `MAX_UPLOAD_SIZE_MB` | `25` | Document upload limit |
 | `MAX_IMAGE_SIZE_MB` | `10` | Vehicle image limit |
 | `NODE_ENV` | `production` | Do not change |
+| `SESSION_COOKIE_SECURE` | unset | Session cookie `Secure` flag — see below |
 
 Set in the Unraid template UI or in `docker-compose.yml`.
+
+### Reverse proxy / Cloudflare / custom domain
+
+Smart Garage keeps `/data` (SQLite + uploads) as the **only** persistent state.
+There is no `AUTH_SECRET`/`SESSION_SECRET` to configure — login sessions are a
+random opaque token stored in the database, not a signed/encrypted cookie, so
+there is nothing that can "rotate" and invalidate every session on restart.
+
+`SESSION_COOKIE_SECURE` controls the cookie's `Secure` attribute:
+
+- **Unset (default):** works for both plain `http://` (local IP / LAN) and
+  `https://` (reverse proxy) access — browsers accept non-`Secure` cookies
+  over HTTPS too. Use this if you access Smart Garage both locally over HTTP
+  and remotely over HTTPS.
+- `SESSION_COOKIE_SECURE=true`: forces the `Secure` flag. Use this if the app
+  is **only** ever reached over HTTPS (e.g. exclusively through Cloudflare).
+- `SESSION_COOKIE_SECURE=auto`: sets `Secure` only when the reverse proxy
+  forwards `X-Forwarded-Proto: https`. Make sure your proxy (Cloudflare
+  Tunnel, Nginx Proxy Manager, Traefik, etc.) sets this header.
+
+If the app ever shows a generic error page after visiting through a new
+domain or after a database restore, it self-recovers automatically: the
+stale/incompatible session cookie is cleared and you're redirected to the
+login page with a "session expired" notice — no manual cookie deletion
+should ever be required. See [`CHANGELOG.md`](../CHANGELOG.md) for details.
 
 ## Health check
 

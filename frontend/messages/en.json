@@ -11,6 +11,7 @@
     "maintenance": "Maintenance",
     "history": "History",
     "documents": "Documents",
+    "notes": "Notes",
     "expenses": "Expenses",
     "costs": "Cost overview",
     "fuel": "Fuel",
@@ -330,9 +331,14 @@
     "cost": "Cost (€)",
     "vendor": "Workshop / vendor",
     "saveIntervals": "Save intervals",
+    "saveChanges": "Save changes",
     "saving": "Saving…",
     "dueInDays": "in {days} days",
     "dueInKm": "in {km} km",
+    "edit": "Edit",
+    "editRecord": "Edit service record",
+    "notePlaceholder": "What was done, parts used, observations, next steps…",
+    "saveAsDefault": "Remember these parts/fluids as defaults for this service type",
     "status": {
       "OK": "OK",
       "DUE_SOON": "Due soon",
@@ -347,6 +353,80 @@
       "INSPECTION": "Inspection",
       "ADDITIVE": "Additive",
       "OTHER": "Other"
+    },
+    "items": {
+      "title": "Used parts & fluids",
+      "hint": "Add the exact oil, filters, or parts used — quantities and part numbers are saved with this record.",
+      "empty": "No parts or fluids added yet.",
+      "category": "Category",
+      "name": "Name",
+      "namePlaceholder": "Leave blank to use category name",
+      "brand": "Brand",
+      "productName": "Product name",
+      "partNumber": "Part number",
+      "specification": "Specification",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "customUnit": "Custom unit",
+      "cost": "Cost (€)",
+      "supplier": "Supplier / shop",
+      "itemNotes": "Notes",
+      "addItem": "Add item",
+      "addCustomItem": "Add custom item",
+      "remove": "Remove",
+      "categories": {
+        "ENGINE_OIL": "Engine oil",
+        "OIL_FILTER": "Oil filter",
+        "AIR_FILTER": "Air filter",
+        "CABIN_FILTER": "Cabin filter",
+        "FUEL_FILTER": "Fuel filter",
+        "SPARK_PLUGS": "Spark plugs",
+        "GLOW_PLUGS": "Glow plugs",
+        "BRAKE_FLUID": "Brake fluid",
+        "COOLANT": "Coolant",
+        "TRANSMISSION_OIL": "Transmission oil",
+        "DSG_OIL": "DSG oil",
+        "DIFFERENTIAL_OIL": "Differential oil",
+        "BRAKE_PADS": "Brake pads",
+        "BRAKE_DISCS": "Brake discs",
+        "BRAKE_SENSOR": "Brake sensor",
+        "TIRES": "Tires",
+        "WIPERS": "Wiper blades",
+        "BATTERY": "Battery",
+        "BELT": "Belt",
+        "GASKET": "Gasket / seal",
+        "OTHER": "Custom item"
+      },
+      "units": {
+        "LITERS": "Liters",
+        "MILLILITERS": "Milliliters",
+        "PIECES": "Pieces",
+        "SETS": "Sets",
+        "KG": "Kilograms",
+        "GRAMS": "Grams",
+        "CUSTOM": "Custom"
+      },
+      "unitsShort": {
+        "LITERS": "L",
+        "MILLILITERS": "ml",
+        "PIECES": "pcs",
+        "SETS": "sets",
+        "KG": "kg",
+        "GRAMS": "g",
+        "CUSTOM": ""
+      }
+    },
+    "defaults": {
+      "title": "Default parts & fluids",
+      "hint": "Set once — new service entries for this schedule prefill automatically. Editing a default never changes past records.",
+      "manage": "Manage defaults",
+      "hide": "Hide",
+      "save": "Save defaults",
+      "saving": "Saving…",
+      "saved": "Defaults saved",
+      "clear": "Clear defaults",
+      "clearing": "Clearing…",
+      "count": "{count, plural, one {# default} other {# defaults}}"
     },
     "detail": {
       "back": "Back to maintenance",
@@ -380,7 +460,86 @@
     "latest": "Latest",
     "odometer": "Odometer",
     "cost": "Cost",
-    "vendor": "Workshop"
+    "vendor": "Workshop",
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search parts, oil, filters, notes…",
+      "vehicle": "Vehicle",
+      "allVehicles": "All vehicles",
+      "category": "Category",
+      "allCategories": "All categories",
+      "fromDate": "From",
+      "toDate": "To",
+      "clearFilters": "Clear filters"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Checklists, ideas, and reminders — linked to a vehicle or maintenance type if you like",
+    "newNote": "New note",
+    "back": "Back to notes",
+    "noContent": "No content yet",
+    "updatedAt": "Updated {date}",
+    "pin": "Pin note",
+    "unpin": "Unpin note",
+    "empty": {
+      "title": "No notes yet",
+      "subtitle": "Create your first note — jot down torque specs, parts to buy, or anything worth remembering."
+    },
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search notes…",
+      "vehicle": "Vehicle",
+      "allVehicles": "All vehicles",
+      "tag": "Tag",
+      "allTags": "All tags",
+      "pinnedOnly": "Pinned only",
+      "clearFilters": "Clear filters"
+    },
+    "related": {
+      "title": "Related notes",
+      "subtitle": "Notes linked to this vehicle or service type",
+      "empty": "No related notes yet.",
+      "newNote": "New note"
+    },
+    "editor": {
+      "newSubtitle": "Create a note and optionally link it to a vehicle or maintenance type.",
+      "editSubtitle": "Edit note details, links, and content.",
+      "title": "Title",
+      "titlePlaceholder": "e.g. Scirocco oil change info",
+      "vehicle": "Vehicle",
+      "noVehicle": "No vehicle (global note)",
+      "maintenanceType": "Maintenance type",
+      "noMaintenanceType": "No maintenance type",
+      "tags": "Tags",
+      "tagsPlaceholder": "torque, parts, tuning…",
+      "tagsHint": "Separate tags with commas.",
+      "pin": "Pin this note",
+      "content": "Content",
+      "contentPlaceholder": "Write your note using headings, lists, bold/italic…",
+      "save": "Save note",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "delete": "Delete note",
+      "deleteTitle": "Delete note?",
+      "deleteDescription": "\"{title}\" will be permanently deleted. This cannot be undone.",
+      "deleteConfirm": "Delete",
+      "deleting": "Deleting…",
+      "toolbar": {
+        "write": "Write",
+        "preview": "Preview",
+        "heading": "Heading",
+        "bold": "Bold",
+        "italic": "Italic",
+        "bulletList": "Bullet list",
+        "numberedList": "Numbered list",
+        "link": "Link",
+        "selectionPlaceholder": "text",
+        "linkText": "link text",
+        "emptyPreview": "Nothing to preview yet.",
+        "hint": "Supports headings (###), **bold**, *italic*, lists, and [links](https://…)."
+      }
+    }
   },
   "documents": {
     "title": "Documents",
@@ -533,6 +692,10 @@
         "fuel": {
           "title": "Fuel tracking",
           "description": "Fill-ups, consumption, and fuel costs"
+        },
+        "notes": {
+          "title": "Notes",
+          "description": "Ideas, checklists, and reminders for this vehicle"
         },
         "reminders": {
           "title": "Reminders",
@@ -778,6 +941,7 @@
     "loginLink": "Sign in",
     "signOut": "Sign out",
     "admin": "User management",
+    "sessionExpiredNotice": "Your session has expired. Please sign in again.",
     "errors": {
       "invalidUsername": "Invalid username",
       "passwordTooShort": "Password must be at least 8 characters",
@@ -971,5 +1135,12 @@
       "usernameTaken": "Username taken",
       "failed": "Failed"
     }
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "This page hit an unexpected error. You can try again or head back to your dashboard.",
+    "reload": "Try again",
+    "goHome": "Go to dashboard",
+    "sessionExpiredDescription": "Your session is no longer valid. Redirecting you to sign in…"
   }
 }

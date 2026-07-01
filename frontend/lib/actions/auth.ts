@@ -11,6 +11,11 @@ import {
   createUserByAdmin,
 } from "@/lib/services/auth";
 import { requireAdmin } from "@/lib/auth/current-user";
+import {
+  clearSessionCookie,
+  deleteSession,
+  getSessionTokenFromCookies,
+} from "@/lib/auth/session";
 
 export type AuthActionResult = {
   ok: boolean;
@@ -71,6 +76,25 @@ export async function logoutAction() {
   await logoutUser();
   const locale = await getLocale();
   redirect(`/${locale}/login`);
+}
+
+/**
+ * Called by the client-side error boundary (`app/[locale]/error.tsx`) when a
+ * page render fails with an auth error (UNAUTHORIZED/FORBIDDEN). Server
+ * Actions are the only place outside route handlers that are allowed to
+ * mutate cookies, so this is how a stale/invalid session cookie gets
+ * cleared automatically before the user is sent back to the login page —
+ * they never need to know cookies were involved.
+ */
+export async function recoverFromInvalidSession(): Promise<void> {
+  try {
+    const token = await getSessionTokenFromCookies();
+    if (token) {
+      await deleteSession(token).catch(() => {});
+    }
+  } finally {
+    await clearSessionCookie();
+  }
 }
 
 export async function toggleUserActiveAction(

@@ -4,19 +4,26 @@ import { revalidatePath } from "next/cache";
 import { getLocale } from "next-intl/server";
 import type { Locale } from "@/lib/i18n/routing";
 import {
+  clearScheduleItemDefaults,
   createMaintenanceSchedule,
   deleteMaintenanceSchedule,
   logMaintenanceService,
   applyWarningSetup,
+  saveScheduleItemDefaults,
+  updateMaintenanceRecord,
   updateMaintenanceSchedule,
 } from "@/lib/services/maintenance";
 import {
+  clearScheduleDefaultsSchema,
   createScheduleSchema,
   logMaintenanceSchema,
+  saveScheduleDefaultsSchema,
   setupWarningSchema,
+  updateMaintenanceRecordSchema,
   updateScheduleSchema,
   type SetupWarningInput,
 } from "@/lib/validations/maintenance";
+import { parseItemsJson } from "@/lib/validations/maintenance-items";
 
 export type MaintenanceActionResult = {
   ok: boolean;
@@ -113,9 +120,11 @@ export async function logMaintenanceAction(
       currency: formData.get("currency") || undefined,
       vendorName: formData.get("vendorName") || undefined,
       note: formData.get("note") || undefined,
+      saveAsDefault: formData.get("saveAsDefault") || undefined,
     });
+    const items = parseItemsJson(formData.get("itemsJson"));
 
-    await logMaintenanceService(parsed);
+    await logMaintenanceService(parsed, items);
     revalidateMaintenancePaths(
       formData.get("vehicleId")?.toString(),
       parsed.scheduleId,
@@ -125,6 +134,74 @@ export async function logMaintenanceAction(
     return {
       ok: false,
       error: error instanceof Error ? error.message : "Failed to log service",
+    };
+  }
+}
+
+export async function updateMaintenanceRecordAction(
+  _prev: MaintenanceActionResult | null,
+  formData: FormData,
+): Promise<MaintenanceActionResult> {
+  try {
+    const parsed = updateMaintenanceRecordSchema.parse({
+      recordId: formData.get("recordId"),
+      performedAt: formData.get("performedAt"),
+      odometerKm: formData.get("odometerKm") || undefined,
+      costCents: formData.get("costEuros") || undefined,
+      currency: formData.get("currency") || undefined,
+      vendorName: formData.get("vendorName") || undefined,
+      note: formData.get("note") || undefined,
+      saveAsDefault: formData.get("saveAsDefault") || undefined,
+    });
+    const items = parseItemsJson(formData.get("itemsJson"));
+
+    await updateMaintenanceRecord(parsed, items);
+    revalidateMaintenancePaths(
+      formData.get("vehicleId")?.toString(),
+      formData.get("scheduleId")?.toString(),
+    );
+    revalidatePath("/notes");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Failed to update record",
+    };
+  }
+}
+
+export async function saveScheduleDefaultsAction(
+  _prev: MaintenanceActionResult | null,
+  formData: FormData,
+): Promise<MaintenanceActionResult> {
+  try {
+    const items = parseItemsJson(formData.get("itemsJson"));
+    const parsed = saveScheduleDefaultsSchema.parse({
+      scheduleId: formData.get("scheduleId"),
+      items,
+    });
+
+    await saveScheduleItemDefaults(parsed);
+    revalidateMaintenancePaths(undefined, parsed.scheduleId);
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Failed to save defaults",
+    };
+  }
+}
+
+export async function clearScheduleDefaultsAction(scheduleId: string) {
+  try {
+    const parsed = clearScheduleDefaultsSchema.parse({ scheduleId });
+    await clearScheduleItemDefaults(parsed.scheduleId);
+    revalidateMaintenancePaths(undefined, parsed.scheduleId);
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Failed to clear defaults",
     };
   }
 }
