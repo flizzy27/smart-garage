@@ -13,7 +13,12 @@ export type UserSettings = {
   currency: CurrencyCode;
   designPreset: DesignPresetId;
   backgroundBlurPx: number;
+  maintenanceDueSoonKm: number;
+  maintenanceDueSoonDays: number;
 };
+
+export const DEFAULT_MAINTENANCE_DUE_SOON_KM = 1500;
+export const DEFAULT_MAINTENANCE_DUE_SOON_DAYS = 30;
 
 export const DEFAULT_SETTINGS: UserSettings = {
   theme: "system",
@@ -22,7 +27,25 @@ export const DEFAULT_SETTINGS: UserSettings = {
   currency: "EUR",
   designPreset: DEFAULT_DESIGN_PRESET,
   backgroundBlurPx: DEFAULT_BACKGROUND_BLUR_PX,
+  maintenanceDueSoonKm: DEFAULT_MAINTENANCE_DUE_SOON_KM,
+  maintenanceDueSoonDays: DEFAULT_MAINTENANCE_DUE_SOON_DAYS,
 };
+
+/** Suggested presets for the "soon due" mileage warning (km). */
+export const MAINTENANCE_DUE_SOON_KM_OPTIONS = [250, 500, 750, 1000, 1500, 2000] as const;
+
+/** Suggested presets for the "soon due" date warning (days). */
+export const MAINTENANCE_DUE_SOON_DAYS_OPTIONS = [7, 14, 30, 60, 90] as const;
+
+export function clampMaintenanceDueSoonKm(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_MAINTENANCE_DUE_SOON_KM;
+  return Math.min(50_000, Math.max(0, Math.round(value)));
+}
+
+export function clampMaintenanceDueSoonDays(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_MAINTENANCE_DUE_SOON_DAYS;
+  return Math.min(365, Math.max(0, Math.round(value)));
+}
 
 export const TIMEZONE_OPTIONS = [
   "Europe/Berlin",

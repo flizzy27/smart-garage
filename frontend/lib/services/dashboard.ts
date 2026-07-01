@@ -12,18 +12,20 @@ import {
 } from "@/lib/repositories/maintenance";
 import { computeNextDue } from "@/lib/maintenance/scheduler";
 import { scheduleDisplayName } from "@/lib/maintenance/display";
+import { getMaintenanceThresholds } from "@/lib/repositories/preferences";
 import { maybeSendMaintenanceAlerts } from "@/lib/services/notifications";
 
 export const getDashboardStats = cache(async () => {
   const ownerUserId = await getCurrentUserId();
   const locale = (await getLocale()) as Locale;
 
-  const [primaryVehicle, expenses, dueSoonCount, upcomingMaintenance] =
+  const [primaryVehicle, expenses, dueSoonCount, upcomingMaintenance, thresholds] =
     await Promise.all([
       getPrimaryVehicleForOwner(ownerUserId),
       getMonthlyExpenseSummary(ownerUserId),
       countDueSchedulesForOwner(ownerUserId),
       getUpcomingSchedulesForOwner(ownerUserId, locale, 8),
+      getMaintenanceThresholds(ownerUserId),
     ]);
 
   void maybeSendMaintenanceAlerts(ownerUserId, locale);
@@ -40,6 +42,8 @@ export const getDashboardStats = cache(async () => {
           odometerKm: schedule.lastOdometerKm,
         },
         primaryVehicle.currentOdometerKm,
+        new Date(),
+        thresholds,
       );
 
       return {

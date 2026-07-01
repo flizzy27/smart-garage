@@ -1,18 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { formatIntervalLabel } from "@/lib/maintenance/display";
 import type { SerializedSchedule } from "@/lib/repositories/maintenance";
-
-const statusStyles = {
-  OVERDUE: "border-danger/40 bg-danger-muted/20",
-  DUE_SOON: "border-warning/40 bg-warning-muted/20",
-  OK: "border-border bg-card",
-} as const;
-
-const statusText = {
-  OVERDUE: "text-danger",
-  DUE_SOON: "text-warning",
-  OK: "text-success",
-} as const;
+import {
+  MAINTENANCE_STATUS_CARD_CLASS,
+  MAINTENANCE_STATUS_TEXT_CLASS,
+} from "@/lib/maintenance/status-style";
 
 type Props = {
   schedule: SerializedSchedule;
@@ -23,11 +15,10 @@ type Props = {
 export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Props) {
   const t = await getTranslations("maintenance");
   const tDetail = await getTranslations("maintenance.detail");
-  const tone = schedule.dueStatus as keyof typeof statusStyles;
 
   return (
     <section
-      className={`rounded-xl border p-5 shadow-sm ${statusStyles[tone] ?? statusStyles.OK}`}
+      className={`rounded-xl border p-5 shadow-sm ${MAINTENANCE_STATUS_CARD_CLASS[schedule.dueStatus]}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -47,7 +38,9 @@ export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Pr
           </p>
         </div>
         <div className="text-right">
-          <p className={`text-sm font-bold ${statusText[tone] ?? statusText.OK}`}>
+          <p
+            className={`text-sm font-bold ${MAINTENANCE_STATUS_TEXT_CLASS[schedule.dueStatus]}`}
+          >
             {t(`status.${schedule.dueStatus}`)}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">

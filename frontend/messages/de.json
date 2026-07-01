@@ -134,6 +134,16 @@
         "title": "Darstellung",
         "description": "Design und Anzeigeoptionen"
       },
+      "maintenance": {
+        "title": "Wartungserinnerungen",
+        "description": "Legen Sie fest, wie früh ein Service als „Bald fällig“ markiert wird, bevor er überfällig ist.",
+        "dueSoonKm": "Kilometer-Warnung",
+        "dueSoonKmHint": "Einen Service als bald fällig markieren, sobald er innerhalb dieser Kilometerzahl zum nächsten Intervall liegt.",
+        "dueSoonDays": "Zeit-Warnung",
+        "dueSoonDaysHint": "Einen Service als bald fällig markieren, sobald er innerhalb dieser Anzahl von Tagen zum nächsten Intervall liegt.",
+        "unitKm": "km",
+        "unitDays": "Tage"
+      },
       "design": {
         "title": "Design-Vorlage",
         "description": "Farbthemen für Sidebar und Akzente",
@@ -238,7 +248,7 @@
         "eventMaintenanceOverdue": "Wartung überfällig",
         "eventMaintenanceOverdueHint": "Wenn ein Service über Datum oder Kilometerstand fällig ist",
         "eventMaintenanceDueSoon": "Wartung bald fällig",
-        "eventMaintenanceDueSoonHint": "Innerhalb von 30 Tagen oder 1.500 km zum nächsten Service",
+        "eventMaintenanceDueSoonHint": "Wenn sich ein Service Ihrer konfigurierten Warnschwelle nähert",
         "eventMaintenanceLogged": "Service erfasst",
         "eventMaintenanceLoggedHint": "Demnächst — wenn ein Service eingetragen wird",
         "eventExpenseAdded": "Neue Ausgabe",

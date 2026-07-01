@@ -17,6 +17,7 @@ import {
   listAllRecordsForOwner,
   listRecordsForSchedule,
 } from "@/lib/repositories/maintenance-records";
+import { getMaintenanceThresholds } from "@/lib/repositories/preferences";
 import type { Locale } from "@/lib/i18n/routing";
 import type {
   CreateScheduleInput,
@@ -32,7 +33,8 @@ import { prisma } from "@/lib/prisma";
 
 export async function getMaintenancePageData(locale: Locale) {
   const ownerUserId = await getCurrentUserId();
-  await refreshAllScheduleDueStatuses(ownerUserId);
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
+  await refreshAllScheduleDueStatuses(ownerUserId, thresholds);
   const [templates, schedules] = await Promise.all([
     listMaintenanceTemplates(),
     listSchedulesForOwner(ownerUserId),
@@ -40,20 +42,21 @@ export async function getMaintenancePageData(locale: Locale) {
 
   return {
     templates,
-    schedules: schedules.map((s) => serializeSchedule(s, locale)),
+    schedules: schedules.map((s) => serializeSchedule(s, locale, thresholds)),
   };
 }
 
 export async function getScheduleDetailData(scheduleId: string, locale: Locale) {
   const ownerUserId = await getCurrentUserId();
-  await refreshScheduleDueStatus(prisma, scheduleId);
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
+  await refreshScheduleDueStatus(prisma, scheduleId, thresholds);
   const schedule = await findScheduleById(scheduleId, ownerUserId);
   if (!schedule) return null;
 
   const records = await listRecordsForSchedule(scheduleId, ownerUserId, locale);
 
   return {
-    schedule: serializeSchedule(schedule, locale),
+    schedule: serializeSchedule(schedule, locale, thresholds),
     records,
     currentOdometerKm: schedule.vehicle.currentOdometerKm,
   };
@@ -73,6 +76,7 @@ export async function getVehicleMaintenanceData(vehicleId: string, locale: Local
   });
   if (!vehicle) return null;
 
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
   const [templates, schedules] = await Promise.all([
     listMaintenanceTemplates(),
     listSchedulesForVehicle(vehicleId),
@@ -81,7 +85,7 @@ export async function getVehicleMaintenanceData(vehicleId: string, locale: Local
   return {
     vehicle,
     templates,
-    schedules: schedules.map((s) => serializeSchedule(s, locale)),
+    schedules: schedules.map((s) => serializeSchedule(s, locale, thresholds)),
   };
 }
 
@@ -163,6 +167,7 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
     ? new Date(input.lastPerformedAt)
     : null;
 
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
   const computed = computeNextDue(
     { intervalKm, intervalMonths },
     {
@@ -170,6 +175,8 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
       odometerKm: input.lastOdometerKm ?? null,
     },
     vehicle.currentOdometerKm,
+    new Date(),
+    thresholds,
   );
 
   const schedule = await prisma.vehicleMaintenanceSchedule.create({
@@ -224,10 +231,13 @@ export async function updateMaintenanceSchedule(input: UpdateScheduleInput) {
       ? input.lastOdometerKm
       : schedule.lastOdometerKm;
 
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
   const computed = computeNextDue(
     { intervalKm, intervalMonths },
     { performedAt: lastPerformedAt, odometerKm: lastOdometerKm },
     schedule.vehicle.currentOdometerKm,
+    new Date(),
+    thresholds,
   );
 
   await prisma.vehicleMaintenanceSchedule.update({
@@ -296,7 +306,11 @@ export async function logMaintenanceService(input: LogMaintenanceInput) {
     return created;
   });
 
-  await refreshScheduleDueStatus(prisma, schedule.id);
+  await refreshScheduleDueStatus(
+    prisma,
+    schedule.id,
+    await getMaintenanceThresholds(ownerUserId),
+  );
 
   if (costCents > 0) {
     const { createExpenseFromMaintenance } = await import("@/lib/services/expenses");

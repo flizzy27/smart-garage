@@ -23,6 +23,10 @@ import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { ScheduleIntervalForm } from "@/components/maintenance/ScheduleIntervalForm";
+import {
+  MAINTENANCE_STATUS_CARD_CLASS,
+  MAINTENANCE_STATUS_TEXT_CLASS,
+} from "@/lib/maintenance/status-style";
 
 type Template = {
   id: string;
@@ -49,12 +53,6 @@ type Props = {
   templates: Template[];
   vehicles: VehicleOption[];
   defaultVehicleId?: string;
-};
-
-const statusStyles = {
-  OVERDUE: "border-danger/40 bg-danger-muted/40",
-  DUE_SOON: "border-warning/40 bg-warning-muted/30",
-  OK: "border-border bg-card",
 };
 
 export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicleId }: Props) {
@@ -261,11 +259,10 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
   const t = useTranslations("maintenance");
   const locale = useLocale();
   const [editing, setEditing] = useState(false);
-  const tone = schedule.dueStatus as keyof typeof statusStyles;
 
   return (
     <article
-      className={`rounded-xl border p-4 transition ${statusStyles[tone] ?? statusStyles.OK}`}
+      className={`rounded-xl border p-4 transition ${MAINTENANCE_STATUS_CARD_CLASS[schedule.dueStatus]}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <Link href={`/maintenance/${schedule.id}`} className="min-w-0 flex-1">
@@ -284,13 +281,7 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
         </Link>
         <div className="text-right">
           <p
-            className={`text-sm font-bold ${
-              schedule.dueStatus === "OVERDUE"
-                ? "text-danger"
-                : schedule.dueStatus === "DUE_SOON"
-                  ? "text-warning"
-                  : "text-success"
-            }`}
+            className={`text-sm font-bold ${MAINTENANCE_STATUS_TEXT_CLASS[schedule.dueStatus]}`}
           >
             {t(`status.${schedule.dueStatus}`)}
           </p>

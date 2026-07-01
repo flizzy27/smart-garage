@@ -9,6 +9,23 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.5.0] - 2026-07-01
+
+### Added
+
+- **Configurable "Soon due" warning thresholds** — the mileage warning (km) and date warning (days) that flip a service into the yellow "Soon due" state are now editable per user under **Settings → General → Maintenance reminders**. Presets (250/500/750/1000/1500/2000 km and 7/14/30/60/90 days) are offered, plus any custom value. Previously these were hardcoded at 30 days / 1,500 km.
+- **`getMaintenanceThresholds()`** — lightweight per-user threshold lookup, threaded through the scheduler, repositories, services, and dashboard so status is computed consistently against the user's own settings.
+
+### Changed
+
+- **Centralized maintenance status styling** — all status colors (green OK / yellow Soon due / red Overdue) now come from a single `lib/maintenance/status-style.ts` module. The dashboard cards, maintenance board, schedule detail header, and reminders panel previously each carried their own duplicated color tables; they now share one source of truth for consistent colors everywhere.
+- **Scheduler** — `computeNextDue()` and `resolveDueStatus()` accept configurable thresholds (defaulting to the previous 30 days / 1,500 km for backward compatibility).
+- **Notifications** — the "Maintenance due soon" event hint now refers to the user's configured warning threshold instead of a fixed "30 days / 1,500 km".
+
+### Database
+
+- `UserPreferences` gains `maintenanceDueSoonKm` (default 1500) and `maintenanceDueSoonDays` (default 30). Migration `20260701192351_maintenance_due_soon_thresholds`.
+
 ## [0.4.8] - 2026-06-30
 
 ### Fixed

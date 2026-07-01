@@ -18,8 +18,16 @@ export type ComputedDue = {
   dueInKm: number | null;
 };
 
-const DUE_SOON_DAYS = 30;
-const DUE_SOON_KM = 1500;
+/** Warning window before a service becomes overdue. Configurable per user. */
+export type MaintenanceThresholds = {
+  dueSoonDays: number;
+  dueSoonKm: number;
+};
+
+export const DEFAULT_MAINTENANCE_THRESHOLDS: MaintenanceThresholds = {
+  dueSoonDays: 30,
+  dueSoonKm: 1500,
+};
 
 export function addMonths(date: Date, months: number): Date {
   const result = new Date(date);
@@ -32,6 +40,7 @@ export function computeNextDue(
   last: LastService,
   currentOdometerKm: number,
   referenceDate: Date = new Date(),
+  thresholds: MaintenanceThresholds = DEFAULT_MAINTENANCE_THRESHOLDS,
 ): ComputedDue {
   let nextDueAt: Date | null = null;
   let nextDueOdometerKm: number | null = null;
@@ -57,7 +66,7 @@ export function computeNextDue(
       ? nextDueOdometerKm - currentOdometerKm
       : null;
 
-  const dueStatus = resolveDueStatus(dueInDays, dueInKm);
+  const dueStatus = resolveDueStatus(dueInDays, dueInKm, thresholds);
 
   return {
     nextDueAt,
@@ -71,11 +80,14 @@ export function computeNextDue(
 export function resolveDueStatus(
   dueInDays: number | null,
   dueInKm: number | null,
+  thresholds: MaintenanceThresholds = DEFAULT_MAINTENANCE_THRESHOLDS,
 ): MaintenanceDueStatus {
   const timeOverdue = dueInDays != null && dueInDays < 0;
-  const timeDueSoon = dueInDays != null && dueInDays >= 0 && dueInDays <= DUE_SOON_DAYS;
+  const timeDueSoon =
+    dueInDays != null && dueInDays >= 0 && dueInDays <= thresholds.dueSoonDays;
   const kmOverdue = dueInKm != null && dueInKm < 0;
-  const kmDueSoon = dueInKm != null && dueInKm >= 0 && dueInKm <= DUE_SOON_KM;
+  const kmDueSoon =
+    dueInKm != null && dueInKm >= 0 && dueInKm <= thresholds.dueSoonKm;
 
   if (timeOverdue || kmOverdue) return "OVERDUE";
   if (timeDueSoon || kmDueSoon) return "DUE_SOON";

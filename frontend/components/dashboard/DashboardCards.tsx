@@ -7,24 +7,11 @@ import { DashboardOdometerUpdate } from "@/components/vehicles/VehicleExtras";
 import { formatCurrency } from "@/lib/regional/format";
 import { getVehicleImageUrl } from "@/lib/vehicles/serialize";
 import { getDashboardStats } from "@/lib/services/dashboard";
-
-function urgencyTone(dueStatus: string): "danger" | "warning" | "neutral" {
-  if (dueStatus === "OVERDUE") return "danger";
-  if (dueStatus === "DUE_SOON") return "warning";
-  return "neutral";
-}
-
-const urgencyBadgeClass = {
-  danger: "bg-danger-muted text-danger ring-1 ring-danger/20",
-  warning: "bg-warning-muted text-warning ring-1 ring-warning/20",
-  neutral: "bg-muted text-muted-foreground",
-};
-
-const urgencyCardClass = {
-  danger: "border-danger/30 bg-danger-muted/30",
-  warning: "border-warning/30 bg-warning-muted/20",
-  neutral: "border-border",
-};
+import type { MaintenanceDueStatus } from "@prisma/client";
+import {
+  MAINTENANCE_STATUS_BADGE_CLASS,
+  MAINTENANCE_STATUS_CARD_CLASS,
+} from "@/lib/maintenance/status-style";
 
 export async function PrimaryVehicleCard({ locale }: { locale: string }) {
   const t = await getTranslations("dashboard.primaryVehicle");
@@ -160,7 +147,6 @@ export async function PrimaryVehicleCard({ locale }: { locale: string }) {
 export async function DueSoonCard() {
   const t = await getTranslations("dashboard.dueSoon");
   const { dueSoonCount } = await getDashboardStats();
-  const tone = dueSoonCount > 0 ? "danger" : "neutral";
 
   return (
     <StatCard
@@ -168,7 +154,9 @@ export async function DueSoonCard() {
       value={dueSoonCount}
       detail={t("description")}
       icon={IconMaintenance}
-      className={dueSoonCount > 0 ? urgencyCardClass[tone] : undefined}
+      className={
+        dueSoonCount > 0 ? MAINTENANCE_STATUS_CARD_CLASS.OVERDUE : undefined
+      }
     />
   );
 }
@@ -220,12 +208,12 @@ export async function UpcomingMaintenanceCard() {
           </p>
         ) : (
           upcomingMaintenance.map((item) => {
-            const tone = urgencyTone(item.dueStatus);
+            const dueStatus = item.dueStatus as MaintenanceDueStatus;
             return (
               <Link
                 key={item.id}
                 href={`/maintenance/${item.id}#log-service`}
-                className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 transition hover:shadow-md ${urgencyCardClass[tone]}`}
+                className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 transition hover:shadow-md ${MAINTENANCE_STATUS_CARD_CLASS[dueStatus]}`}
               >
                 <div className="min-w-0">
                   <p className="truncate font-medium text-foreground">{item.name}</p>
@@ -235,7 +223,7 @@ export async function UpcomingMaintenanceCard() {
                 </div>
                 <div className="shrink-0 text-right">
                   <span
-                    className={`inline-flex rounded-md px-2.5 py-1 text-xs font-semibold tabular-nums ${urgencyBadgeClass[tone]}`}
+                    className={`inline-flex rounded-md px-2.5 py-1 text-xs font-semibold tabular-nums ${MAINTENANCE_STATUS_BADGE_CLASS[dueStatus]}`}
                   >
                     {item.dueStatus === "OVERDUE"
                       ? t("overdue")
