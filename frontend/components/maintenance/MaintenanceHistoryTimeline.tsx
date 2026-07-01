@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { formatCurrency, formatDate } from "@/lib/regional/format";
 import { renderMarkdownToSafeHtml } from "@/lib/notes/markdown";
 import { EditMaintenanceRecordDialog } from "@/components/maintenance/EditMaintenanceRecordDialog";
+import { Dialog } from "@/components/ui/Dialog";
+import { Alert } from "@/components/ui/Alert";
+import { deleteMaintenanceRecordAction } from "@/lib/actions/maintenance";
 import type { SerializedMaintenanceRecord } from "@/lib/repositories/maintenance-records";
 
 type MaintenanceHistoryTimelineProps = {
@@ -45,7 +49,30 @@ export function MaintenanceHistoryTimeline({
   const t = useTranslations("history");
   const tMaintenance = useTranslations("maintenance");
   const locale = useLocale();
+  const router = useRouter();
   const [editingRecord, setEditingRecord] = useState<SerializedMaintenanceRecord | null>(null);
+  const [deletingRecord, setDeletingRecord] = useState<SerializedMaintenanceRecord | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deletePending, startDelete] = useTransition();
+
+  const confirmDelete = () => {
+    if (!deletingRecord) return;
+    const record = deletingRecord;
+    setDeleteError(null);
+    startDelete(async () => {
+      const result = await deleteMaintenanceRecordAction(
+        record.id,
+        record.vehicleId,
+        record.scheduleId ?? undefined,
+      );
+      if (!result.ok) {
+        setDeleteError(result.error ?? "Failed to delete record");
+        return;
+      }
+      setDeletingRecord(null);
+      router.refresh();
+    });
+  };
 
   if (records.length === 0) {
     return (
@@ -116,6 +143,16 @@ export function MaintenanceHistoryTimeline({
                     >
                       {tMaintenance("edit")}
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeleteError(null);
+                        setDeletingRecord(record);
+                      }}
+                      className="min-h-[32px] rounded-lg border border-danger/30 px-2.5 py-1 text-xs font-medium text-danger transition hover:bg-danger/10"
+                    >
+                      {tMaintenance("deleteRecord")}
+                    </button>
                   </div>
                 </div>
 
@@ -171,6 +208,20 @@ export function MaintenanceHistoryTimeline({
           onClose={() => setEditingRecord(null)}
         />
       ) : null}
+
+      <Dialog
+        open={Boolean(deletingRecord)}
+        title={tMaintenance("deleteRecordTitle")}
+        description={tMaintenance("deleteRecordConfirm")}
+        confirmLabel={deletePending ? tMaintenance("deleting") : tMaintenance("confirmDelete")}
+        cancelLabel={tMaintenance("cancel")}
+        confirmVariant="danger"
+        loading={deletePending}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeletingRecord(null)}
+      >
+        {deleteError ? <Alert variant="error">{deleteError}</Alert> : null}
+      </Dialog>
     </>
   );
 }

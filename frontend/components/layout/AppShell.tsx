@@ -29,7 +29,7 @@ export function AppShell({
             blurStyle={blurStyle}
           />
           <div
-            className={`flex min-w-0 flex-1 flex-col ${hasBackground ? "bg-surface/88" : "bg-surface"}`}
+            className={`flex min-w-0 flex-1 flex-col ${hasBackground ? "bg-surface/88" : "app-main"}`}
             style={hasBackground ? blurStyle : undefined}
           >
             <Header onMenuOpen={() => setMobileOpen(true)} blurStyle={hasBackground ? blurStyle : undefined} />

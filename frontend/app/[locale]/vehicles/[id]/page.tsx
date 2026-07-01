@@ -7,7 +7,6 @@ import { DeleteVehicleButton } from "@/components/vehicles/DeleteVehicleButton";
 import { VehicleDetailOverview } from "@/components/vehicles/VehicleDetailOverview";
 import { VehicleHubModules } from "@/components/vehicles/VehicleHubModules";
 import { VehicleDetailPanels } from "@/components/vehicles/VehicleDetailPanels";
-import { VehicleQrCode } from "@/components/vehicles/VehicleExtras";
 import { OdometerQuickUpdate } from "@/components/vehicles/OdometerQuickUpdate";
 import { RelatedNotesCard } from "@/components/notes/RelatedNotesCard";
 import { getVehicleForCurrentUser } from "@/lib/services/vehicles";
@@ -75,9 +74,8 @@ export default async function VehicleDetailPage({ params }: Props) {
         </h2>
         <div className="grid gap-6 lg:grid-cols-[1fr_auto]">
           <VehicleDetailOverview vehicle={vehicle} locale={locale} />
-          <div className="space-y-4">
-            <VehicleQrCode vehicleId={vehicle.id} vehicleName={title} />
-            {canEdit ? (
+          {canEdit ? (
+            <div className="space-y-4">
               <div className="rounded-xl border border-border bg-card p-4">
                 <OdometerQuickUpdate
                   vehicleId={vehicle.id}
@@ -85,8 +83,8 @@ export default async function VehicleDetailPage({ params }: Props) {
                   locale={locale}
                 />
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       </section>
 

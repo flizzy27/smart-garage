@@ -261,6 +261,13 @@ export async function updateVehicleForCurrentUser(
     }
 
     await upsertVehicleCurrentSpec(vehicleId, payload.currentSpec);
+    // Editing the vehicle rewrites the current spec from the form's base power,
+    // which would erase modification power gains. Re-apply modifications so the
+    // displayed "current" power stays factory + mods.
+    const { recalculateVehicleCurrentSpec } = await import(
+      "@/lib/repositories/modifications"
+    );
+    await recalculateVehicleCurrentSpec(vehicleId);
 
     const image = formData.get("image");
     if (image instanceof File && image.size > 0) {

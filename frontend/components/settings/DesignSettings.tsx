@@ -3,7 +3,11 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAppearance } from "@/providers/AppearanceProvider";
-import { DESIGN_PRESETS, type DesignPresetId } from "@/lib/theme/presets";
+import {
+  DESIGN_PRESETS,
+  MAX_BACKGROUND_BLUR_PX,
+  type DesignPresetId,
+} from "@/lib/theme/presets";
 import { saveAppearanceSettings } from "@/lib/actions/appearance";
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Label";
@@ -39,10 +43,10 @@ export function DesignPresetSettings() {
                 : "border-border hover:border-accent/40"
             }`}
           >
-            {preset.sidebarGradient ? (
+            {preset.previewGradient ? (
               <div
                 className="mb-3 h-2 rounded-full"
-                style={{ background: preset.sidebarGradient }}
+                style={{ background: preset.previewGradient }}
               />
             ) : (
               <div className="mb-3 h-2 rounded-full bg-accent" />
@@ -86,7 +90,7 @@ export function BackgroundBlurSettings({ hasBackground }: { hasBackground: boole
             id="background-blur"
             type="range"
             min={0}
-            max={24}
+            max={MAX_BACKGROUND_BLUR_PX}
             step={1}
             value={localBlur}
             onChange={(e) => setLocalBlur(Number(e.target.value))}

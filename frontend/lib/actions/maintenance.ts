@@ -6,6 +6,7 @@ import type { Locale } from "@/lib/i18n/routing";
 import {
   clearScheduleItemDefaults,
   createMaintenanceSchedule,
+  deleteMaintenanceRecordEntry,
   deleteMaintenanceSchedule,
   logMaintenanceService,
   applyWarningSetup,
@@ -166,6 +167,24 @@ export async function updateMaintenanceRecordAction(
     return {
       ok: false,
       error: error instanceof Error ? error.message : "Failed to update record",
+    };
+  }
+}
+
+export async function deleteMaintenanceRecordAction(
+  recordId: string,
+  vehicleId?: string,
+  scheduleId?: string,
+): Promise<MaintenanceActionResult> {
+  try {
+    await deleteMaintenanceRecordEntry(recordId);
+    revalidateMaintenancePaths(vehicleId, scheduleId);
+    revalidatePath("/notes");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Failed to delete record",
     };
   }
 }

@@ -124,6 +124,35 @@ export async function countRecordsForSchedule(
   });
 }
 
+/**
+ * Hard-deletes a maintenance record the user owns. Linked maintenance items
+ * cascade automatically; any auto-created expense linked to this record is
+ * removed in the same transaction so an accidental log leaves nothing behind.
+ * Notes/documents keep their history (their FK is set to null by the schema).
+ * Returns the deleted record's `scheduleId` (or null) so callers can refresh
+ * the schedule's due status.
+ */
+export async function deleteMaintenanceRecord(
+  recordId: string,
+  ownerUserId: string,
+): Promise<{ scheduleId: string | null } | null> {
+  const record = await prisma.maintenanceRecord.findFirst({
+    where: {
+      id: recordId,
+      vehicle: { ownerUserId, deletedAt: null },
+    },
+    select: { id: true, scheduleId: true },
+  });
+  if (!record) return null;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.expense.deleteMany({ where: { maintenanceRecordId: record.id } });
+    await tx.maintenanceRecord.delete({ where: { id: record.id } });
+  });
+
+  return { scheduleId: record.scheduleId };
+}
+
 export type HistoryFilters = {
   search?: string;
   vehicleId?: string;

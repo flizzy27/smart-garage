@@ -145,6 +145,12 @@
         "unitKm": "km",
         "unitDays": "days"
       },
+      "quickFuel": {
+        "title": "Quick fuel",
+        "description": "The quick fuel widget on the dashboard for fast fill-up logging",
+        "label": "Show quick fuel widget",
+        "hint": "When enabled, a collapsible quick fuel entry appears on the dashboard. It stays collapsed until you open it."
+      },
       "design": {
         "title": "Design preset",
         "description": "Color themes for sidebar and accent colors",
@@ -160,7 +166,13 @@
           "midnight": "Midnight",
           "midnightDesc": "Deep indigo and violet",
           "rose": "Rose",
-          "roseDesc": "Pink and magenta accents"
+          "roseDesc": "Pink and magenta accents",
+          "aurora": "Aurora",
+          "auroraDesc": "Teal and cyan, calm and cool",
+          "graphite": "Graphite",
+          "graphiteDesc": "Neutral slate — clean and minimal",
+          "crimson": "Crimson",
+          "crimsonDesc": "Bold red and warm highlights"
         }
       },
       "export": {
@@ -354,6 +366,12 @@
     "dueInKm": "in {km} km",
     "edit": "Edit",
     "editRecord": "Edit service record",
+    "deleteRecord": "Delete",
+    "deleteRecordTitle": "Delete service record?",
+    "deleteRecordConfirm": "This permanently removes this service record and any parts/fluids logged with it. This cannot be undone.",
+    "confirmDelete": "Delete record",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
     "notePlaceholder": "What was done, parts used, observations, next steps…",
     "saveAsDefault": "Remember these parts/fluids as defaults for this service type",
     "status": {
@@ -646,7 +664,22 @@
       "add": "Add modification",
       "adding": "Adding…",
       "added": "Modification added.",
+      "addTitle": "Add a modification",
+      "edit": "Edit",
+      "editTitle": "Edit modification",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Modification updated.",
+      "cancel": "Cancel",
       "remove": "Remove",
+      "deleteTitle": "Remove modification?",
+      "deleteConfirm": "This removes the modification and updates the vehicle's current power back down.",
+      "confirmDelete": "Remove",
+      "deleting": "Removing…",
+      "currentList": "Installed modifications",
+      "factory": "Factory",
+      "current": "Current",
+      "gain": "Gain",
       "error": "Could not save modification."
     },
     "modificationCategories": {
@@ -824,12 +857,6 @@
         "notFound": "Vehicle not found.",
         "unknown": "Could not update mileage."
       }
-    },
-    "qr": {
-      "title": "QR code",
-      "hint": "Scan to open this vehicle on your phone",
-      "alt": "QR code for {name}",
-      "openLink": "Open vehicle page"
     },
     "inspections": {
       "title": "TÜV / HU & AU",

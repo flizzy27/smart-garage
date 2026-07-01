@@ -12,6 +12,7 @@ import {
   MAINTENANCE_ITEM_CATEGORIES,
   MAINTENANCE_ITEM_UNITS,
   defaultUnitForCategory,
+  getItemSuggestions,
 } from "@/lib/maintenance/item-categories";
 import type { SerializedMaintenanceItem } from "@/lib/repositories/maintenance-items";
 
@@ -139,7 +140,11 @@ export function MaintenanceItemsEditor({
         </p>
       ) : (
         <div className="space-y-3">
-          {items.map((item, index) => (
+          {items.map((item, index) => {
+            const suggestions = getItemSuggestions(item.category);
+            const brandListId = `${idPrefix}-${reactId}-${index}-brand-list`;
+            const specListId = `${idPrefix}-${reactId}-${index}-spec-list`;
+            return (
             <div
               key={item.key}
               className="space-y-3 rounded-lg border border-border-subtle bg-muted/30 p-3"
@@ -194,8 +199,16 @@ export function MaintenanceItemsEditor({
                     id={`${idPrefix}-${reactId}-${index}-brand`}
                     value={item.brand}
                     placeholder="Mann Filter, Motul, NGK…"
+                    list={suggestions.brands ? brandListId : undefined}
                     onChange={(e) => updateItem(item.key, { brand: e.target.value })}
                   />
+                  {suggestions.brands ? (
+                    <datalist id={brandListId}>
+                      {suggestions.brands.map((option) => (
+                        <option key={option} value={option} />
+                      ))}
+                    </datalist>
+                  ) : null}
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor={`${idPrefix}-${reactId}-${index}-product`}>
@@ -227,8 +240,16 @@ export function MaintenanceItemsEditor({
                     id={`${idPrefix}-${reactId}-${index}-spec`}
                     value={item.specification}
                     placeholder="5W-40, DOT 4…"
+                    list={suggestions.specs ? specListId : undefined}
                     onChange={(e) => updateItem(item.key, { specification: e.target.value })}
                   />
+                  {suggestions.specs ? (
+                    <datalist id={specListId}>
+                      {suggestions.specs.map((option) => (
+                        <option key={option} value={option} />
+                      ))}
+                    </datalist>
+                  ) : null}
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
@@ -309,7 +330,8 @@ export function MaintenanceItemsEditor({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

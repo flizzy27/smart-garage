@@ -35,12 +35,18 @@ function PowerComparison({
   current,
   gain,
   unit,
+  factoryLabel,
+  currentLabel,
+  gainLabel,
 }: {
   label: string;
   factory: number | null;
   current: number | null;
   gain: number | null;
   unit: string;
+  factoryLabel: string;
+  currentLabel: string;
+  gainLabel: string;
 }) {
   if (factory == null && current == null) return null;
 
@@ -51,19 +57,19 @@ function PowerComparison({
       </p>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center">
         <div>
-          <p className="text-xs text-muted-foreground">Factory</p>
+          <p className="text-xs text-muted-foreground">{factoryLabel}</p>
           <p className="text-lg font-semibold text-foreground">
             {factory != null ? `${factory} ${unit}` : "—"}
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Current</p>
+          <p className="text-xs text-muted-foreground">{currentLabel}</p>
           <p className="text-lg font-semibold text-foreground">
             {current != null ? `${current} ${unit}` : "—"}
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Gain</p>
+          <p className="text-xs text-muted-foreground">{gainLabel}</p>
           <p className="text-lg font-semibold text-accent">
             {gain != null && gain !== 0
               ? `${gain > 0 ? "+" : ""}${gain} ${unit}`
@@ -83,6 +89,12 @@ export async function VehicleDetailOverview({
   const tFuel = await getTranslations("vehicles.fuelTypes");
   const tBody = await getTranslations("vehicles.bodyTypes");
   const tDrive = await getTranslations("vehicles.driveTypes");
+  const tMod = await getTranslations("vehicles.modifications");
+  const powerLabels = {
+    factoryLabel: tMod("factory"),
+    currentLabel: tMod("current"),
+    gainLabel: tMod("gain"),
+  };
   const imageUrl = getVehicleImageUrl(vehicle.imageDocumentId);
   const title = getVehicleDisplayName(vehicle);
 
@@ -141,6 +153,7 @@ export async function VehicleDetailOverview({
               current={current?.powerPs ?? null}
               gain={vehicle.powerGainPs}
               unit="PS"
+              {...powerLabels}
             />
             <PowerComparison
               label={t("detail.powerKw")}
@@ -148,6 +161,7 @@ export async function VehicleDetailOverview({
               current={current?.powerKw ?? null}
               gain={vehicle.powerGainKw}
               unit="kW"
+              {...powerLabels}
             />
             <dl>
               <SpecRow

@@ -1,6 +1,6 @@
 {
   "name": "smart-garage-frontend",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "description": "Smart Garage — self-hosted vehicle management (Next.js)",
   "scripts": {
@@ -33,7 +33,6 @@
     "next": "16.2.9",
     "next-intl": "^4.13.0",
     "prisma": "^6.19.0",
-    "qrcode": "^1.5.4",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "zod": "^4.4.3"
@@ -41,7 +40,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "csv-parse": "^7.0.0",

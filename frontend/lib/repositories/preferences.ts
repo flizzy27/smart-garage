@@ -36,6 +36,7 @@ export async function findPreferencesForUser(userId: string): Promise<UserSettin
     currency: sanitizeCurrency(row.currency),
     designPreset: sanitizeDesignPreset(row.designPreset),
     backgroundBlurPx: clampBackgroundBlur(row.backgroundBlurPx ?? DEFAULT_SETTINGS.backgroundBlurPx),
+    quickFuelEnabled: row.quickFuelEnabled ?? DEFAULT_SETTINGS.quickFuelEnabled,
     maintenanceDueSoonKm: clampMaintenanceDueSoonKm(
       row.maintenanceDueSoonKm ?? DEFAULT_SETTINGS.maintenanceDueSoonKm,
     ),
@@ -93,6 +94,11 @@ export async function upsertPreferencesForUser(
     settings.maintenanceDueSoonDays,
   );
 
+  // Note: designPreset and backgroundBlurPx are intentionally NOT written here.
+  // They are owned by `updateAppearanceForUser` (the appearance action) so that
+  // saving general settings from a device with a stale local design cache never
+  // clobbers the design/blur the user picked. On create we seed sensible
+  // defaults so a fresh row is valid.
   return prisma.userPreferences.upsert({
     where: { userId },
     create: {
@@ -103,6 +109,7 @@ export async function upsertPreferencesForUser(
       currency: settings.currency,
       designPreset: settings.designPreset,
       backgroundBlurPx: clampBackgroundBlur(settings.backgroundBlurPx),
+      quickFuelEnabled: settings.quickFuelEnabled,
       maintenanceDueSoonKm,
       maintenanceDueSoonDays,
     },
@@ -111,12 +118,20 @@ export async function upsertPreferencesForUser(
       locale: settings.locale,
       timezone: settings.timezone,
       currency: settings.currency,
-      designPreset: settings.designPreset,
-      backgroundBlurPx: clampBackgroundBlur(settings.backgroundBlurPx),
+      quickFuelEnabled: settings.quickFuelEnabled,
       maintenanceDueSoonKm,
       maintenanceDueSoonDays,
     },
   });
+}
+
+/** Lightweight read of just the quick-fuel widget preference for a user. */
+export async function getQuickFuelEnabled(userId: string): Promise<boolean> {
+  const row = await prisma.userPreferences.findUnique({
+    where: { userId },
+    select: { quickFuelEnabled: true },
+  });
+  return row?.quickFuelEnabled ?? DEFAULT_SETTINGS.quickFuelEnabled;
 }
 
 export async function updateAppearanceForUser(

@@ -9,6 +9,35 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.8.0] - 2026-07-02
+
+### Added
+
+- **Delete maintenance records** — history/edit view now has a delete action (with confirmation) so an accidentally logged maintenance entry can be removed. Any auto-created expense for that record is removed too; the linked schedule's due status is recalculated. Linked notes/documents are kept (only unlinked).
+- **Parts/materials autocomplete** — the maintenance items editor now suggests common brands and specifications per category (engine oil, oil/air/cabin/fuel filters, brake fluid, coolant, spark/glow plugs, brake pads/discs, tires, wipers, battery, transmission/DSG oil, and more), 20+ suggestions where applicable, via native datalists. Custom values are still fully allowed.
+- **More design presets** — added Aurora (teal/cyan), Graphite (neutral slate) and Crimson (red) on top of the existing Classic, Space, Forest, Sunset, Midnight and Rose presets, all polished with matching light/dark palettes.
+- **Quick fuel is now configurable** — a new "Quick fuel" toggle in Settings (enabled by default, stored per user in the DB). The dashboard widget is collapsible and starts collapsed; your open/closed choice is remembered per device.
+
+### Fixed
+
+- **Theme now database-backed and consistent** — the active theme (light/dark/system) is rendered from each user's DB preference on the server (`data-theme` on `<html>`) and applied before first paint, eliminating the "some parts light, some parts dark" mismatch. Preferences now treat the database as the source of truth (local cache is only a fallback), so theme, language, currency, timezone, quick fuel and maintenance thresholds follow the user across devices instead of relying on cookies/local storage.
+- **Design preset color leak** — switching presets no longer bleeds colors into the default theme. Preset palettes are now pure CSS driven by a `data-design` attribute, so "Classic" always stays the true default and switching back is clean.
+- **Modifications feature** — editing a modification now works on mobile and desktop (inline edit form), plus add and delete. Power gains are applied correctly (e.g. 180 PS + 100 PS mod = 280 PS shown, factory power preserved) and are no longer wiped when the vehicle is edited.
+
+### Changed
+
+- **Maintenance list ordering** — schedules are now sorted by priority: overdue first, then due-soon, then normal (previously an inconsistent status ordering).
+- **Selected design integrates app-wide** — the chosen accent color now subtly tints the main content area's default background, not just buttons and the sidebar.
+- **Background blur control** — the blur slider range was widened (0–50 px) for finer, stronger control over custom background images.
+
+### Removed
+
+- **QR code feature** — removed entirely (vehicle QR API route, UI, and the `qrcode` / `@types/qrcode` dependencies). The lockfile was updated accordingly.
+
+### Migrations
+
+- One new migration (`20260702010000_quick_fuel_setting`) adds a `quickFuelEnabled` boolean (default `true`) to `UserPreferences`. It runs automatically on container start — no manual action required; existing data is untouched.
+
 ## [0.7.0] - 2026-07-01
 
 ### Added
