@@ -81,12 +81,20 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  /* Stop iOS Safari from auto-scaling text on device rotation. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Stop the rubber-band pull-to-refresh bounce when launched standalone. */
+  overscroll-behavior-y: none;
 }
 
 /* App-like tap feedback: remove the grey flash on tap for touch devices. */

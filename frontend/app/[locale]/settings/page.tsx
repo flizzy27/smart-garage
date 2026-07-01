@@ -11,6 +11,7 @@ import {
   DesignPresetSettings,
 } from "@/components/settings/DesignSettings";
 import { SettingsSection } from "@/components/settings/SettingsSection";
+import { InstallAppSettings } from "@/components/settings/InstallAppSettings";
 import { findAppearanceForUser } from "@/lib/repositories/preferences";
 import { getCurrentUserId } from "@/lib/auth/current-user";
 
@@ -63,6 +64,13 @@ export default async function GeneralSettingsPage({ params }: Props) {
       >
         <BackgroundSettings hasBackground={appearance.hasBackground} />
         <BackgroundBlurSettings hasBackground={appearance.hasBackground} />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t("install.title")}
+        description={t("install.description")}
+      >
+        <InstallAppSettings />
       </SettingsSection>
     </div>
   );

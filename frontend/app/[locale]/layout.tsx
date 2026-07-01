@@ -11,6 +11,8 @@ import { AppearanceProvider } from "@/providers/AppearanceProvider";
 import { LocaleSync } from "@/components/settings/LocaleSync";
 import { ShellGate } from "@/components/layout/ShellGate";
 import { AuthSessionProvider } from "@/providers/AuthSessionProvider";
+import { InstallPromptProvider } from "@/providers/InstallPromptProvider";
+import { ServiceWorkerRegister } from "@/providers/ServiceWorkerRegister";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { findAppearanceForUser } from "@/lib/repositories/preferences";
 
@@ -20,10 +22,9 @@ export const metadata: Metadata = {
   applicationName: "Smart Garage",
   title: "Smart Garage",
   description: "Self-hosted vehicle management and maintenance tracking",
-  icons: {
-    icon: "/brand/smart-garage-logo.png",
-    apple: "/brand/smart-garage-logo.png",
-  },
+  // Favicon / home-screen icons come from the app/icon.png, app/apple-icon.png,
+  // and app/favicon.ico file conventions (root of app/) — Next injects the
+  // correct <link> tags automatically, no explicit `icons` field needed here.
   // App-like behavior on iOS home-screen launch (not marketing/SEO).
   appleWebApp: {
     capable: true,
@@ -93,8 +94,11 @@ export default async function LocaleLayout({ children, params }: Props) {
           <AuthSessionProvider user={user}>
             <UserSettingsProvider initialSettings={initialSettings}>
               <AppearanceProvider initial={appearance}>
-                <LocaleSync />
-                <ShellGate>{children}</ShellGate>
+                <InstallPromptProvider>
+                  <LocaleSync />
+                  <ServiceWorkerRegister />
+                  <ShellGate>{children}</ShellGate>
+                </InstallPromptProvider>
               </AppearanceProvider>
             </UserSettingsProvider>
           </AuthSessionProvider>
