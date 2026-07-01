@@ -122,6 +122,40 @@ enum MaintenanceDueStatus {
   OVERDUE
 }
 
+enum MaintenanceItemCategory {
+  ENGINE_OIL
+  OIL_FILTER
+  AIR_FILTER
+  CABIN_FILTER
+  FUEL_FILTER
+  SPARK_PLUGS
+  GLOW_PLUGS
+  BRAKE_FLUID
+  COOLANT
+  TRANSMISSION_OIL
+  DSG_OIL
+  DIFFERENTIAL_OIL
+  BRAKE_PADS
+  BRAKE_DISCS
+  BRAKE_SENSOR
+  TIRES
+  WIPERS
+  BATTERY
+  BELT
+  GASKET
+  OTHER
+}
+
+enum MaintenanceItemUnit {
+  LITERS
+  MILLILITERS
+  PIECES
+  SETS
+  KG
+  GRAMS
+  CUSTOM
+}
+
 enum VehicleShareRole {
   VIEWER
   EDITOR
@@ -175,6 +209,8 @@ model User {
   documents            Document[]                @relation("DocumentUploadedBy")
   fuelEntries          FuelEntry[]               @relation("FuelEntryCreatedBy")
   notificationSettings UserNotificationSettings?
+  notes                Note[]
+  noteTags             NoteTag[]
 }
 
 model Session {
@@ -214,22 +250,22 @@ model UserNotificationSettings {
   pushoverAppToken        String?
   telegramEnabled         Boolean   @default(false)
   telegramBotToken        String?
-  telegramChatId            String?
+  telegramChatId          String?
   eventMaintenanceOverdue Boolean   @default(true)
-  eventMaintenanceDueSoon   Boolean   @default(true)
-  eventMaintenanceLogged    Boolean   @default(false)
-  eventExpenseAdded         Boolean   @default(false)
-  deliveryImmediate         Boolean   @default(true)
-  deliveryScheduled         Boolean   @default(false)
-  scheduledTime             String?   @default("08:00")
-  scheduledDays             String?   @default("MO,TU,WE,TH,FR,SA,SU")
-  minIntervalHours          Int       @default(6)
-  quietHoursEnabled         Boolean   @default(false)
-  quietHoursStart           String?   @default("22:00")
-  quietHoursEnd             String?   @default("07:00")
-  timezone                  String    @default("Europe/Berlin")
-  lastMaintenanceAlertAt    DateTime?
-  updatedAt                 DateTime  @updatedAt
+  eventMaintenanceDueSoon Boolean   @default(true)
+  eventMaintenanceLogged  Boolean   @default(false)
+  eventExpenseAdded       Boolean   @default(false)
+  deliveryImmediate       Boolean   @default(true)
+  deliveryScheduled       Boolean   @default(false)
+  scheduledTime           String?   @default("08:00")
+  scheduledDays           String?   @default("MO,TU,WE,TH,FR,SA,SU")
+  minIntervalHours        Int       @default(6)
+  quietHoursEnabled       Boolean   @default(false)
+  quietHoursStart         String?   @default("22:00")
+  quietHoursEnd           String?   @default("07:00")
+  timezone                String    @default("Europe/Berlin")
+  lastMaintenanceAlertAt  DateTime?
+  updatedAt               DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -293,17 +329,17 @@ model CatalogSeries {
 }
 
 model CatalogGeneration {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   seriesId  String
   name      String
   code      String?
   yearFrom  Int
   yearTo    Int?
   source    CatalogDataSource @default(NHTSA_VPIC)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
-  series   CatalogSeries   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  series   CatalogSeries    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   variants CatalogVariant[]
 
   @@index([seriesId])
@@ -324,7 +360,7 @@ model CatalogVariant {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
-  generation CatalogGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  generation CatalogGeneration  @relation(fields: [generationId], references: [id], onDelete: Cascade)
   engines    CatalogEngine[]
   modelYears CatalogModelYear[]
 
@@ -333,26 +369,26 @@ model CatalogVariant {
 }
 
 model CatalogEngine {
-  id                 String    @id @default(cuid())
-  variantId          String
-  code               String?
-  name               String
-  displacementCc     Int?
-  fuelType           FuelType?
-  powerKw            Int?
-  powerPs            Int?
-  torqueNm           Int?
-  cylinders          Int?
-  valves             Int?
-  aspiration         String?
-  transmissionTypes  Json?
-  metadata           Json?
-  source             CatalogDataSource @default(NHTSA_VPIC)
-  externalId         String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                String            @id @default(cuid())
+  variantId         String
+  code              String?
+  name              String
+  displacementCc    Int?
+  fuelType          FuelType?
+  powerKw           Int?
+  powerPs           Int?
+  torqueNm          Int?
+  cylinders         Int?
+  valves            Int?
+  aspiration        String?
+  transmissionTypes Json?
+  metadata          Json?
+  source            CatalogDataSource @default(NHTSA_VPIC)
+  externalId        String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 
-  variant    CatalogVariant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  variant    CatalogVariant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
   modelYears CatalogModelYear[]
 
   @@index([variantId])
@@ -360,13 +396,13 @@ model CatalogEngine {
 }
 
 model CatalogModelYear {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   variantId String
   engineId  String
   year      Int
   source    CatalogDataSource @default(NHTSA_VPIC)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
   variant  CatalogVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
   engine   CatalogEngine  @relation(fields: [engineId], references: [id], onDelete: Cascade)
@@ -402,20 +438,21 @@ model Vehicle {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
-  owner            User                 @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
-  catalogModelYear CatalogModelYear?    @relation(fields: [catalogModelYearId], references: [id], onDelete: SetNull)
-  manufacturer     CatalogManufacturer? @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
-  factorySpecs     VehicleFactorySpec?
-  currentSpecs     VehicleCurrentSpec?
-  modifications    VehicleModification[]
-  maintenanceRecords MaintenanceRecord[]
+  owner                User                         @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  catalogModelYear     CatalogModelYear?            @relation(fields: [catalogModelYearId], references: [id], onDelete: SetNull)
+  manufacturer         CatalogManufacturer?         @relation(fields: [manufacturerId], references: [id], onDelete: SetNull)
+  factorySpecs         VehicleFactorySpec?
+  currentSpecs         VehicleCurrentSpec?
+  modifications        VehicleModification[]
+  maintenanceRecords   MaintenanceRecord[]
   maintenanceSchedules VehicleMaintenanceSchedule[]
-  expenses         Expense[]
-  documents        Document[]
-  fuelEntries      FuelEntry[]
-  shares           VehicleShare[]
-  inspections      VehicleInspection[]
-  insurancePolicies InsurancePolicy[]
+  expenses             Expense[]
+  documents            Document[]
+  fuelEntries          FuelEntry[]
+  shares               VehicleShare[]
+  inspections          VehicleInspection[]
+  insurancePolicies    InsurancePolicy[]
+  linkedNotes          Note[]
 
   @@index([ownerUserId])
   @@index([catalogModelYearId])
@@ -423,7 +460,7 @@ model Vehicle {
 }
 
 model VehicleFactorySpec {
-  vehicleId          String    @id
+  vehicleId          String     @id
   engineCode         String?
   engineDescription  String?
   powerKw            Int?
@@ -440,13 +477,13 @@ model VehicleFactorySpec {
   productionYearFrom Int?
   productionYearTo   Int?
   rawCatalog         Json?
-  createdAt          DateTime  @default(now())
+  createdAt          DateTime   @default(now())
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 }
 
 model VehicleCurrentSpec {
-  vehicleId         String    @id
+  vehicleId         String     @id
   engineCode        String?
   engineDescription String?
   powerKw           Int?
@@ -460,7 +497,7 @@ model VehicleCurrentSpec {
   bodyType          BodyType?
   driveType         DriveType?
   transmissionTypes Json?
-  updatedAt         DateTime  @updatedAt
+  updatedAt         DateTime   @updatedAt
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 }
@@ -505,37 +542,68 @@ model MaintenanceTemplate {
   updatedAt             DateTime            @updatedAt
 
   schedules VehicleMaintenanceSchedule[]
+  notes     Note[]
 
   @@index([category])
 }
 
 model VehicleMaintenanceSchedule {
-  id                  String               @id @default(cuid())
-  vehicleId           String
-  templateId          String?
-  customName          String?
-  category            MaintenanceCategory    @default(OTHER)
-  intervalKm          Int?
-  intervalMonths      Int?
-  lastPerformedAt     DateTime?
-  lastOdometerKm      Int?
-  nextDueAt           DateTime?
-  nextDueOdometerKm   Int?
-  estimatedCostCents  BigInt?
-  currency            String               @default("EUR")
-  notes               String?
-  isActive            Boolean              @default(true)
-  dueStatus           MaintenanceDueStatus @default(OK)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
+  id                 String               @id @default(cuid())
+  vehicleId          String
+  templateId         String?
+  customName         String?
+  category           MaintenanceCategory  @default(OTHER)
+  intervalKm         Int?
+  intervalMonths     Int?
+  lastPerformedAt    DateTime?
+  lastOdometerKm     Int?
+  nextDueAt          DateTime?
+  nextDueOdometerKm  Int?
+  estimatedCostCents BigInt?
+  currency           String               @default("EUR")
+  notes              String?
+  isActive           Boolean              @default(true)
+  dueStatus          MaintenanceDueStatus @default(OK)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
 
-  vehicle  Vehicle              @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  template MaintenanceTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
-  records  MaintenanceRecord[]
+  vehicle      Vehicle                  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  template     MaintenanceTemplate?     @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  records      MaintenanceRecord[]
+  itemDefaults MaintenanceItemDefault[]
 
   @@index([vehicleId])
   @@index([nextDueAt])
   @@index([dueStatus])
+}
+
+/// Default parts/fluids for a vehicle + maintenance type combination.
+/// These act as templates only — copied into new MaintenanceRecords as a
+/// historical snapshot at creation time. Changing a default never rewrites
+/// past records.
+model MaintenanceItemDefault {
+  id            String                  @id @default(cuid())
+  scheduleId    String
+  category      MaintenanceItemCategory @default(OTHER)
+  name          String?
+  brand         String?
+  productName   String?
+  partNumber    String?
+  specification String?
+  quantity      Float?
+  unit          MaintenanceItemUnit?
+  customUnit    String?
+  costCents     BigInt?
+  currency      String?
+  supplierName  String?
+  notes         String?
+  sortOrder     Int                     @default(0)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  schedule VehicleMaintenanceSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@index([scheduleId])
 }
 
 model MaintenanceRecord {
@@ -558,10 +626,80 @@ model MaintenanceRecord {
   createdBy User                        @relation("MaintenanceRecordCreatedBy", fields: [createdByUserId], references: [id])
   expenses  Expense[]
   documents Document[]
+  items     MaintenanceItem[]
+  notes     Note[]
 
   @@index([vehicleId])
   @@index([scheduleId])
   @@index([performedAt])
+}
+
+/// Parts/fluids/materials actually used for a specific maintenance record.
+/// This is a historical snapshot — editing MaintenanceItemDefault later does
+/// not change values already saved here.
+model MaintenanceItem {
+  id            String                  @id @default(cuid())
+  recordId      String
+  category      MaintenanceItemCategory @default(OTHER)
+  name          String?
+  brand         String?
+  productName   String?
+  partNumber    String?
+  specification String?
+  quantity      Float?
+  unit          MaintenanceItemUnit?
+  customUnit    String?
+  costCents     BigInt?
+  currency      String?
+  supplierName  String?
+  notes         String?
+  sortOrder     Int                     @default(0)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+
+  record MaintenanceRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+
+  @@index([recordId])
+}
+
+/// Free-form note, optionally linked to a vehicle, a maintenance type, and/or
+/// a specific maintenance record. All links are independent and optional.
+model Note {
+  id                    String   @id @default(cuid())
+  ownerUserId           String
+  title                 String
+  content               String
+  vehicleId             String?
+  maintenanceTemplateId String?
+  maintenanceRecordId   String?
+  isPinned              Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  owner               User                 @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  vehicle             Vehicle?             @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  maintenanceTemplate MaintenanceTemplate? @relation(fields: [maintenanceTemplateId], references: [id], onDelete: SetNull)
+  maintenanceRecord   MaintenanceRecord?   @relation(fields: [maintenanceRecordId], references: [id], onDelete: SetNull)
+  tags                NoteTag[]
+
+  @@index([ownerUserId])
+  @@index([vehicleId])
+  @@index([maintenanceTemplateId])
+  @@index([maintenanceRecordId])
+  @@index([isPinned])
+}
+
+model NoteTag {
+  id          String   @id @default(cuid())
+  ownerUserId String
+  name        String
+  createdAt   DateTime @default(now())
+
+  owner User   @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  notes Note[]
+
+  @@unique([ownerUserId, name])
+  @@index([ownerUserId])
 }
 
 model FuelEntry {
@@ -593,7 +731,7 @@ model Expense {
   amountCents         BigInt
   currency            String          @default("EUR")
   odometerKm          Int?
-  maintenanceRecordId   String?
+  maintenanceRecordId String?
   description         String?
   createdByUserId     String
   createdAt           DateTime        @default(now())
@@ -674,20 +812,20 @@ model VehicleInspection {
 }
 
 model InsurancePolicy {
-  id            String                 @id @default(cuid())
-  vehicleId     String
-  provider      String
-  policyNumber  String?
-  premiumCents  BigInt
-  currency      String                 @default("EUR")
-  sfClass       String?
-  coverageType  InsuranceCoverageType  @default(LIABILITY)
-  startDate     DateTime
-  endDate       DateTime
-  autoRenew     Boolean                @default(true)
-  notes         String?
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
+  id           String                @id @default(cuid())
+  vehicleId    String
+  provider     String
+  policyNumber String?
+  premiumCents BigInt
+  currency     String                @default("EUR")
+  sfClass      String?
+  coverageType InsuranceCoverageType @default(LIABILITY)
+  startDate    DateTime
+  endDate      DateTime
+  autoRenew    Boolean               @default(true)
+  notes        String?
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
 
   vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 

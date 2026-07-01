@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { optionalEuroAmountSchema } from "@/lib/validations/money";
+import { maintenanceItemsArraySchema } from "@/lib/validations/maintenance-items";
 
 export const createScheduleSchema = z.object({
   vehicleId: z.string().min(1),
@@ -38,8 +39,32 @@ export const logMaintenanceSchema = z.object({
   costCents: optionalEuroAmountSchema,
   currency: z.string().length(3).optional(),
   vendorName: z.string().max(120).optional(),
-  note: z.string().max(2000).optional(),
+  note: z.string().max(4000).optional(),
+  saveAsDefault: z.coerce.boolean().optional(),
 });
+
+export const updateMaintenanceRecordSchema = z.object({
+  recordId: z.string().min(1),
+  performedAt: z.string().min(1),
+  odometerKm: z.coerce.number().int().min(0).optional().nullable(),
+  costCents: optionalEuroAmountSchema,
+  currency: z.string().length(3).optional(),
+  vendorName: z.string().max(120).optional(),
+  note: z.string().max(4000).optional(),
+  saveAsDefault: z.coerce.boolean().optional(),
+});
+
+export const saveScheduleDefaultsSchema = z.object({
+  scheduleId: z.string().min(1),
+  items: maintenanceItemsArraySchema,
+});
+
+export const clearScheduleDefaultsSchema = z.object({
+  scheduleId: z.string().min(1),
+});
+
+export type UpdateMaintenanceRecordInput = z.infer<typeof updateMaintenanceRecordSchema>;
+export type SaveScheduleDefaultsInput = z.infer<typeof saveScheduleDefaultsSchema>;
 
 export const setupWarningSchema = z.object({
   scheduleId: z.string().min(1),

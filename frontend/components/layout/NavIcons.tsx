@@ -59,6 +59,14 @@ export function IconHistory({ className = "h-5 w-5" }: NavIconProps) {
   );
 }
 
+export function IconNotes({ className = "h-5 w-5" }: NavIconProps) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m-6 4h6m-6 4h3m-8 4h10a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v13a2 2 0 002 2z" />
+    </svg>
+  );
+}
+
 export function IconSettings({ className = "h-5 w-5" }: NavIconProps) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75} aria-hidden>

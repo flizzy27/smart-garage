@@ -2,7 +2,8 @@ import { cookies, headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 
-export const SESSION_COOKIE = "sg_session";
+import { SESSION_COOKIE, isWellFormedSessionToken } from "@/lib/auth/session-token";
+export { SESSION_COOKIE, isWellFormedSessionToken };
 
 /**
  * Session cookie `Secure` flag.
@@ -95,7 +96,11 @@ export async function getSessionByToken(token: string) {
 
 export async function getSessionTokenFromCookies(): Promise<string | null> {
   const jar = await cookies();
-  return jar.get(SESSION_COOKIE)?.value ?? null;
+  const value = jar.get(SESSION_COOKIE)?.value;
+  // A cookie with an unexpected shape (corrupted, truncated, wrong app,
+  // old/incompatible format) is never a valid token — treat it as absent
+  // instead of handing garbage to a database lookup.
+  return isWellFormedSessionToken(value) ? value : null;
 }
 
 export async function setSessionCookie(token: string, remember: boolean) {

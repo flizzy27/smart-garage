@@ -11,6 +11,7 @@
     "maintenance": "Wartung",
     "history": "Verlauf",
     "documents": "Dokumente",
+    "notes": "Notizen",
     "expenses": "Ausgaben",
     "costs": "Kostenübersicht",
     "fuel": "Kraftstoff",
@@ -330,9 +331,14 @@
     "cost": "Kosten (€)",
     "vendor": "Werkstatt",
     "saveIntervals": "Intervalle speichern",
+    "saveChanges": "Änderungen speichern",
     "saving": "Speichern…",
     "dueInDays": "in {days} Tagen",
     "dueInKm": "in {km} km",
+    "edit": "Bearbeiten",
+    "editRecord": "Serviceeintrag bearbeiten",
+    "notePlaceholder": "Was wurde gemacht, verwendete Teile, Beobachtungen, nächste Schritte…",
+    "saveAsDefault": "Diese Teile/Flüssigkeiten als Standard für diese Wartungsart merken",
     "status": {
       "OK": "OK",
       "DUE_SOON": "Bald fällig",
@@ -347,6 +353,80 @@
       "INSPECTION": "Inspektion",
       "ADDITIVE": "Additiv",
       "OTHER": "Sonstiges"
+    },
+    "items": {
+      "title": "Verwendete Teile & Flüssigkeiten",
+      "hint": "Trage das genaue Öl, die Filter oder Teile ein — Mengen und Teilenummern werden mit diesem Eintrag gespeichert.",
+      "empty": "Noch keine Teile oder Flüssigkeiten hinzugefügt.",
+      "category": "Kategorie",
+      "name": "Bezeichnung",
+      "namePlaceholder": "Leer lassen, um den Kategorienamen zu verwenden",
+      "brand": "Marke",
+      "productName": "Produktname",
+      "partNumber": "Teilenummer",
+      "specification": "Spezifikation",
+      "quantity": "Menge",
+      "unit": "Einheit",
+      "customUnit": "Eigene Einheit",
+      "cost": "Kosten (€)",
+      "supplier": "Lieferant / Werkstatt",
+      "itemNotes": "Notizen",
+      "addItem": "Element hinzufügen",
+      "addCustomItem": "Eigenes Element hinzufügen",
+      "remove": "Entfernen",
+      "categories": {
+        "ENGINE_OIL": "Motoröl",
+        "OIL_FILTER": "Ölfilter",
+        "AIR_FILTER": "Luftfilter",
+        "CABIN_FILTER": "Innenraumfilter",
+        "FUEL_FILTER": "Kraftstofffilter",
+        "SPARK_PLUGS": "Zündkerzen",
+        "GLOW_PLUGS": "Glühkerzen",
+        "BRAKE_FLUID": "Bremsflüssigkeit",
+        "COOLANT": "Kühlmittel",
+        "TRANSMISSION_OIL": "Getriebeöl",
+        "DSG_OIL": "DSG-Öl",
+        "DIFFERENTIAL_OIL": "Differentialöl",
+        "BRAKE_PADS": "Bremsbeläge",
+        "BRAKE_DISCS": "Bremsscheiben",
+        "BRAKE_SENSOR": "Bremssensor",
+        "TIRES": "Reifen",
+        "WIPERS": "Scheibenwischer",
+        "BATTERY": "Batterie",
+        "BELT": "Riemen",
+        "GASKET": "Dichtung",
+        "OTHER": "Eigenes Element"
+      },
+      "units": {
+        "LITERS": "Liter",
+        "MILLILITERS": "Milliliter",
+        "PIECES": "Stück",
+        "SETS": "Sätze",
+        "KG": "Kilogramm",
+        "GRAMS": "Gramm",
+        "CUSTOM": "Eigene"
+      },
+      "unitsShort": {
+        "LITERS": "L",
+        "MILLILITERS": "ml",
+        "PIECES": "Stk",
+        "SETS": "Sätze",
+        "KG": "kg",
+        "GRAMS": "g",
+        "CUSTOM": ""
+      }
+    },
+    "defaults": {
+      "title": "Standard-Teile & -Flüssigkeiten",
+      "hint": "Einmal festlegen — neue Serviceeinträge für diese Wartung werden automatisch vorausgefüllt. Das Ändern eines Standards ändert vergangene Einträge nicht.",
+      "manage": "Standards verwalten",
+      "hide": "Ausblenden",
+      "save": "Standards speichern",
+      "saving": "Speichern…",
+      "saved": "Standards gespeichert",
+      "clear": "Standards löschen",
+      "clearing": "Wird gelöscht…",
+      "count": "{count, plural, one {# Standard} other {# Standards}}"
     },
     "detail": {
       "back": "Zurück zur Wartung",
@@ -380,7 +460,86 @@
     "latest": "Aktuell",
     "odometer": "Kilometerstand",
     "cost": "Kosten",
-    "vendor": "Werkstatt"
+    "vendor": "Werkstatt",
+    "filters": {
+      "search": "Suche",
+      "searchPlaceholder": "Teile, Öl, Filter, Notizen suchen…",
+      "vehicle": "Fahrzeug",
+      "allVehicles": "Alle Fahrzeuge",
+      "category": "Kategorie",
+      "allCategories": "Alle Kategorien",
+      "fromDate": "Von",
+      "toDate": "Bis",
+      "clearFilters": "Filter zurücksetzen"
+    }
+  },
+  "notes": {
+    "title": "Notizen",
+    "subtitle": "Checklisten, Ideen und Erinnerungen — optional mit Fahrzeug oder Wartungsart verknüpft",
+    "newNote": "Neue Notiz",
+    "back": "Zurück zu Notizen",
+    "noContent": "Noch kein Inhalt",
+    "updatedAt": "Aktualisiert {date}",
+    "pin": "Notiz anheften",
+    "unpin": "Anheften lösen",
+    "empty": {
+      "title": "Noch keine Notizen",
+      "subtitle": "Erstelle deine erste Notiz — Drehmomentwerte, Einkaufsliste oder alles, was du dir merken willst."
+    },
+    "filters": {
+      "search": "Suche",
+      "searchPlaceholder": "Notizen durchsuchen…",
+      "vehicle": "Fahrzeug",
+      "allVehicles": "Alle Fahrzeuge",
+      "tag": "Tag",
+      "allTags": "Alle Tags",
+      "pinnedOnly": "Nur angeheftete",
+      "clearFilters": "Filter zurücksetzen"
+    },
+    "related": {
+      "title": "Verknüpfte Notizen",
+      "subtitle": "Notizen, die mit diesem Fahrzeug oder dieser Wartungsart verknüpft sind",
+      "empty": "Noch keine verknüpften Notizen.",
+      "newNote": "Neue Notiz"
+    },
+    "editor": {
+      "newSubtitle": "Erstelle eine Notiz und verknüpfe sie optional mit einem Fahrzeug oder einer Wartungsart.",
+      "editSubtitle": "Notizdetails, Verknüpfungen und Inhalt bearbeiten.",
+      "title": "Titel",
+      "titlePlaceholder": "z. B. Scirocco Ölwechsel-Infos",
+      "vehicle": "Fahrzeug",
+      "noVehicle": "Kein Fahrzeug (globale Notiz)",
+      "maintenanceType": "Wartungsart",
+      "noMaintenanceType": "Keine Wartungsart",
+      "tags": "Tags",
+      "tagsPlaceholder": "Drehmoment, Teile, Tuning…",
+      "tagsHint": "Tags durch Kommas trennen.",
+      "pin": "Diese Notiz anheften",
+      "content": "Inhalt",
+      "contentPlaceholder": "Notiz mit Überschriften, Listen, fett/kursiv schreiben…",
+      "save": "Notiz speichern",
+      "saving": "Speichern…",
+      "cancel": "Abbrechen",
+      "delete": "Notiz löschen",
+      "deleteTitle": "Notiz löschen?",
+      "deleteDescription": "„{title}“ wird endgültig gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "deleteConfirm": "Löschen",
+      "deleting": "Wird gelöscht…",
+      "toolbar": {
+        "write": "Schreiben",
+        "preview": "Vorschau",
+        "heading": "Überschrift",
+        "bold": "Fett",
+        "italic": "Kursiv",
+        "bulletList": "Aufzählung",
+        "numberedList": "Nummerierte Liste",
+        "link": "Link",
+        "selectionPlaceholder": "Text",
+        "linkText": "Linktext",
+        "emptyPreview": "Noch nichts zum Anzeigen.",
+        "hint": "Unterstützt Überschriften (###), **fett**, *kursiv*, Listen und [Links](https://…)."
+      }
+    }
   },
   "documents": {
     "title": "Dokumente",
@@ -533,6 +692,10 @@
         "fuel": {
           "title": "Kraftstoff",
           "description": "Tankvorgänge, Verbrauch und Kraftstoffkosten"
+        },
+        "notes": {
+          "title": "Notizen",
+          "description": "Ideen, Checklisten und Erinnerungen für dieses Fahrzeug"
         },
         "reminders": {
           "title": "Erinnerungen",
@@ -778,6 +941,7 @@
     "loginLink": "Anmelden",
     "signOut": "Abmelden",
     "admin": "Benutzerverwaltung",
+    "sessionExpiredNotice": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
     "errors": {
       "invalidUsername": "Ungültiger Benutzername",
       "passwordTooShort": "Passwort muss mindestens 8 Zeichen haben",
@@ -971,5 +1135,12 @@
       "usernameTaken": "Benutzername vergeben",
       "failed": "Fehler"
     }
+  },
+  "errorBoundary": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Beim Laden dieser Seite ist ein unerwarteter Fehler aufgetreten. Sie können es erneut versuchen oder zum Dashboard zurückkehren.",
+    "reload": "Erneut versuchen",
+    "goHome": "Zum Dashboard",
+    "sessionExpiredDescription": "Ihre Sitzung ist nicht mehr gültig. Sie werden zur Anmeldung weitergeleitet…"
   }
 }

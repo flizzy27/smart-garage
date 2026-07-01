@@ -9,12 +9,14 @@ import { VehicleHubModules } from "@/components/vehicles/VehicleHubModules";
 import { VehicleDetailPanels } from "@/components/vehicles/VehicleDetailPanels";
 import { VehicleQrCode } from "@/components/vehicles/VehicleExtras";
 import { OdometerQuickUpdate } from "@/components/vehicles/OdometerQuickUpdate";
+import { RelatedNotesCard } from "@/components/notes/RelatedNotesCard";
 import { getVehicleForCurrentUser } from "@/lib/services/vehicles";
 import { getCurrentUserId } from "@/lib/auth/current-user";
 import { resolveVehicleAccess } from "@/lib/vehicles/access";
 import { listInspectionsForVehicle } from "@/lib/repositories/inspections";
 import { listInsurancePoliciesForVehicle } from "@/lib/repositories/insurance";
 import { listSharesForVehicle } from "@/lib/repositories/vehicle-shares";
+import { getRelatedNotesForVehicle } from "@/lib/services/notes";
 import {
   getVehicleDisplayName,
   serializeVehicle,
@@ -43,10 +45,11 @@ export default async function VehicleDetailPage({ params }: Props) {
   const isOwner = access?.role === "OWNER";
   const canEdit = access?.canEdit ?? false;
 
-  const [inspections, insurancePolicies, shares] = await Promise.all([
+  const [inspections, insurancePolicies, shares, relatedNotes] = await Promise.all([
     listInspectionsForVehicle(id, userId),
     listInsurancePoliciesForVehicle(id, userId),
     isOwner ? listSharesForVehicle(id, userId) : Promise.resolve([]),
+    getRelatedNotesForVehicle(id, locale as "en" | "de"),
   ]);
 
   return (
@@ -135,9 +138,16 @@ export default async function VehicleDetailPage({ params }: Props) {
             expenses: vehicle.expenseCount,
             documents: vehicle.documentCount,
             fuel: vehicle.fuelCount,
+            notes: vehicle.notesCount,
           }}
         />
       </section>
+
+      <RelatedNotesCard
+        notes={relatedNotes}
+        locale={locale}
+        newNoteHref={`/notes/new?vehicleId=${vehicle.id}`}
+      />
     </div>
   );
 }

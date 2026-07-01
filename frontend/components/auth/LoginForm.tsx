@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 
-export function LoginForm() {
+export function LoginForm({ sessionExpired = false }: { sessionExpired?: boolean }) {
   const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState<
     AuthActionResult | null,
@@ -26,6 +26,10 @@ export function LoginForm() {
           <p className="text-sm text-muted-foreground">{t("loginSubtitle")}</p>
         </div>
       </div>
+
+      {!state?.error && sessionExpired ? (
+        <Alert variant="info">{t("sessionExpiredNotice")}</Alert>
+      ) : null}
 
       {state?.error ? (
         <Alert variant="error">{t(`errors.${state.error}`)}</Alert>

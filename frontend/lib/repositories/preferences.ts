@@ -5,14 +5,19 @@ import {
   clampMaintenanceDueSoonDays,
   clampMaintenanceDueSoonKm,
 } from "@/lib/settings/types";
-import type { Locale } from "@/lib/i18n/routing";
-import type { ThemeMode, CurrencyCode } from "@/lib/settings/types";
 import type { DesignPresetId } from "@/lib/theme/presets";
 import { clampBackgroundBlur } from "@/lib/theme/presets";
 import {
   DEFAULT_MAINTENANCE_THRESHOLDS,
   type MaintenanceThresholds,
 } from "@/lib/maintenance/scheduler";
+import {
+  sanitizeCurrency,
+  sanitizeDesignPreset,
+  sanitizeLocale,
+  sanitizeThemeMode,
+  sanitizeTimezone,
+} from "@/lib/settings/sanitize";
 
 export type AppearancePreferences = {
   designPreset: DesignPresetId;
@@ -25,11 +30,11 @@ export async function findPreferencesForUser(userId: string): Promise<UserSettin
   if (!row) return DEFAULT_SETTINGS;
 
   return {
-    theme: row.theme as ThemeMode,
-    locale: row.locale as Locale,
-    timezone: row.timezone,
-    currency: row.currency as CurrencyCode,
-    designPreset: (row.designPreset as DesignPresetId) ?? DEFAULT_SETTINGS.designPreset,
+    theme: sanitizeThemeMode(row.theme),
+    locale: sanitizeLocale(row.locale),
+    timezone: sanitizeTimezone(row.timezone),
+    currency: sanitizeCurrency(row.currency),
+    designPreset: sanitizeDesignPreset(row.designPreset),
     backgroundBlurPx: clampBackgroundBlur(row.backgroundBlurPx ?? DEFAULT_SETTINGS.backgroundBlurPx),
     maintenanceDueSoonKm: clampMaintenanceDueSoonKm(
       row.maintenanceDueSoonKm ?? DEFAULT_SETTINGS.maintenanceDueSoonKm,
@@ -73,7 +78,7 @@ export async function findAppearanceForUser(userId: string): Promise<AppearanceP
   });
 
   return {
-    designPreset: (row?.designPreset as DesignPresetId) ?? DEFAULT_SETTINGS.designPreset,
+    designPreset: sanitizeDesignPreset(row?.designPreset),
     backgroundBlurPx: clampBackgroundBlur(row?.backgroundBlurPx ?? DEFAULT_SETTINGS.backgroundBlurPx),
     hasBackground: Boolean(row?.backgroundImageKey),
   };

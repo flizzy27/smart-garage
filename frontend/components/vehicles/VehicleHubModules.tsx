@@ -9,6 +9,7 @@ type VehicleHubModulesProps = {
     expenses: number;
     documents: number;
     fuel: number;
+    notes: number;
   };
 };
 
@@ -17,6 +18,7 @@ const modules = [
   { key: "expenses", icon: "currency", href: (id: string) => `/expenses?vehicle=${id}` },
   { key: "documents", icon: "document", href: (id: string) => `/documents?vehicle=${id}` },
   { key: "fuel", icon: "fuel", href: (id: string) => `/fuel?vehicle=${id}` },
+  { key: "notes", icon: "notes", href: (id: string) => `/notes?vehicleId=${id}` },
   { key: "reminders", icon: "bell", href: () => "/reminders" },
 ] as const;
 
@@ -29,6 +31,8 @@ function ModuleIcon({ type }: { type: (typeof modules)[number]["icon"] }) {
     document:
       "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
     fuel: "M13 10V3L4 14h7v7l9-11h-7z",
+    notes:
+      "M9 7h6m-6 4h6m-6 4h3m-8 4h10a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v13a2 2 0 002 2z",
     bell: "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9",
   };
 
@@ -57,6 +61,7 @@ export async function VehicleHubModules({
     if (key === "expenses") return counts.expenses;
     if (key === "documents") return counts.documents;
     if (key === "fuel") return counts.fuel;
+    if (key === "notes") return counts.notes;
     return 0;
   };
 

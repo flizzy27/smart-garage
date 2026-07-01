@@ -14,17 +14,29 @@ import {
   refreshAllScheduleDueStatuses,
 } from "@/lib/repositories/maintenance";
 import {
+  findRecordForOwner,
   listAllRecordsForOwner,
   listRecordsForSchedule,
+  type HistoryFilters,
 } from "@/lib/repositories/maintenance-records";
+import {
+  clearScheduleDefaults,
+  createRecordItems,
+  listDefaultsForSchedule,
+  replaceRecordItems,
+  replaceScheduleDefaults,
+} from "@/lib/repositories/maintenance-items";
 import { getMaintenanceThresholds } from "@/lib/repositories/preferences";
 import type { Locale } from "@/lib/i18n/routing";
 import type {
   CreateScheduleInput,
   LogMaintenanceInput,
+  SaveScheduleDefaultsInput,
   SetupWarningInput,
+  UpdateMaintenanceRecordInput,
   UpdateScheduleInput,
 } from "@/lib/validations/maintenance";
+import { dropBlankItems, type MaintenanceItemInput } from "@/lib/validations/maintenance-items";
 import {
   circaLastPerformedDate,
   estimateLastService,
@@ -53,19 +65,36 @@ export async function getScheduleDetailData(scheduleId: string, locale: Locale) 
   const schedule = await findScheduleById(scheduleId, ownerUserId);
   if (!schedule) return null;
 
-  const records = await listRecordsForSchedule(scheduleId, ownerUserId, locale);
+  const [records, itemDefaults] = await Promise.all([
+    listRecordsForSchedule(scheduleId, ownerUserId, locale),
+    listDefaultsForSchedule(scheduleId),
+  ]);
 
   return {
     schedule: serializeSchedule(schedule, locale, thresholds),
     records,
+    itemDefaults,
     currentOdometerKm: schedule.vehicle.currentOdometerKm,
   };
 }
 
-export async function getHistoryPageData(locale: Locale) {
+export async function getHistoryPageData(locale: Locale, filters: HistoryFilters = {}) {
   const ownerUserId = await getCurrentUserId();
-  const records = await listAllRecordsForOwner(ownerUserId, locale);
-  return { records };
+  const [records, vehicles] = await Promise.all([
+    listAllRecordsForOwner(ownerUserId, locale, 200, filters),
+    prisma.vehicle.findMany({
+      where: { ownerUserId, deletedAt: null },
+      select: { id: true, make: true, model: true, licensePlate: true },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+  return {
+    records,
+    vehicles: vehicles.map((v) => ({
+      id: v.id,
+      name: [v.make, v.model].filter(Boolean).join(" ") || v.licensePlate || "Vehicle",
+    })),
+  };
 }
 
 export async function getVehicleMaintenanceData(vehicleId: string, locale: Locale) {
@@ -263,7 +292,10 @@ export async function updateMaintenanceSchedule(input: UpdateScheduleInput) {
   });
 }
 
-export async function logMaintenanceService(input: LogMaintenanceInput) {
+export async function logMaintenanceService(
+  input: LogMaintenanceInput,
+  items: MaintenanceItemInput[] = [],
+) {
   const ownerUserId = await getCurrentUserId();
   const schedule = await findScheduleById(input.scheduleId, ownerUserId);
   if (!schedule) throw new Error("Schedule not found");
@@ -271,6 +303,7 @@ export async function logMaintenanceService(input: LogMaintenanceInput) {
   const performedAt = new Date(input.performedAt);
   const odometerKm = input.odometerKm ?? schedule.vehicle.currentOdometerKm;
   const costCents = input.costCents ?? 0;
+  const cleanItems = dropBlankItems(items);
 
   const record = await prisma.$transaction(async (tx) => {
     const created = await tx.maintenanceRecord.create({
@@ -287,6 +320,8 @@ export async function logMaintenanceService(input: LogMaintenanceInput) {
         createdByUserId: ownerUserId,
       },
     });
+
+    await createRecordItems(tx, created.id, cleanItems);
 
     await tx.vehicleMaintenanceSchedule.update({
       where: { id: schedule.id },
@@ -305,6 +340,10 @@ export async function logMaintenanceService(input: LogMaintenanceInput) {
 
     return created;
   });
+
+  if (input.saveAsDefault) {
+    await replaceScheduleDefaults(schedule.id, cleanItems);
+  }
 
   await refreshScheduleDueStatus(
     prisma,
@@ -338,6 +377,65 @@ export async function logMaintenanceService(input: LogMaintenanceInput) {
   });
 
   return record.id;
+}
+
+export async function updateMaintenanceRecord(
+  input: UpdateMaintenanceRecordInput,
+  items: MaintenanceItemInput[] = [],
+) {
+  const ownerUserId = await getCurrentUserId();
+  const record = await findRecordForOwner(input.recordId, ownerUserId);
+  if (!record) throw new Error("Record not found");
+
+  const performedAt = new Date(input.performedAt);
+  const odometerKm = input.odometerKm ?? record.odometerKm ?? undefined;
+  const costCents = input.costCents ?? Number(record.costCents);
+  const cleanItems = dropBlankItems(items);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.maintenanceRecord.update({
+      where: { id: record.id },
+      data: {
+        performedAt,
+        odometerKm: odometerKm ?? null,
+        costCents: BigInt(costCents),
+        currency: input.currency ?? record.currency,
+        vendorName: input.vendorName?.trim() || null,
+        note: input.note?.trim() || null,
+      },
+    });
+
+    await replaceRecordItems(tx, record.id, cleanItems);
+  });
+
+  if (input.saveAsDefault && record.scheduleId) {
+    await replaceScheduleDefaults(record.scheduleId, cleanItems);
+  }
+
+  if (record.scheduleId) {
+    await refreshScheduleDueStatus(
+      prisma,
+      record.scheduleId,
+      await getMaintenanceThresholds(ownerUserId),
+    );
+  }
+}
+
+export async function saveScheduleItemDefaults(input: SaveScheduleDefaultsInput) {
+  const ownerUserId = await getCurrentUserId();
+  const schedule = await findScheduleById(input.scheduleId, ownerUserId);
+  if (!schedule) throw new Error("Schedule not found");
+
+  const cleanItems = dropBlankItems(input.items as MaintenanceItemInput[]);
+  await replaceScheduleDefaults(schedule.id, cleanItems);
+}
+
+export async function clearScheduleItemDefaults(scheduleId: string) {
+  const ownerUserId = await getCurrentUserId();
+  const schedule = await findScheduleById(scheduleId, ownerUserId);
+  if (!schedule) throw new Error("Schedule not found");
+
+  await clearScheduleDefaults(schedule.id);
 }
 
 export async function deleteMaintenanceSchedule(scheduleId: string) {
