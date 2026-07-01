@@ -70,6 +70,25 @@ stale/incompatible session cookie is cleared and you're redirected to the
 login page with a "session expired" notice — no manual cookie deletion
 should ever be required. See [`CHANGELOG.md`](../CHANGELOG.md) for details.
 
+## Installing as an app (PWA)
+
+Smart Garage can be added to the home screen / installed as a standalone app
+(own icon, own window, no browser UI) on iPhone, Android, and desktop
+Chrome/Edge. This works identically over local IP and a reverse-proxy domain
+— no extra configuration or environment variables are required.
+
+- **iPhone/iPad:** open in Safari → Share → *Add to Home Screen*.
+- **Android:** open in Chrome → menu (⋮) → *Install app*.
+- **Desktop (Chrome/Edge):** click the install icon in the address bar, or
+  use the browser menu → *Install Smart Garage…*.
+
+Step-by-step instructions are also shown in-app under **Settings → Install
+app**. A minimal service worker (`public/sw.js`) enables the install prompt
+on Chrome/Android; it only caches the manifest/icons and never touches
+`/api/*` or page HTML, so it cannot cause stale login state or hide a new
+update after a container restart. See `AGENTS.md` if you ever need to bump
+its cache version after changing an icon file.
+
 ## Health check
 
 ```

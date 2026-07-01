@@ -225,6 +225,23 @@
         "notice": "Factory specs are sourced from",
         "license": "CC BY 4.0"
       },
+      "install": {
+        "title": "Install app",
+        "description": "Add Smart Garage to your home screen or install it as an app",
+        "alreadyInstalled": "Smart Garage is installed and running as an app on this device.",
+        "installButton": "Install Smart Garage",
+        "dismissedHint": "You can install Smart Garage any time using the steps below.",
+        "iosTitle": "iPhone / iPad",
+        "iosStep1": "Open Smart Garage in Safari (or Chrome).",
+        "iosStep2": "Tap the Share icon, then \"Add to Home Screen\".",
+        "iosStep3": "Open Smart Garage from the new icon on your home screen.",
+        "androidTitle": "Android",
+        "androidStep1": "Open Smart Garage in Chrome.",
+        "androidStep2": "Tap the menu (⋮) and choose \"Install app\" or \"Add to Home screen\".",
+        "desktopTitle": "Desktop (Chrome / Edge)",
+        "desktopStep1": "Open Smart Garage in Chrome or Edge.",
+        "desktopStep2": "Click the install icon in the address bar, or open the browser menu and choose \"Install Smart Garage…\"."
+      },
       "notifications": {
         "title": "Notifications",
         "description": "Choose where, what, and when you receive alerts",

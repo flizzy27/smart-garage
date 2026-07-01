@@ -9,6 +9,28 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.7.0] - 2026-07-01
+
+### Added
+
+- **Installable PWA (iPhone, Android, desktop)** — Smart Garage can now be added to the home screen / installed as a standalone app from Safari (iOS), Chrome (Android/desktop), and Edge, with its own name, icon, and window (no browser address bar/tabs).
+- New web app manifest (`app/manifest.ts`) — `name`, `short_name`, `description`, `start_url: "/"`, `scope: "/"`, `display: "standalone"`, `orientation: "portrait-primary"`, `background_color`/`theme_color` (`#0f172a`), `categories`, and three icons (192×192, 512×512, and a padded 512×512 maskable variant for Android's adaptive icon masks).
+- New dedicated app icon set — a clean car/garage silhouette (no text, unlike the full wordmark logo) generated at every required size: `app/icon.png`, `app/apple-icon.png` (180×180), `app/favicon.ico`, plus the manifest icons under `public/icons/`.
+- **Minimal, safety-first service worker** (`public/sw.js`) — unlocks the Chrome/Android "Install app" prompt (which requires an active service worker). It only caches the manifest, favicon, and app icons via stale-while-revalidate; every navigation, `/api/*` call, and RSC payload always goes straight to the network, so login/logout, session cookies, and locale routing are never affected by caching. Registered only in production (skipped in `next dev`) via a small client component.
+- **"Install app" settings section** — a new panel on the General settings page with step-by-step instructions for iPhone, Android, and desktop, plus a native "Install Smart Garage" button when the browser offers an install prompt (Chrome/Edge). Already-installed (standalone) visits show a simple "installed" confirmation instead. No install prompt is ever shown automatically — only in response to the button click.
+- Minor mobile/app-feel polish: `-webkit-text-size-adjust: 100%` (stops iOS from rescaling text on rotation) and `overscroll-behavior-y: none` on `body` (stops the pull-to-refresh rubber-band bounce when launched standalone).
+
+### Notes
+
+- `start_url` is `"/"`, not a hardcoded locale — the existing next-intl middleware already remembers each visitor's last-used locale, so the installed app always opens in the right language.
+- No changes to the notification system: no automatic permission prompts were added, and the existing Pushover/Telegram maintenance alerts are untouched. Browser Push API (VAPID) is not implemented — see limitations below.
+- Verified with a Linux Docker build + container run (manifest, icons, `sw.js`, and `/api/health` all return `200`) in addition to `lint`, `typecheck`, `test`, and `build`.
+
+### Limitations / future improvements
+
+- No offline mode — by design, to avoid any risk of stale authenticated pages or API responses; only static branding assets are cached.
+- No real Web Push notifications (would need VAPID keys and a new subscription flow) — out of scope for this release; existing Pushover/Telegram channels are unaffected.
+
 ## [0.6.0] - 2026-07-02
 
 ### Added
