@@ -16,7 +16,7 @@ export function Header({ onMenuOpen, blurStyle }: HeaderProps) {
 
   return (
     <header
-      className="relative sticky top-0 z-30 flex h-14 w-full shrink-0 items-center border-b border-border bg-surface/90 px-4 sm:px-6"
+      className="safe-pt safe-pl safe-pr sticky top-0 z-30 w-full shrink-0 border-b border-border bg-surface/90"
       style={{
         ...blurStyle,
         ...(designPreset !== "default"
@@ -27,15 +27,17 @@ export function Header({ onMenuOpen, blurStyle }: HeaderProps) {
           : {}),
       }}
     >
-      <button
-        type="button"
-        className="inline-flex shrink-0 items-center justify-center rounded-lg border border-border bg-card p-2 text-foreground shadow-sm transition-colors hover:bg-muted lg:hidden"
-        onClick={onMenuOpen}
-        aria-label={tNav("openMenu")}
-      >
-        <IconMenu />
-      </button>
-      <HeaderDateTime />
+      <div className="relative flex h-14 w-full items-center px-4 sm:px-6">
+        <button
+          type="button"
+          className="inline-flex shrink-0 items-center justify-center rounded-lg border border-border bg-card p-2 text-foreground shadow-sm transition-colors hover:bg-muted lg:hidden"
+          onClick={onMenuOpen}
+          aria-label={tNav("openMenu")}
+        >
+          <IconMenu />
+        </button>
+        <HeaderDateTime />
+      </div>
     </header>
   );
 }

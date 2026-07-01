@@ -35,7 +35,7 @@ export function Sidebar({ mobileOpen, onMobileClose, translucent = false, blurSt
       ) : null}
 
       <aside
-        className={`group/sidebar fixed inset-y-0 left-0 z-50 flex shrink-0 flex-col border-r border-sidebar-border ${sidebarBg} transition-[width,transform] duration-200 lg:static lg:z-auto lg:translate-x-0 ${
+        className={`group/sidebar safe-pt safe-pb safe-pl fixed inset-y-0 left-0 z-50 flex shrink-0 flex-col border-r border-sidebar-border ${sidebarBg} transition-[width,transform] duration-200 lg:static lg:z-auto lg:translate-x-0 ${
           collapsed ? "w-[4.5rem]" : "w-64"
         } ${
           mobileOpen
