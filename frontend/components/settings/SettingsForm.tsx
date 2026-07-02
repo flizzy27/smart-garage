@@ -212,7 +212,10 @@ function ThresholdField({
                 commit((e.target as HTMLInputElement).value);
               }
             }}
-            className="w-28 rounded-lg border border-border bg-card py-2 pl-3 pr-12 text-sm text-foreground shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+            // Wide enough for the largest allowed value; native number spinners
+            // are hidden so they never eat space or overlap the value, and the
+            // unit label sits in the reserved right padding (never on the digits).
+            className="w-36 rounded-lg border border-border bg-card py-2 pl-3 pr-14 text-sm text-foreground shadow-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
             {unit}

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { withDbRetry } from "@/lib/db/retry";
 import type { UserSettings } from "@/lib/settings/types";
 import {
   DEFAULT_SETTINGS,
@@ -99,30 +100,36 @@ export async function upsertPreferencesForUser(
   // saving general settings from a device with a stale local design cache never
   // clobbers the design/blur the user picked. On create we seed sensible
   // defaults so a fresh row is valid.
-  return prisma.userPreferences.upsert({
-    where: { userId },
-    create: {
-      userId,
-      theme: settings.theme,
-      locale: settings.locale,
-      timezone: settings.timezone,
-      currency: settings.currency,
-      designPreset: settings.designPreset,
-      backgroundBlurPx: clampBackgroundBlur(settings.backgroundBlurPx),
-      quickFuelEnabled: settings.quickFuelEnabled,
-      maintenanceDueSoonKm,
-      maintenanceDueSoonDays,
-    },
-    update: {
-      theme: settings.theme,
-      locale: settings.locale,
-      timezone: settings.timezone,
-      currency: settings.currency,
-      quickFuelEnabled: settings.quickFuelEnabled,
-      maintenanceDueSoonKm,
-      maintenanceDueSoonDays,
-    },
-  });
+  //
+  // Wrapped in withDbRetry so a transient SQLite lock doesn't silently drop the
+  // save (the client fires this optimistically), which would make the setting
+  // appear to revert on the next reload.
+  return withDbRetry(() =>
+    prisma.userPreferences.upsert({
+      where: { userId },
+      create: {
+        userId,
+        theme: settings.theme,
+        locale: settings.locale,
+        timezone: settings.timezone,
+        currency: settings.currency,
+        designPreset: settings.designPreset,
+        backgroundBlurPx: clampBackgroundBlur(settings.backgroundBlurPx),
+        quickFuelEnabled: settings.quickFuelEnabled,
+        maintenanceDueSoonKm,
+        maintenanceDueSoonDays,
+      },
+      update: {
+        theme: settings.theme,
+        locale: settings.locale,
+        timezone: settings.timezone,
+        currency: settings.currency,
+        quickFuelEnabled: settings.quickFuelEnabled,
+        maintenanceDueSoonKm,
+        maintenanceDueSoonDays,
+      },
+    }),
+  );
 }
 
 /** Lightweight read of just the quick-fuel widget preference for a user. */

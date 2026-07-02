@@ -75,7 +75,12 @@ export function UserSettingsProvider({
     setSettings(next);
     writeSettings(next);
     applyThemeToDocument(next.theme);
-    void saveUserPreferences(next);
+    // Optimistic: the UI + local cache update immediately. The server write is
+    // retried on transient SQLite locks (see repository); surface a failure in
+    // the console instead of letting it become a silent unhandled rejection.
+    saveUserPreferences(next).catch((error) => {
+      console.error("Failed to save user preferences", error);
+    });
   }, []);
 
   const setTheme = useCallback(

@@ -9,6 +9,21 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.8.2] - 2026-07-02
+
+### Fixed
+
+- **Maintenance reminder settings readable again** — the km/day threshold inputs cut off larger values (e.g. `1500` showed as `15…`) because the field was too narrow and the browser's number spinners overlapped the digits. The fields are now wider, the native spinners are hidden, and the unit label (`km`/`Tage`) sits in reserved padding so the full value is always visible.
+- **Settings no longer silently revert** — preference saves (theme, language, currency, timezone, quick fuel, maintenance thresholds) are fired optimistically from the client; a transient SQLite write lock could drop the save while the UI still showed the new value, so it appeared to snap back (e.g. 50 → 30 days) after a reload or redeploy. The write is now retried on lock contention, and failures surface in the console instead of being swallowed.
+
+### Changed
+
+- **SQLite tuned for concurrent access** — the database connection now uses WAL journal mode and a 5s busy timeout. Readers no longer block writers (and vice versa), and brief write locks wait-and-retry instead of immediately failing — markedly more reliable for homelab/Unraid setups where several requests can write at once. This makes all writes across the app (not just settings) more robust.
+
+### Notes
+
+- No schema migration in this release. Existing `/data` databases are picked up as-is; WAL mode is enabled automatically on first connection and persists in the database file. Container updates on Unraid continue to run `prisma migrate deploy` on start (non-destructive; only pending migrations are applied) against the persistent `/data` volume.
+
 ## [0.8.1] - 2026-07-02
 
 ### Fixed
