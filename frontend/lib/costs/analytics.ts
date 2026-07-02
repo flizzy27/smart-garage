@@ -1,5 +1,6 @@
 import type { ExpenseCategory } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
 import { vehicleAccessWhere } from "@/lib/vehicles/access";
 
 export type CostChartPoint = {
@@ -30,6 +31,7 @@ export async function getCostAnalytics(
   locale: string,
   months = 12,
 ): Promise<CostAnalytics> {
+  const preferences = await findPreferencesForUser(userId);
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1);
 
@@ -135,6 +137,6 @@ export async function getCostAnalytics(
       .sort((a, b) => b.totalCents - a.totalCents),
     yearTotalCents,
     monthTotalCents,
-    currency: "EUR",
+    currency: preferences.currency,
   };
 }

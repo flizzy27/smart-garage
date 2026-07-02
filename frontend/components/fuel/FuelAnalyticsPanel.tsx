@@ -3,6 +3,8 @@
 import { useLocale, useTranslations } from "next-intl";
 import type { FuelAnalytics } from "@/lib/fuel/analytics";
 import { formatEuros } from "@/lib/money";
+import { formatDistance } from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { FuelBarChart, FuelLineChart } from "./FuelCharts";
 
@@ -35,6 +37,7 @@ function StatTile({
 export function FuelAnalyticsPanel({ analytics }: Props) {
   const t = useTranslations("fuel.analytics");
   const locale = useLocale();
+  const { settings } = useUserSettings();
 
   const {
     totalEntries,
@@ -73,11 +76,19 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           detail={
             projectedAnnualCostCents != null
               ? t("projectedAnnualCost", {
-                  cost: formatEuros(projectedAnnualCostCents, locale),
+                  cost: formatEuros(
+                    projectedAnnualCostCents,
+                    locale,
+                    settings.currency,
+                  ),
                 })
               : projectedAnnualKm != null
                 ? t("projectedAnnualKm", {
-                    km: Math.round(projectedAnnualKm).toLocaleString(locale),
+                    km: formatDistance(
+                      projectedAnnualKm,
+                      locale,
+                      settings.distanceUnit,
+                    ),
                   })
                 : t("needsMoreData")
           }
@@ -99,25 +110,31 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           label={t("avgPrice")}
           value={
             avgPricePerLiter != null
-              ? `${avgPricePerLiter.toFixed(3)} €`
+              ? formatEuros(avgPricePerLiter * 100, locale, settings.currency)
               : "—"
           }
         />
         <StatTile
           label={t("totalCost")}
-          value={formatEuros(totalCostCents, locale)}
+          value={formatEuros(totalCostCents, locale, settings.currency)}
           detail={t("totalLiters", { liters: totalLiters.toFixed(1) })}
         />
         <StatTile
           label={t("costPer100Km")}
           value={
             avgCostPer100KmCents != null
-              ? formatEuros(avgCostPer100KmCents, locale)
+              ? formatEuros(avgCostPer100KmCents, locale, settings.currency)
               : "—"
           }
           detail={
             totalDistanceKm > 0
-              ? t("distanceTracked", { km: totalDistanceKm.toLocaleString(locale) })
+              ? t("distanceTracked", {
+                  km: formatDistance(
+                    totalDistanceKm,
+                    locale,
+                    settings.distanceUnit,
+                  ),
+                })
               : undefined
           }
         />
@@ -130,7 +147,7 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           </CardHeader>
           <CardContent className="pt-0">
             {priceHistory.length >= 2 ? (
-              <FuelLineChart data={priceHistory} unit=" €/L" />
+              <FuelLineChart data={priceHistory} unit={` ${settings.currency}/L`} />
             ) : (
               <p className="text-xs text-muted-foreground">{t("needsMoreData")}</p>
             )}
@@ -162,7 +179,7 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           </CardHeader>
           <CardContent className="pt-0">
             {monthlyCostHistory.length > 0 ? (
-              <FuelBarChart data={monthlyCostHistory} unit=" €" />
+              <FuelBarChart data={monthlyCostHistory} unit={` ${settings.currency}`} />
             ) : (
               <p className="text-xs text-muted-foreground">{t("needsMoreData")}</p>
             )}

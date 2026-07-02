@@ -9,6 +9,20 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.9.1] - 2026-07-02
+
+### Added
+
+- **Miles as a regional distance unit** — added a Regional setting for kilometers or miles. Smart Garage still stores odometer and maintenance data internally in kilometers, but vehicle mileage, odometer updates, maintenance intervals, due distances, reminders, fuel distance summaries, and relevant form inputs now display and accept the selected unit. Fixes #2.
+
+### Fixed
+
+- **Preferred currency now affects new entries and summaries** — dashboard cost cards, cost analytics, fuel analytics, quick fuel, manual expenses, maintenance logging, and modification forms now use the user's saved currency preference instead of hardcoded EUR labels/defaults where the app is displaying user-entered amounts. Fixes #3.
+
+### Notes
+
+- Includes a small SQLite migration adding `UserPreferences.distanceUnit` with default `km`, so existing Unraid installs keep their current metric behavior until a user changes the setting.
+
 ## [0.9.0] - 2026-07-02
 
 ### Added

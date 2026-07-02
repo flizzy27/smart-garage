@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { updateOdometerForCurrentUser } from "@/lib/services/vehicles";
+import { parseFormDistanceToKm } from "@/lib/regional/distance";
+import { sanitizeDistanceUnit } from "@/lib/settings/sanitize";
 
 export type OdometerActionResult = {
   ok: boolean;
@@ -13,9 +15,13 @@ export async function updateOdometerAction(
   formData: FormData,
 ): Promise<OdometerActionResult> {
   const vehicleId = String(formData.get("vehicleId") ?? "");
-  const km = Number(formData.get("currentOdometerKm"));
+  const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
+  const km = parseFormDistanceToKm(
+    formData.get("currentOdometerKm"),
+    distanceUnit,
+  );
 
-  const result = await updateOdometerForCurrentUser(vehicleId, km);
+  const result = await updateOdometerForCurrentUser(vehicleId, km ?? Number.NaN);
   if (!result.success) {
     return { ok: false, error: result.error?.code ?? "unknown" };
   }

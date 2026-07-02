@@ -232,6 +232,7 @@ model UserPreferences {
   locale                 String   @default("de")
   timezone               String   @default("Europe/Berlin")
   currency               String   @default("EUR")
+  distanceUnit           String   @default("km")
   designPreset           String   @default("default")
   backgroundBlurPx       Int      @default(8)
   backgroundImageKey     String?

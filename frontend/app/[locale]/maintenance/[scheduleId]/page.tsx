@@ -9,7 +9,9 @@ import { ScheduleDetailHeader } from "@/components/maintenance/ScheduleDetailHea
 import { RelatedNotesCard } from "@/components/notes/RelatedNotesCard";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { Link } from "@/lib/i18n/navigation";
+import { getCurrentUserId } from "@/lib/auth/current-user";
 import { suggestedCategoriesForTemplateSlug } from "@/lib/maintenance/item-categories";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
 import { getScheduleDetailData } from "@/lib/services/maintenance";
 import { listRelatedNotesForSchedule } from "@/lib/services/notes";
 
@@ -31,11 +33,14 @@ export default async function ScheduleDetailPage({ params }: Props) {
 
   const { schedule, records, itemDefaults, currentOdometerKm } = data;
   const suggestedCategories = suggestedCategoriesForTemplateSlug(schedule.templateSlug);
-  const relatedNotes = await listRelatedNotesForSchedule(
-    schedule.vehicleId,
-    schedule.templateId,
-    locale as "en" | "de",
-  );
+  const [relatedNotes, settings] = await Promise.all([
+    listRelatedNotesForSchedule(
+      schedule.vehicleId,
+      schedule.templateId,
+      locale as "en" | "de",
+    ),
+    getCurrentUserId().then(findPreferencesForUser),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
@@ -52,6 +57,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
         schedule={schedule}
         recordCount={records.length}
         locale={locale}
+        distanceUnit={settings.distanceUnit}
       />
 
       <ScheduleDetailAdjust schedule={schedule} locale={locale as "en" | "de"} />

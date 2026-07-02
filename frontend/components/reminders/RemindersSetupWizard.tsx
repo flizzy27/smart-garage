@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import { setupWarningAction } from "@/lib/actions/maintenance";
 import { CIRCA_MONTHS_OPTIONS } from "@/lib/maintenance/setup-estimate";
 import { formatDateInputValue } from "@/lib/maintenance/setup-estimate";
+import { formatDistance } from "@/lib/regional/distance";
 import type { SerializedSchedule } from "@/lib/repositories/maintenance";
 import { Modal } from "@/components/ui/Modal";
 import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 type RemindersSetupWizardProps = {
   open: boolean;
@@ -21,6 +23,7 @@ type RemindersSetupWizardProps = {
 
 export function RemindersSetupWizard({ open, onClose, queue }: RemindersSetupWizardProps) {
   const t = useTranslations("reminders.setup");
+  const { settings } = useUserSettings();
   const router = useRouter();
   const [index, setIndex] = useState(0);
   const [exactDate, setExactDate] = useState(() => formatDateInputValue(new Date()));
@@ -119,7 +122,13 @@ export function RemindersSetupWizard({ open, onClose, queue }: RemindersSetupWiz
                   ? t("statusDueSoon")
                   : t("statusUnset")}
               {current.dueInDays != null ? ` · ${current.dueInDays}d` : ""}
-              {current.dueInKm != null ? ` · ${current.dueInKm} km` : ""}
+              {current.dueInKm != null
+                ? ` · ${formatDistance(
+                    current.dueInKm,
+                    settings.locale,
+                    settings.distanceUnit,
+                  )}`
+                : ""}
             </p>
           </div>
 

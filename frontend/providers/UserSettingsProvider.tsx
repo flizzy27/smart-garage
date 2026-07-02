@@ -28,6 +28,7 @@ type UserSettingsContextValue = {
   setLocale: (locale: Locale) => void;
   setTimezone: (timezone: string) => void;
   setCurrency: (currency: CurrencyCode) => void;
+  setDistanceUnit: (distanceUnit: UserSettings["distanceUnit"]) => void;
   setQuickFuelEnabled: (enabled: boolean) => void;
   setMaintenanceDueSoonKm: (km: number) => void;
   setMaintenanceDueSoonDays: (days: number) => void;
@@ -111,6 +112,13 @@ export function UserSettingsProvider({
     [persist],
   );
 
+  const setDistanceUnit = useCallback(
+    (distanceUnit: UserSettings["distanceUnit"]) => {
+      persist({ ...readSettings(), distanceUnit });
+    },
+    [persist],
+  );
+
   const setQuickFuelEnabled = useCallback(
     (quickFuelEnabled: boolean) => {
       persist({ ...readSettings(), quickFuelEnabled });
@@ -139,6 +147,7 @@ export function UserSettingsProvider({
       setLocale,
       setTimezone,
       setCurrency,
+      setDistanceUnit,
       setQuickFuelEnabled,
       setMaintenanceDueSoonKm,
       setMaintenanceDueSoonDays,
@@ -149,6 +158,7 @@ export function UserSettingsProvider({
       setLocale,
       setTimezone,
       setCurrency,
+      setDistanceUnit,
       setQuickFuelEnabled,
       setMaintenanceDueSoonKm,
       setMaintenanceDueSoonDays,

@@ -4,11 +4,13 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { formatCurrency, formatDate } from "@/lib/regional/format";
+import { formatDistance } from "@/lib/regional/distance";
 import { renderMarkdownToSafeHtml } from "@/lib/notes/markdown";
 import { EditMaintenanceRecordDialog } from "@/components/maintenance/EditMaintenanceRecordDialog";
 import { Dialog } from "@/components/ui/Dialog";
 import { Alert } from "@/components/ui/Alert";
 import { deleteMaintenanceRecordAction } from "@/lib/actions/maintenance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedMaintenanceRecord } from "@/lib/repositories/maintenance-records";
 
 type MaintenanceHistoryTimelineProps = {
@@ -49,6 +51,7 @@ export function MaintenanceHistoryTimeline({
   const t = useTranslations("history");
   const tMaintenance = useTranslations("maintenance");
   const locale = useLocale();
+  const { settings } = useUserSettings();
   const router = useRouter();
   const [editingRecord, setEditingRecord] = useState<SerializedMaintenanceRecord | null>(null);
   const [deletingRecord, setDeletingRecord] = useState<SerializedMaintenanceRecord | null>(null);
@@ -161,7 +164,11 @@ export function MaintenanceHistoryTimeline({
                     <dt className="text-xs text-muted-foreground">{t("odometer")}</dt>
                     <dd className="font-medium tabular-nums text-foreground">
                       {record.odometerKm != null
-                        ? `${record.odometerKm.toLocaleString(locale)} km`
+                        ? formatDistance(
+                            record.odometerKm,
+                            locale,
+                            settings.distanceUnit,
+                          )
                         : "—"}
                     </dd>
                   </div>

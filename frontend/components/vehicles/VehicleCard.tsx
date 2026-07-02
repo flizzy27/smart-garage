@@ -1,6 +1,7 @@
 import { Link } from "@/lib/i18n/navigation";
 import { Card, CardContent } from "@/components/ui/Card";
 import { formatDistance } from "@/lib/regional/format";
+import type { DistanceUnit } from "@/lib/settings/types";
 import type { SerializedVehicle } from "@/lib/vehicles/serialize";
 import {
   getVehicleDisplayName,
@@ -11,12 +12,14 @@ type VehicleCardProps = {
   vehicle: SerializedVehicle;
   locale: string;
   mileageLabel: string;
+  distanceUnit: DistanceUnit;
 };
 
 export function VehicleCard({
   vehicle,
   locale,
   mileageLabel,
+  distanceUnit,
 }: VehicleCardProps) {
   const imageUrl = getVehicleImageUrl(vehicle.imageDocumentId);
   const title = getVehicleDisplayName(vehicle);
@@ -55,7 +58,7 @@ export function VehicleCard({
           <p className="text-sm text-muted-foreground">
             {mileageLabel}:{" "}
             <span className="font-medium text-foreground tabular-nums">
-              {formatDistance(vehicle.currentOdometerKm, locale)}
+              {formatDistance(vehicle.currentOdometerKm, locale, distanceUnit)}
             </span>
           </p>
         </CardContent>

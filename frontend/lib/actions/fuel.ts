@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createFuelEntry, deleteFuelEntry } from "@/lib/services/fuel";
+import { parseFormDistanceToKm } from "@/lib/regional/distance";
+import { sanitizeDistanceUnit } from "@/lib/settings/sanitize";
 import { createFuelEntrySchema } from "@/lib/validations/fuel";
 
 export type FuelActionResult = {
@@ -14,10 +16,11 @@ export async function createFuelEntryAction(
   formData: FormData,
 ): Promise<FuelActionResult> {
   try {
+    const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
     const parsed = createFuelEntrySchema.parse({
       vehicleId: formData.get("vehicleId"),
       filledAt: formData.get("filledAt"),
-      odometerKm: formData.get("odometerKm") || undefined,
+      odometerKm: parseFormDistanceToKm(formData.get("odometerKm"), distanceUnit),
       liters: formData.get("liters") || undefined,
       totalCostCents: formData.get("amountEuros") || undefined,
       currency: formData.get("currency") || undefined,

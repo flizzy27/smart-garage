@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { IconExpenses } from "@/components/layout/NavIcons";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 type VehicleOption = { id: string; label: string };
 
@@ -26,6 +27,7 @@ const OPEN_STATE_KEY = "smart-garage-quickfuel-open";
 
 export function FuelQuickAdd({ vehicles, defaultVehicleId }: Props) {
   const t = useTranslations("dashboard.fuelQuickAdd");
+  const { settings } = useUserSettings();
   const [amount, setAmount] = useState("100");
   const [pricePerLiter, setPricePerLiter] = useState("1.8");
   // Collapsed by default; the user's per-device choice is remembered so it never
@@ -107,6 +109,8 @@ export function FuelQuickAdd({ vehicles, defaultVehicleId }: Props) {
       <form action={formAction} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <input type="hidden" name="filledAt" value={todayIsoDate()} />
         <input type="hidden" name="liters" value={liters} />
+        <input type="hidden" name="currency" value={settings.currency} />
+        <input type="hidden" name="distanceUnit" value={settings.distanceUnit} />
 
         <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
           <Label htmlFor="quick-fuel-vehicle" required>

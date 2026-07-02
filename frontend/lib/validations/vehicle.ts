@@ -1,5 +1,7 @@
 import { BodyType, DriveType, FuelType } from "@prisma/client";
 import { z } from "zod";
+import { parseFormDistanceToKm } from "@/lib/regional/distance";
+import { sanitizeDistanceUnit } from "@/lib/settings/sanitize";
 
 const currentYear = new Date().getFullYear();
 
@@ -99,6 +101,7 @@ export const vehicleFormSchema = z
 export type VehicleFormInput = z.infer<typeof vehicleFormSchema>;
 
 export function parseVehicleFormData(formData: FormData): VehicleFormInput {
+  const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
   const toOptionalInt = (key: string) => {
     const raw = formData.get(key);
     if (raw === null || raw === "") return null;
@@ -149,7 +152,8 @@ export function parseVehicleFormData(formData: FormData): VehicleFormInput {
     displacementCc: toOptionalInt("displacementCc"),
     bodyType: enumOrNull("bodyType", BodyType),
     driveType: enumOrNull("driveType", DriveType),
-    currentOdometerKm: Number(formData.get("currentOdometerKm") ?? 0),
+    currentOdometerKm:
+      parseFormDistanceToKm(formData.get("currentOdometerKm"), distanceUnit) ?? 0,
     color: String(formData.get("color") ?? "") || null,
     notes: String(formData.get("notes") ?? "") || null,
   });

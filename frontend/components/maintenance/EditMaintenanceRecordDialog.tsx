@@ -19,6 +19,11 @@ import {
   type MaintenanceActionResult,
 } from "@/lib/actions/maintenance";
 import { suggestedCategoriesForTemplateSlug } from "@/lib/maintenance/item-categories";
+import {
+  distanceUnitLabel,
+  formDistanceValue,
+} from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedMaintenanceRecord } from "@/lib/repositories/maintenance-records";
 
 type EditMaintenanceRecordDialogProps = {
@@ -33,6 +38,8 @@ export function EditMaintenanceRecordDialog({
   onClose,
 }: EditMaintenanceRecordDialogProps) {
   const t = useTranslations("maintenance");
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const router = useRouter();
   const [items, setItems] = useState<EditableMaintenanceItem[]>(() =>
     itemsFromSerialized(record.items),
@@ -60,6 +67,8 @@ export function EditMaintenanceRecordDialog({
       <form action={formAction} className="space-y-4">
         <input type="hidden" name="recordId" value={record.id} />
         <input type="hidden" name="vehicleId" value={record.vehicleId} />
+        <input type="hidden" name="currency" value={settings.currency} />
+        <input type="hidden" name="distanceUnit" value={distanceUnit} />
         {record.scheduleId ? (
           <input type="hidden" name="scheduleId" value={record.scheduleId} />
         ) : null}
@@ -80,13 +89,15 @@ export function EditMaintenanceRecordDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-odometer">{t("odometer")}</Label>
+            <Label htmlFor="edit-odometer">
+              {t("odometer")} ({distanceUnitLabel(distanceUnit)})
+            </Label>
             <Input
               id="edit-odometer"
               name="odometerKm"
               type="number"
               min={0}
-              defaultValue={record.odometerKm ?? undefined}
+              defaultValue={formDistanceValue(record.odometerKm, distanceUnit)}
             />
           </div>
           <div className="space-y-2">

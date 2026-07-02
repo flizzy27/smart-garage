@@ -17,6 +17,11 @@ import type { VehicleActionResult } from "@/lib/services/vehicles";
 import type { SerializedVehicle } from "@/lib/vehicles/serialize";
 import { getVehicleImageUrl } from "@/lib/vehicles/serialize";
 import { Link, useRouter } from "@/lib/i18n/navigation";
+import {
+  distanceUnitLabel,
+  formDistanceValue,
+} from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 const FUEL_TYPES = Object.values(FuelType);
 const BODY_TYPES = Object.values(BodyType);
@@ -249,6 +254,8 @@ export function VehicleForm({
   const tBody = useTranslations("vehicles.bodyTypes");
   const tDrive = useTranslations("vehicles.driveTypes");
   const tErrors = useTranslations("vehicles.errors");
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const router = useRouter();
 
   const [state, formAction, pending] = useActionState<
@@ -399,6 +406,7 @@ export function VehicleForm({
   return (
     <form action={formAction} className="space-y-8">
       <input type="hidden" name="entryMode" value={entryMode} />
+      <input type="hidden" name="distanceUnit" value={distanceUnit} />
 
       {errorCode ? (
         <Alert>
@@ -927,7 +935,7 @@ export function VehicleForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="currentOdometerKm" required>
-              {t("mileage")}
+              {t("mileage")} ({distanceUnitLabel(distanceUnit)})
             </Label>
             <Input
               id="currentOdometerKm"
@@ -935,7 +943,10 @@ export function VehicleForm({
               type="number"
               min={0}
               required
-              defaultValue={initialVehicle?.currentOdometerKm ?? 0}
+              defaultValue={formDistanceValue(
+                initialVehicle?.currentOdometerKm ?? 0,
+                distanceUnit,
+              )}
             />
           </div>
         </div>

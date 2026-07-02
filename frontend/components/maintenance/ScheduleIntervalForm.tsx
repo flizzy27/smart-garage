@@ -13,6 +13,11 @@ import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
+import {
+  distanceUnitLabel,
+  formDistanceValue,
+} from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 type ScheduleIntervalFormProps = {
   schedule: SerializedSchedule;
@@ -26,6 +31,8 @@ export function ScheduleIntervalForm({
   onSaved,
 }: ScheduleIntervalFormProps) {
   const t = useTranslations("maintenance");
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const router = useRouter();
   const [state, action, pending] = useActionState<
     MaintenanceActionResult | null,
@@ -43,21 +50,31 @@ export function ScheduleIntervalForm({
     <form action={action} className="mt-3 space-y-3 rounded-lg border border-border-subtle bg-muted/30 p-3">
       <input type="hidden" name="scheduleId" value={schedule.id} />
       <input type="hidden" name="vehicleId" value={schedule.vehicleId} />
+      <input type="hidden" name="currency" value={settings.currency} />
+      <input type="hidden" name="distanceUnit" value={distanceUnit} />
       <p className="text-xs text-muted-foreground">
-        {t("editIntervals")}: {formatIntervalLabel(schedule.intervalKm, schedule.intervalMonths, locale)}
+        {t("editIntervals")}:{" "}
+        {formatIntervalLabel(
+          schedule.intervalKm,
+          schedule.intervalMonths,
+          locale,
+          distanceUnit,
+        )}
       </p>
       {state?.error ? <Alert variant="error">{state.error}</Alert> : null}
       {state?.ok ? <Alert variant="success">{t("scheduleUpdated")}</Alert> : null}
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
-          <Label htmlFor={`interval-km-${schedule.id}`}>{t("intervalKm")}</Label>
+          <Label htmlFor={`interval-km-${schedule.id}`}>
+            {t("intervalKm")} ({distanceUnitLabel(distanceUnit)})
+          </Label>
           <Input
             id={`interval-km-${schedule.id}`}
             name="intervalKm"
             type="number"
             min={0}
-            defaultValue={schedule.intervalKm ?? ""}
-            placeholder="15000"
+            defaultValue={formDistanceValue(schedule.intervalKm, distanceUnit)}
+            placeholder={distanceUnit === "mi" ? "10000" : "15000"}
           />
         </div>
         <div className="space-y-1">
@@ -81,13 +98,18 @@ export function ScheduleIntervalForm({
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor={`last-km-${schedule.id}`}>{t("lastOdometer")}</Label>
+          <Label htmlFor={`last-km-${schedule.id}`}>
+            {t("lastOdometer")} ({distanceUnitLabel(distanceUnit)})
+          </Label>
           <Input
             id={`last-km-${schedule.id}`}
             name="lastOdometerKm"
             type="number"
             min={0}
-            defaultValue={schedule.lastOdometerKm ?? schedule.vehicleOdometerKm}
+            defaultValue={formDistanceValue(
+              schedule.lastOdometerKm ?? schedule.vehicleOdometerKm,
+              distanceUnit,
+            )}
           />
         </div>
       </div>

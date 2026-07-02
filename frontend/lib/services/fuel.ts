@@ -7,6 +7,7 @@ import {
   type SerializedFuelEntry,
 } from "@/lib/repositories/fuel";
 import { findVehicleById } from "@/lib/repositories/vehicles";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
 import type { CreateFuelEntryInput } from "@/lib/validations/fuel";
 
 export async function getFuelPageData(
@@ -21,6 +22,7 @@ export async function createFuelEntry(input: CreateFuelEntryInput) {
   const ownerUserId = await getCurrentUserId();
   const vehicle = await findVehicleById(input.vehicleId, ownerUserId);
   if (!vehicle) throw new Error("VEHICLE_NOT_FOUND");
+  const preferences = await findPreferencesForUser(ownerUserId);
 
   const entry = await createFuelEntryRecord({
     vehicleId: input.vehicleId,
@@ -28,7 +30,7 @@ export async function createFuelEntry(input: CreateFuelEntryInput) {
     odometerKm: input.odometerKm,
     liters: input.liters,
     totalCostCents: BigInt(input.totalCostCents ?? 0),
-    currency: input.currency ?? "EUR",
+    currency: input.currency ?? preferences.currency,
     stationName: input.stationName,
     note: input.note,
     createdByUserId: ownerUserId,

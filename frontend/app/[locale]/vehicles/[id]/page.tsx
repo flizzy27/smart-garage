@@ -15,6 +15,7 @@ import { resolveVehicleAccess } from "@/lib/vehicles/access";
 import { listInspectionsForVehicle } from "@/lib/repositories/inspections";
 import { listInsurancePoliciesForVehicle } from "@/lib/repositories/insurance";
 import { listSharesForVehicle } from "@/lib/repositories/vehicle-shares";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
 import { getRelatedNotesForVehicle } from "@/lib/services/notes";
 import {
   getVehicleDisplayName,
@@ -44,11 +45,12 @@ export default async function VehicleDetailPage({ params }: Props) {
   const isOwner = access?.role === "OWNER";
   const canEdit = access?.canEdit ?? false;
 
-  const [inspections, insurancePolicies, shares, relatedNotes] = await Promise.all([
+  const [inspections, insurancePolicies, shares, relatedNotes, settings] = await Promise.all([
     listInspectionsForVehicle(id, userId),
     listInsurancePoliciesForVehicle(id, userId),
     isOwner ? listSharesForVehicle(id, userId) : Promise.resolve([]),
     getRelatedNotesForVehicle(id, locale as "en" | "de"),
+    findPreferencesForUser(userId),
   ]);
 
   return (
@@ -73,7 +75,11 @@ export default async function VehicleDetailPage({ params }: Props) {
           {t("detail.overview")}
         </h2>
         <div className="grid gap-6 lg:grid-cols-[1fr_auto]">
-          <VehicleDetailOverview vehicle={vehicle} locale={locale} />
+          <VehicleDetailOverview
+            vehicle={vehicle}
+            locale={locale}
+            distanceUnit={settings.distanceUnit}
+          />
           {canEdit ? (
             <div className="space-y-4">
               <div className="rounded-xl border border-border bg-card p-4">

@@ -14,6 +14,8 @@ import {
   type FuelActionResult,
 } from "@/lib/actions/fuel";
 import { formatEuros } from "@/lib/money";
+import { distanceUnitLabel } from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedFuelEntry } from "@/lib/repositories/fuel";
 
 type VehicleOption = { id: string; label: string };
@@ -27,6 +29,8 @@ type Props = {
 export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
   const t = useTranslations("fuel");
   const locale = useLocale();
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const [createState, createAction, creating] = useActionState<
     FuelActionResult | null,
     FormData
@@ -51,6 +55,8 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
         {createState?.ok ? <Alert variant="success">{t("added")}</Alert> : null}
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <input type="hidden" name="currency" value={settings.currency} />
+          <input type="hidden" name="distanceUnit" value={distanceUnit} />
           <div className="space-y-2">
             <Label htmlFor="fuel-vehicle" required>
               {t("vehicle")}
@@ -98,7 +104,9 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fuel-odometer">{t("odometer")}</Label>
+            <Label htmlFor="fuel-odometer">
+              {t("odometer")} ({distanceUnitLabel(distanceUnit)})
+            </Label>
             <Input id="fuel-odometer" name="odometerKm" type="number" min={0} />
           </div>
           <div className="space-y-2">
@@ -136,7 +144,11 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
                     {entry.vehicleName} · {new Date(entry.filledAt).toLocaleDateString()}
                     {entry.liters != null ? ` · ${entry.liters} L` : ""}
                     {entry.liters != null && entry.liters > 0
-                      ? ` · ${(entry.totalCostCents / 100 / entry.liters).toFixed(3)} €/L`
+                      ? ` · ${formatEuros(
+                          entry.totalCostCents / entry.liters,
+                          locale,
+                          entry.currency,
+                        )}/L`
                       : ""}
                   </p>
                 </div>

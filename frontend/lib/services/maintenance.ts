@@ -27,7 +27,10 @@ import {
   replaceRecordItems,
   replaceScheduleDefaults,
 } from "@/lib/repositories/maintenance-items";
-import { getMaintenanceThresholds } from "@/lib/repositories/preferences";
+import {
+  findPreferencesForUser,
+  getMaintenanceThresholds,
+} from "@/lib/repositories/preferences";
 import type { Locale } from "@/lib/i18n/routing";
 import type {
   CreateScheduleInput,
@@ -207,6 +210,7 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
     where: { id: input.vehicleId, ownerUserId, deletedAt: null },
   });
   if (!vehicle) throw new Error("Vehicle not found");
+  const preferences = await findPreferencesForUser(ownerUserId);
 
   let template = null;
   if (input.templateId) {
@@ -253,7 +257,7 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
         input.estimatedCostCents != null
           ? BigInt(input.estimatedCostCents)
           : template?.defaultCostCentsMin ?? undefined,
-      currency: input.currency ?? vehicle.purchaseCurrency ?? "EUR",
+      currency: input.currency ?? vehicle.purchaseCurrency ?? preferences.currency,
       notes: input.notes?.trim() || null,
       nextDueAt: computed.nextDueAt,
       nextDueOdometerKm: computed.nextDueOdometerKm,

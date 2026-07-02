@@ -8,6 +8,7 @@ import {
   sortSchedulesForSetup,
 } from "@/lib/maintenance/reminder-queue";
 import { formatIntervalLabel } from "@/lib/maintenance/display";
+import { formatDistance } from "@/lib/regional/distance";
 import type { SerializedSchedule } from "@/lib/repositories/maintenance";
 import { ScheduleIntervalForm } from "@/components/maintenance/ScheduleIntervalForm";
 import { RemindersSetupWizard } from "@/components/reminders/RemindersSetupWizard";
@@ -17,6 +18,7 @@ import {
   MAINTENANCE_STATUS_BADGE_CLASS,
   MAINTENANCE_STATUS_CARD_CLASS,
 } from "@/lib/maintenance/status-style";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 type Props = {
   schedules: SerializedSchedule[];
@@ -25,6 +27,7 @@ type Props = {
 export function RemindersPanel({ schedules }: Props) {
   const t = useTranslations("reminders");
   const locale = useLocale() as "en" | "de";
+  const { settings } = useUserSettings();
   const [wizardOpen, setWizardOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -76,7 +79,13 @@ export function RemindersPanel({ schedules }: Props) {
                             ? ` · ${t("dueInDays", { days: item.dueInDays })}`
                             : ""}
                           {item.dueInKm != null
-                            ? ` · ${t("dueInKm", { km: item.dueInKm })}`
+                            ? ` · ${t("dueInKm", {
+                                km: formatDistance(
+                                  item.dueInKm,
+                                  locale,
+                                  settings.distanceUnit,
+                                ),
+                              })}`
                             : ""}
                         </p>
                         <p className="mt-1 text-[11px] text-muted-foreground">
@@ -84,6 +93,7 @@ export function RemindersPanel({ schedules }: Props) {
                             item.intervalKm,
                             item.intervalMonths,
                             locale,
+                            settings.distanceUnit,
                           )}
                         </p>
                       </div>

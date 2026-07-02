@@ -5,6 +5,7 @@ import { IconExpenses, IconMaintenance, IconVehicles } from "@/components/layout
 import { Card, CardContent, CardHeader, StatCard } from "@/components/ui/Card";
 import { DashboardOdometerUpdate } from "@/components/vehicles/VehicleExtras";
 import { formatCurrency } from "@/lib/regional/format";
+import { formatDistance } from "@/lib/regional/distance";
 import { getVehicleImageUrl } from "@/lib/vehicles/serialize";
 import { getDashboardStats } from "@/lib/services/dashboard";
 import type { MaintenanceDueStatus } from "@prisma/client";
@@ -185,7 +186,7 @@ export async function CostOverviewCard({ locale }: { locale: string }) {
 
 export async function UpcomingMaintenanceCard() {
   const t = await getTranslations("dashboard.upcomingMaintenance");
-  const { upcomingMaintenance } = await getDashboardStats();
+  const { upcomingMaintenance, preferences } = await getDashboardStats();
 
   return (
     <Card>
@@ -215,10 +216,22 @@ export async function UpcomingMaintenanceCard() {
                   ? t("overdueByDays", { days: Math.abs(item.dueInDays) })
                   : t("dueInDays", { days: item.dueInDays })
                 : null,
-              item.dueInKm != null
-                ? item.dueInKm < 0
-                  ? t("overdueByKm", { km: Math.abs(item.dueInKm) })
-                  : t("dueInKm", { km: item.dueInKm })
+                item.dueInKm != null
+                  ? item.dueInKm < 0
+                  ? t("overdueByKm", {
+                      km: formatDistance(
+                        Math.abs(item.dueInKm),
+                        preferences.locale,
+                        preferences.distanceUnit,
+                      ),
+                    })
+                  : t("dueInKm", {
+                      km: formatDistance(
+                        item.dueInKm,
+                        preferences.locale,
+                        preferences.distanceUnit,
+                      ),
+                    })
                 : null,
             ].filter(Boolean);
             return (

@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { formatDistance } from "@/lib/regional/format";
+import type { DistanceUnit } from "@/lib/settings/types";
 import type { SerializedVehicle } from "@/lib/vehicles/serialize";
 import {
   getVehicleDisplayName,
@@ -11,6 +12,7 @@ import { VehicleModificationsButton } from "./VehicleModifications";
 type VehicleDetailOverviewProps = {
   vehicle: SerializedVehicle;
   locale: string;
+  distanceUnit: DistanceUnit;
 };
 
 function SpecRow({
@@ -84,6 +86,7 @@ function PowerComparison({
 export async function VehicleDetailOverview({
   vehicle,
   locale,
+  distanceUnit,
 }: VehicleDetailOverviewProps) {
   const t = await getTranslations("vehicles");
   const tFuel = await getTranslations("vehicles.fuelTypes");
@@ -166,7 +169,7 @@ export async function VehicleDetailOverview({
             <dl>
               <SpecRow
                 label={t("mileage")}
-                value={formatDistance(vehicle.currentOdometerKm, locale)}
+                value={formatDistance(vehicle.currentOdometerKm, locale, distanceUnit)}
               />
               <SpecRow label={t("form.vin")} value={vehicle.vin} />
               <SpecRow

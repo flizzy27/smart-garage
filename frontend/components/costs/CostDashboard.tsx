@@ -59,7 +59,7 @@ export async function CostDashboard({ analytics, locale }: Props) {
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
-            <FuelBarChart data={chartData} unit=" €" />
+            <FuelBarChart data={chartData} unit={` ${analytics.currency}`} />
           ) : (
             <p className="text-sm text-muted-foreground">{t("noData")}</p>
           )}

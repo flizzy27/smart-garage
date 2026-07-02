@@ -14,6 +14,7 @@ import {
   type ExpenseActionResult,
 } from "@/lib/actions/expenses";
 import { formatEuros } from "@/lib/money";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedExpense } from "@/lib/repositories/expenses";
 
 const CATEGORIES = [
@@ -42,6 +43,7 @@ export function ExpensesLibrary({
 }: Props) {
   const t = useTranslations("expenses");
   const locale = useLocale();
+  const { settings } = useUserSettings();
   const [createState, createAction, creating] = useActionState<
     ExpenseActionResult | null,
     FormData
@@ -66,6 +68,8 @@ export function ExpensesLibrary({
         {createState?.ok ? <Alert variant="success">{t("added")}</Alert> : null}
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <input type="hidden" name="currency" value={settings.currency} />
+          <input type="hidden" name="distanceUnit" value={settings.distanceUnit} />
           <div className="space-y-2">
             <Label htmlFor="exp-vehicle" required>
               {t("vehicle")}

@@ -25,6 +25,8 @@ import {
   type SetupWarningInput,
 } from "@/lib/validations/maintenance";
 import { parseItemsJson } from "@/lib/validations/maintenance-items";
+import { parseFormDistanceToKm } from "@/lib/regional/distance";
+import { sanitizeDistanceUnit } from "@/lib/settings/sanitize";
 
 export type MaintenanceActionResult = {
   ok: boolean;
@@ -49,18 +51,22 @@ export async function createScheduleAction(
   formData: FormData,
 ): Promise<MaintenanceActionResult> {
   try {
+    const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
     const parsed = createScheduleSchema.parse({
       vehicleId: formData.get("vehicleId"),
       templateId: formData.get("templateId") || undefined,
       customName: formData.get("customName") || undefined,
       category: formData.get("category") || undefined,
-      intervalKm: formData.get("intervalKm") || undefined,
+      intervalKm: parseFormDistanceToKm(formData.get("intervalKm"), distanceUnit),
       intervalMonths: formData.get("intervalMonths") || undefined,
       estimatedCostCents: formData.get("estimatedCostEuros") || undefined,
       currency: formData.get("currency") || undefined,
       notes: formData.get("notes") || undefined,
       lastPerformedAt: formData.get("lastPerformedAt") || undefined,
-      lastOdometerKm: formData.get("lastOdometerKm") || undefined,
+      lastOdometerKm: parseFormDistanceToKm(
+        formData.get("lastOdometerKm"),
+        distanceUnit,
+      ),
     });
 
     await createMaintenanceSchedule(parsed);
@@ -79,17 +85,21 @@ export async function updateScheduleAction(
   formData: FormData,
 ): Promise<MaintenanceActionResult> {
   try {
+    const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
     const parsed = updateScheduleSchema.parse({
       scheduleId: formData.get("scheduleId"),
       customName: formData.get("customName") || undefined,
       category: formData.get("category") || undefined,
-      intervalKm: formData.get("intervalKm") || undefined,
+      intervalKm: parseFormDistanceToKm(formData.get("intervalKm"), distanceUnit),
       intervalMonths: formData.get("intervalMonths") || undefined,
       estimatedCostCents: formData.get("estimatedCostEuros") || undefined,
       currency: formData.get("currency") || undefined,
       notes: formData.get("notes") || undefined,
       lastPerformedAt: formData.get("lastPerformedAt") || undefined,
-      lastOdometerKm: formData.get("lastOdometerKm") || undefined,
+      lastOdometerKm: parseFormDistanceToKm(
+        formData.get("lastOdometerKm"),
+        distanceUnit,
+      ),
       isActive: formData.get("isActive") === "true" ? true : undefined,
     });
 
@@ -113,10 +123,11 @@ export async function logMaintenanceAction(
   formData: FormData,
 ): Promise<MaintenanceActionResult> {
   try {
+    const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
     const parsed = logMaintenanceSchema.parse({
       scheduleId: formData.get("scheduleId"),
       performedAt: formData.get("performedAt"),
-      odometerKm: formData.get("odometerKm") || undefined,
+      odometerKm: parseFormDistanceToKm(formData.get("odometerKm"), distanceUnit),
       costCents: formData.get("costEuros") || undefined,
       currency: formData.get("currency") || undefined,
       vendorName: formData.get("vendorName") || undefined,
@@ -144,10 +155,11 @@ export async function updateMaintenanceRecordAction(
   formData: FormData,
 ): Promise<MaintenanceActionResult> {
   try {
+    const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
     const parsed = updateMaintenanceRecordSchema.parse({
       recordId: formData.get("recordId"),
       performedAt: formData.get("performedAt"),
-      odometerKm: formData.get("odometerKm") || undefined,
+      odometerKm: parseFormDistanceToKm(formData.get("odometerKm"), distanceUnit),
       costCents: formData.get("costEuros") || undefined,
       currency: formData.get("currency") || undefined,
       vendorName: formData.get("vendorName") || undefined,

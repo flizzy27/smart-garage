@@ -18,6 +18,11 @@ import {
   logMaintenanceAction,
   type MaintenanceActionResult,
 } from "@/lib/actions/maintenance";
+import {
+  distanceUnitLabel,
+  formDistanceValue,
+} from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedMaintenanceItem } from "@/lib/repositories/maintenance-items";
 
 type LogMaintenanceFormProps = {
@@ -40,6 +45,8 @@ export function LogMaintenanceForm({
   idPrefix = "log",
 }: LogMaintenanceFormProps) {
   const t = useTranslations("maintenance");
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const router = useRouter();
   const [items, setItems] = useState<EditableMaintenanceItem[]>(() =>
     itemsFromSerialized(defaultItems),
@@ -69,6 +76,8 @@ export function LogMaintenanceForm({
 
       <input type="hidden" name="scheduleId" value={scheduleId} />
       <input type="hidden" name="vehicleId" value={vehicleId} />
+      <input type="hidden" name="currency" value={settings.currency} />
+      <input type="hidden" name="distanceUnit" value={distanceUnit} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
@@ -84,14 +93,16 @@ export function LogMaintenanceForm({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${idPrefix}-odometer`}>{t("odometer")}</Label>
+          <Label htmlFor={`${idPrefix}-odometer`}>
+            {t("odometer")} ({distanceUnitLabel(distanceUnit)})
+          </Label>
           <Input
             id={`${idPrefix}-odometer`}
             name="odometerKm"
             type="number"
             min={0}
-            defaultValue={defaultOdometerKm ?? undefined}
-            placeholder="km"
+            defaultValue={formDistanceValue(defaultOdometerKm, distanceUnit)}
+            placeholder={distanceUnitLabel(distanceUnit)}
           />
         </div>
         <div className="space-y-2">

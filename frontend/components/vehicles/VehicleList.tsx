@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { VehicleCard } from "@/components/vehicles/VehicleCard";
+import { getCurrentUserId } from "@/lib/auth/current-user";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
 import type { SerializedVehicle } from "@/lib/vehicles/serialize";
 
 type VehicleListProps = {
@@ -11,6 +13,8 @@ type VehicleListProps = {
 
 export async function VehicleList({ vehicles, locale }: VehicleListProps) {
   const t = await getTranslations("vehicles");
+  const userId = await getCurrentUserId();
+  const settings = await findPreferencesForUser(userId);
 
   if (vehicles.length === 0) {
     return (
@@ -52,6 +56,7 @@ export async function VehicleList({ vehicles, locale }: VehicleListProps) {
           vehicle={vehicle}
           locale={locale}
           mileageLabel={t("mileage")}
+          distanceUnit={settings.distanceUnit}
         />
       ))}
     </div>

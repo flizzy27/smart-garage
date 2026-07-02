@@ -1,4 +1,11 @@
-import { DEFAULT_SETTINGS, CURRENCY_OPTIONS, type ThemeMode, type CurrencyCode } from "@/lib/settings/types";
+import {
+  DEFAULT_SETTINGS,
+  CURRENCY_OPTIONS,
+  DISTANCE_UNIT_OPTIONS,
+  type CurrencyCode,
+  type DistanceUnit,
+  type ThemeMode,
+} from "@/lib/settings/types";
 import { routing, type Locale } from "@/lib/i18n/routing";
 import { DESIGN_PRESETS, DEFAULT_DESIGN_PRESET, type DesignPresetId } from "@/lib/theme/presets";
 
@@ -32,6 +39,12 @@ export function sanitizeCurrency(value: unknown): CurrencyCode {
   return typeof value === "string" && (CURRENCY_OPTIONS as readonly string[]).includes(value)
     ? (value as CurrencyCode)
     : DEFAULT_SETTINGS.currency;
+}
+
+export function sanitizeDistanceUnit(value: unknown): DistanceUnit {
+  return typeof value === "string" && (DISTANCE_UNIT_OPTIONS as readonly string[]).includes(value)
+    ? (value as DistanceUnit)
+    : DEFAULT_SETTINGS.distanceUnit;
 }
 
 const DESIGN_PRESET_IDS: readonly string[] = DESIGN_PRESETS.map((preset) => preset.id);

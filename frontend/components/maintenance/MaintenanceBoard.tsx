@@ -27,6 +27,12 @@ import {
   MAINTENANCE_STATUS_CARD_CLASS,
   MAINTENANCE_STATUS_TEXT_CLASS,
 } from "@/lib/maintenance/status-style";
+import {
+  distanceUnitLabel,
+  formDistanceValue,
+  formatDistance,
+} from "@/lib/regional/distance";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 type Template = {
   id: string;
@@ -58,6 +64,8 @@ type Props = {
 export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicleId }: Props) {
   const t = useTranslations("maintenance");
   const locale = useLocale();
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const [showAdd, setShowAdd] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [vehicleFilter, setVehicleFilter] = useState(defaultVehicleId ?? "");
@@ -110,6 +118,8 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
           {createState?.ok ? (
             <Alert variant="success">{t("scheduleCreated")}</Alert>
           ) : null}
+          <input type="hidden" name="currency" value={settings.currency} />
+          <input type="hidden" name="distanceUnit" value={distanceUnit} />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -167,14 +177,19 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="intervalKm">{t("intervalKm")}</Label>
+              <Label htmlFor="intervalKm">
+                {t("intervalKm")} ({distanceUnitLabel(distanceUnit)})
+              </Label>
               <Input
                 id="intervalKm"
                 name="intervalKm"
                 type="number"
                 min={0}
-                defaultValue={template?.defaultIntervalKm ?? undefined}
-                placeholder="15000"
+                defaultValue={formDistanceValue(
+                  template?.defaultIntervalKm,
+                  distanceUnit,
+                ) || undefined}
+                placeholder={distanceUnit === "mi" ? "10000" : "15000"}
               />
             </div>
             <div className="space-y-2">
@@ -212,7 +227,7 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
               {formatCostRange(
                 template.defaultCostCentsMin,
                 template.defaultCostCentsMax,
-                "EUR",
+                settings.currency,
                 locale as "en" | "de",
               ) ?? "—"}
             </p>
@@ -224,7 +239,9 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
               <Input id="lastPerformedAt" name="lastPerformedAt" type="date" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastOdometerKm">{t("lastOdometer")}</Label>
+              <Label htmlFor="lastOdometerKm">
+                {t("lastOdometer")} ({distanceUnitLabel(distanceUnit)})
+              </Label>
               <Input id="lastOdometerKm" name="lastOdometerKm" type="number" min={0} />
             </div>
           </div>
@@ -258,6 +275,8 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
 function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
   const t = useTranslations("maintenance");
   const locale = useLocale();
+  const { settings } = useUserSettings();
+  const distanceUnit = settings.distanceUnit;
   const [editing, setEditing] = useState(false);
   const dueParts = [
     schedule.dueInDays != null
@@ -267,8 +286,12 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
       : null,
     schedule.dueInKm != null
       ? schedule.dueInKm < 0
-        ? t("overdueByKm", { km: Math.abs(schedule.dueInKm) })
-        : t("dueInKm", { km: schedule.dueInKm })
+        ? t("overdueByKm", {
+            km: formatDistance(Math.abs(schedule.dueInKm), locale, distanceUnit),
+          })
+        : t("dueInKm", {
+            km: formatDistance(schedule.dueInKm, locale, distanceUnit),
+          })
       : null,
   ].filter(Boolean);
 
@@ -288,7 +311,12 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
           </div>
           <p className="mt-1 text-sm text-muted-foreground">{schedule.vehicleName}</p>
           <p className="mt-2 text-xs text-muted-foreground">
-            {formatIntervalLabel(schedule.intervalKm, schedule.intervalMonths, locale as "en" | "de")}
+            {formatIntervalLabel(
+              schedule.intervalKm,
+              schedule.intervalMonths,
+              locale as "en" | "de",
+              distanceUnit,
+            )}
           </p>
         </Link>
         <div className="text-right">

@@ -19,6 +19,7 @@ import {
   type ModificationActionResult,
 } from "@/lib/actions/modifications";
 import { formatEuros } from "@/lib/money";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedModification } from "@/lib/vehicles/serialize";
 
 const PRESET_CATEGORIES = [
@@ -51,6 +52,7 @@ type VehicleModificationsProps = {
 function ModificationFormFields({ mod }: { mod?: SerializedModification }) {
   const t = useTranslations("vehicles.modifications");
   const tCat = useTranslations("vehicles.modificationCategories");
+  const { settings } = useUserSettings();
   const uid = useId();
 
   return (
@@ -144,6 +146,7 @@ function ModificationFormFields({ mod }: { mod?: SerializedModification }) {
         <Label htmlFor={`${uid}-notes`}>{t("notes")}</Label>
         <Textarea id={`${uid}-notes`} name="notes" rows={2} defaultValue={mod?.notes ?? ""} />
       </div>
+      <input type="hidden" name="currency" value={mod?.currency ?? settings.currency} />
       <input type="hidden" name="isCustom" value="false" />
     </div>
   );
@@ -213,7 +216,9 @@ function ModificationRow({
           {mod.installedAt
             ? ` · ${new Date(mod.installedAt).toLocaleDateString(locale)}`
             : ""}
-          {mod.costCents ? ` · ${formatEuros(Number(mod.costCents), locale)}` : ""}
+          {mod.costCents
+            ? ` · ${formatEuros(Number(mod.costCents), locale, mod.currency ?? "EUR")}`
+            : ""}
         </p>
         {mod.description ? (
           <p className="mt-1 text-sm text-muted-foreground">{mod.description}</p>

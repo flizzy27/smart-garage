@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   sanitizeCurrency,
   sanitizeDesignPreset,
+  sanitizeDistanceUnit,
   sanitizeLocale,
   sanitizeThemeMode,
   sanitizeTimezone,
@@ -36,6 +37,13 @@ describe("preference sanitizers (defensive fallback for stale/invalid DB values)
     expect(sanitizeCurrency("USD")).toBe("USD");
     expect(sanitizeCurrency("XXX")).toBe(DEFAULT_SETTINGS.currency);
     expect(sanitizeCurrency(undefined)).toBe(DEFAULT_SETTINGS.currency);
+  });
+
+  it("passes through known distance units and falls back otherwise", () => {
+    expect(sanitizeDistanceUnit("km")).toBe("km");
+    expect(sanitizeDistanceUnit("mi")).toBe("mi");
+    expect(sanitizeDistanceUnit("yards")).toBe(DEFAULT_SETTINGS.distanceUnit);
+    expect(sanitizeDistanceUnit(undefined)).toBe(DEFAULT_SETTINGS.distanceUnit);
   });
 
   it("passes through known design presets and falls back otherwise", () => {

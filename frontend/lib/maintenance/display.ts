@@ -1,4 +1,6 @@
 import type { Locale } from "@/lib/i18n/routing";
+import { formatDistance } from "@/lib/regional/distance";
+import type { DistanceUnit } from "@/lib/settings/types";
 import type { MaintenanceTemplate } from "@prisma/client";
 
 export function templateDisplayName(
@@ -32,13 +34,16 @@ export function formatIntervalLabel(
   intervalKm: number | null,
   intervalMonths: number | null,
   locale: Locale,
+  distanceUnit: DistanceUnit = "km",
 ): string {
   const parts: string[] = [];
   if (intervalKm != null) {
     parts.push(
-      locale === "de"
-        ? `${intervalKm.toLocaleString("de-DE")} km`
-        : `${intervalKm.toLocaleString("en-US")} km`,
+      formatDistance(
+        intervalKm,
+        locale === "de" ? "de-DE" : "en-US",
+        distanceUnit,
+      ),
     );
   }
   if (intervalMonths != null) {

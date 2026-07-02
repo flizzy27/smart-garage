@@ -5,12 +5,14 @@ import { DEFAULT_BACKGROUND_BLUR_PX, DEFAULT_DESIGN_PRESET } from "@/lib/theme/p
 export type ThemeMode = "light" | "dark" | "system";
 
 export type CurrencyCode = "EUR" | "USD" | "GBP" | "CHF";
+export type DistanceUnit = "km" | "mi";
 
 export type UserSettings = {
   theme: ThemeMode;
   locale: Locale;
   timezone: string;
   currency: CurrencyCode;
+  distanceUnit: DistanceUnit;
   designPreset: DesignPresetId;
   backgroundBlurPx: number;
   quickFuelEnabled: boolean;
@@ -26,6 +28,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   locale: "en",
   timezone: "Europe/Berlin",
   currency: "EUR",
+  distanceUnit: "km",
   designPreset: DEFAULT_DESIGN_PRESET,
   backgroundBlurPx: DEFAULT_BACKGROUND_BLUR_PX,
   quickFuelEnabled: true,
@@ -61,3 +64,5 @@ export const TIMEZONE_OPTIONS = [
 ] as const;
 
 export const CURRENCY_OPTIONS: CurrencyCode[] = ["EUR", "USD", "GBP", "CHF"];
+
+export const DISTANCE_UNIT_OPTIONS: DistanceUnit[] = ["km", "mi"];

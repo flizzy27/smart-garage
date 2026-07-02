@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { formatIntervalLabel } from "@/lib/maintenance/display";
+import { formatDistance } from "@/lib/regional/distance";
+import type { DistanceUnit } from "@/lib/settings/types";
 import type { SerializedSchedule } from "@/lib/repositories/maintenance";
 import {
   MAINTENANCE_STATUS_CARD_CLASS,
@@ -10,9 +12,15 @@ type Props = {
   schedule: SerializedSchedule;
   recordCount: number;
   locale: string;
+  distanceUnit: DistanceUnit;
 };
 
-export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Props) {
+export async function ScheduleDetailHeader({
+  schedule,
+  recordCount,
+  locale,
+  distanceUnit,
+}: Props) {
   const t = await getTranslations("maintenance");
   const tDetail = await getTranslations("maintenance.detail");
   const dueParts = [
@@ -23,8 +31,12 @@ export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Pr
       : null,
     schedule.dueInKm != null
       ? schedule.dueInKm < 0
-        ? t("overdueByKm", { km: Math.abs(schedule.dueInKm) })
-        : t("dueInKm", { km: schedule.dueInKm })
+        ? t("overdueByKm", {
+            km: formatDistance(Math.abs(schedule.dueInKm), locale, distanceUnit),
+          })
+        : t("dueInKm", {
+            km: formatDistance(schedule.dueInKm, locale, distanceUnit),
+          })
       : null,
   ].filter(Boolean);
 
@@ -46,6 +58,7 @@ export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Pr
               schedule.intervalKm,
               schedule.intervalMonths,
               locale as "en" | "de",
+              distanceUnit,
             )}
           </p>
         </div>
@@ -74,7 +87,7 @@ export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Pr
           <dt className="text-xs text-muted-foreground">{tDetail("lastOdometer")}</dt>
           <dd className="font-medium tabular-nums text-foreground">
             {schedule.lastOdometerKm != null
-              ? `${schedule.lastOdometerKm.toLocaleString()} km`
+              ? formatDistance(schedule.lastOdometerKm, locale, distanceUnit)
               : "—"}
           </dd>
         </div>

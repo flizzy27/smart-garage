@@ -5,9 +5,15 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/lib/i18n/navigation";
 import type { Locale } from "@/lib/i18n/routing";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
-import type { CurrencyCode, ThemeMode } from "@/lib/settings/types";
+import type { CurrencyCode, DistanceUnit, ThemeMode } from "@/lib/settings/types";
+import {
+  distanceUnitLabel,
+  formDistanceValue,
+  roundDistanceForStorage,
+} from "@/lib/regional/distance";
 import {
   CURRENCY_OPTIONS,
+  DISTANCE_UNIT_OPTIONS,
   MAINTENANCE_DUE_SOON_DAYS_OPTIONS,
   MAINTENANCE_DUE_SOON_KM_OPTIONS,
   TIMEZONE_OPTIONS,
@@ -127,7 +133,7 @@ export function LanguageSettings() {
 
 export function RegionalSettings() {
   const t = useTranslations("pages.settings.regional");
-  const { settings, setTimezone, setCurrency } = useUserSettings();
+  const { settings, setTimezone, setCurrency, setDistanceUnit } = useUserSettings();
 
   return (
     <div className="space-y-4">
@@ -144,6 +150,16 @@ export function RegionalSettings() {
         value={settings.currency}
         onChange={(value) => setCurrency(value as CurrencyCode)}
         options={CURRENCY_OPTIONS.map((code) => ({ value: code, label: code }))}
+      />
+      <SelectField
+        id="distanceUnit"
+        label={t("distanceUnit")}
+        value={settings.distanceUnit}
+        onChange={(value) => setDistanceUnit(value as DistanceUnit)}
+        options={DISTANCE_UNIT_OPTIONS.map((unit) => ({
+          value: unit,
+          label: t(`distanceUnits.${unit}`),
+        }))}
       />
     </div>
   );
@@ -235,22 +251,33 @@ export function MaintenanceReminderSettings() {
   const t = useTranslations("pages.settings.maintenance");
   const { settings, setMaintenanceDueSoonKm, setMaintenanceDueSoonDays } =
     useUserSettings();
+  const distanceUnit = settings.distanceUnit;
+  const distanceUnitText = distanceUnitLabel(distanceUnit);
 
   return (
     <div className="space-y-5">
       <ThresholdField
-        key={`km-${settings.maintenanceDueSoonKm}`}
+        key={`km-${settings.maintenanceDueSoonKm}-${distanceUnit}`}
         id="maintenanceDueSoonKm"
         label={t("dueSoonKm")}
         hint={t("dueSoonKmHint")}
-        value={settings.maintenanceDueSoonKm}
-        unit={t("unitKm")}
-        options={MAINTENANCE_DUE_SOON_KM_OPTIONS}
+        value={formDistanceValue(settings.maintenanceDueSoonKm, distanceUnit) || 0}
+        unit={distanceUnitText}
+        options={MAINTENANCE_DUE_SOON_KM_OPTIONS.map((km) =>
+          Number(formDistanceValue(km, distanceUnit) || 0),
+        )}
         min={0}
-        max={50000}
-        step={50}
-        clamp={clampMaintenanceDueSoonKm}
-        onCommit={setMaintenanceDueSoonKm}
+        max={formDistanceValue(50000, distanceUnit) || 50000}
+        step={distanceUnit === "mi" ? 25 : 50}
+        clamp={(value) =>
+          formDistanceValue(
+            clampMaintenanceDueSoonKm(roundDistanceForStorage(value, distanceUnit)),
+            distanceUnit,
+          ) || 0
+        }
+        onCommit={(value) =>
+          setMaintenanceDueSoonKm(roundDistanceForStorage(value, distanceUnit))
+        }
       />
       <ThresholdField
         key={`days-${settings.maintenanceDueSoonDays}`}

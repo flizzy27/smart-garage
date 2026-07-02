@@ -17,6 +17,8 @@ import {
   type NotificationSettingsRecord,
 } from "@/lib/repositories/notifications";
 import { getUpcomingSchedulesForOwner } from "@/lib/repositories/maintenance";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
+import { formatDistance } from "@/lib/regional/distance";
 import { listEditableVehiclesForOdometerReminder } from "@/lib/repositories/vehicles";
 import type { NotificationSettingsInput } from "@/lib/validations/notifications";
 
@@ -208,6 +210,7 @@ async function sendOdometerReminder(
 ) {
   const vehicles = await listEditableVehiclesForOdometerReminder(userId);
   if (vehicles.length === 0) return;
+  const preferences = await findPreferencesForUser(userId);
 
   const title =
     locale === "de" ? "Kilometerstand aktualisieren" : "Update odometer";
@@ -221,7 +224,11 @@ async function sendOdometerReminder(
       [vehicle.make, vehicle.model].filter(Boolean).join(" ") ||
       vehicle.licensePlate ||
       fallbackVehicle;
-    return `- ${label}: ${vehicle.currentOdometerKm.toLocaleString(locale)} km`;
+    return `- ${label}: ${formatDistance(
+      vehicle.currentOdometerKm,
+      locale,
+      preferences.distanceUnit,
+    )}`;
   });
   const more =
     vehicles.length > 6

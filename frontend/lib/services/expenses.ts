@@ -8,6 +8,7 @@ import {
   type SerializedExpense,
 } from "@/lib/repositories/expenses";
 import { findVehicleById } from "@/lib/repositories/vehicles";
+import { findPreferencesForUser } from "@/lib/repositories/preferences";
 import { notifyExpenseAdded } from "@/lib/services/notifications";
 import type { CreateExpenseInput } from "@/lib/validations/expense";
 
@@ -23,13 +24,14 @@ export async function createExpense(input: CreateExpenseInput) {
   const ownerUserId = await getCurrentUserId();
   const vehicle = await findVehicleById(input.vehicleId, ownerUserId);
   if (!vehicle) throw new Error("VEHICLE_NOT_FOUND");
+  const preferences = await findPreferencesForUser(ownerUserId);
 
   const expense = await createExpenseRecord({
     vehicleId: input.vehicleId,
     category: input.category,
     occurredAt: new Date(input.occurredAt),
     amountCents: BigInt(input.amountCents ?? 0),
-    currency: input.currency ?? "EUR",
+    currency: input.currency ?? preferences.currency,
     odometerKm: input.odometerKm,
     maintenanceRecordId: input.maintenanceRecordId,
     description: input.description,

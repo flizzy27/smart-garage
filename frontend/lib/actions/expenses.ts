@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createExpense, deleteExpense } from "@/lib/services/expenses";
+import { parseFormDistanceToKm } from "@/lib/regional/distance";
+import { sanitizeDistanceUnit } from "@/lib/settings/sanitize";
 import { createExpenseSchema } from "@/lib/validations/expense";
 
 export type ExpenseActionResult = {
@@ -14,13 +16,14 @@ export async function createExpenseAction(
   formData: FormData,
 ): Promise<ExpenseActionResult> {
   try {
+    const distanceUnit = sanitizeDistanceUnit(formData.get("distanceUnit"));
     const parsed = createExpenseSchema.parse({
       vehicleId: formData.get("vehicleId"),
       category: formData.get("category"),
       occurredAt: formData.get("occurredAt"),
       amountCents: formData.get("amountEuros") || undefined,
       currency: formData.get("currency") || undefined,
-      odometerKm: formData.get("odometerKm") || undefined,
+      odometerKm: parseFormDistanceToKm(formData.get("odometerKm"), distanceUnit),
       description: formData.get("description") || undefined,
     });
 

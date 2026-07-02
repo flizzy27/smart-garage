@@ -1,10 +1,4 @@
-export function formatDistance(km: number, locale: string): string {
-  return new Intl.NumberFormat(locale, {
-    style: "unit",
-    unit: "kilometer",
-    maximumFractionDigits: 0,
-  }).format(km);
-}
+export { formatDistance } from "@/lib/regional/distance";
 
 export function formatCurrency(
   amountCents: number,
