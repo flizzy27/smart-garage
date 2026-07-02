@@ -24,6 +24,7 @@
     "catalog:import:ci": "tsx scripts/catalog-import.ts --ci",
     "catalog:import:cardata": "tsx scripts/catalog-import.ts --source=cardata --force",
     "catalog:download:cardata": "tsx scripts/catalog-download-cardata.ts",
+    "catalog:generate:kaggle": "tsx scripts/catalog-generate-kaggle.ts",
     "catalog:dedup": "tsx scripts/catalog-dedup.ts",
     "catalog:validate": "tsx scripts/catalog-validate.ts",
     "catalog:sync": "tsx scripts/catalog-import.ts --force"

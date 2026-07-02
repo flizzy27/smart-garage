@@ -179,14 +179,14 @@ async function fetchYearsBySeries(
   seriesId: string,
   query: string,
 ): Promise<ComboboxOption[]> {
-  const results = await fetchCatalog<{ id: string; year: number }>(
+  const results = await fetchCatalog<{ id: string; year: number; label?: string }>(
     "/api/catalog/years-by-series",
     { seriesId, q: query },
     "120",
   );
   return results.map((item) => ({
     id: item.id,
-    label: String(item.year),
+    label: item.label ?? String(item.year),
   }));
 }
 

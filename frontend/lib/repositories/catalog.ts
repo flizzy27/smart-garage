@@ -1,6 +1,10 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { dedupeManufacturersByName } from "@/lib/catalog/dedup-catalog";
+import {
+  groupCatalogYearsByConfiguration,
+  preferDetailedCatalogRows,
+} from "@/lib/catalog/year-options";
 
 const MANUFACTURER_ALIASES: Record<string, string[]> = {
   vw: ["volkswagen"],
@@ -200,7 +204,7 @@ export async function searchCatalogYearsForSeries(
   seriesId: string,
   query: string,
   limit?: number,
-): Promise<Array<{ id: string; year: number }>> {
+): Promise<Array<{ id: string; year: number; yearFrom: number; yearTo: number; label: string }>> {
   const trimmed = query.trim();
   const take = clampLimit("years", limit, trimmed.length > 0);
   const yearFilter = trimmed ? Number(trimmed) : null;
@@ -208,26 +212,42 @@ export async function searchCatalogYearsForSeries(
   const rows = await prisma.catalogModelYear.findMany({
     where: {
       variant: { generation: { seriesId } },
-      ...(yearFilter && !Number.isNaN(yearFilter) ? { year: yearFilter } : {}),
     },
-    orderBy: [{ year: "desc" }, { id: "asc" }],
-    select: { id: true, year: true },
-    take: take * 8,
+    orderBy: [{ year: "asc" }, { id: "asc" }],
+    select: {
+      id: true,
+      year: true,
+      variant: {
+        select: {
+          id: true,
+          name: true,
+          bodyType: true,
+          driveType: true,
+          generation: { select: { id: true } },
+        },
+      },
+      engine: {
+        select: {
+          id: true,
+          name: true,
+          code: true,
+          displacementCc: true,
+          fuelType: true,
+          powerKw: true,
+          powerPs: true,
+          torqueNm: true,
+          cylinders: true,
+        },
+      },
+    },
   });
 
-  // Deduplicate by year, keeping the first (lowest-id) model year row per year.
-  // The returned id is used as the immediate catalogModelYearId when user selects a year.
-  const seen = new Set<number>();
-  const unique: Array<{ id: string; year: number }> = [];
-  for (const row of rows) {
-    if (!seen.has(row.year)) {
-      seen.add(row.year);
-      unique.push({ id: row.id, year: row.year });
-    }
-  }
-
-  return unique
-    .sort((a, b) => b.year - a.year)
+  return groupCatalogYearsByConfiguration(rows)
+    .filter((option) =>
+      yearFilter && !Number.isNaN(yearFilter)
+        ? option.yearFrom <= yearFilter && option.yearTo >= yearFilter
+        : true,
+    )
     .slice(0, take);
 }
 
@@ -261,6 +281,7 @@ export async function getConfigsForYear(
     },
     select: {
       id: true,
+      year: true,
       variant: {
         select: {
           id: true,
@@ -278,6 +299,7 @@ export async function getConfigsForYear(
           name: true,
           powerPs: true,
           powerKw: true,
+          torqueNm: true,
           fuelType: true,
           displacementCc: true,
           code: true,
@@ -287,9 +309,10 @@ export async function getConfigsForYear(
     },
   });
 
+  const filteredRows = preferDetailedCatalogRows(rows);
   const seen = new Set<string>();
   const unique: CatalogConfigEntry[] = [];
-  for (const row of rows) {
+  for (const row of filteredRows) {
     const key = `${row.variant.id}:${row.engine.id}`;
     if (seen.has(key)) continue;
     seen.add(key);
