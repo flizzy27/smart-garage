@@ -209,6 +209,18 @@ export async function UpcomingMaintenanceCard() {
         ) : (
           upcomingMaintenance.map((item) => {
             const dueStatus = item.dueStatus as MaintenanceDueStatus;
+            const dueParts = [
+              item.dueInDays != null
+                ? item.dueInDays < 0
+                  ? t("overdueByDays", { days: Math.abs(item.dueInDays) })
+                  : t("dueInDays", { days: item.dueInDays })
+                : null,
+              item.dueInKm != null
+                ? item.dueInKm < 0
+                  ? t("overdueByKm", { km: Math.abs(item.dueInKm) })
+                  : t("dueInKm", { km: item.dueInKm })
+                : null,
+            ].filter(Boolean);
             return (
               <Link
                 key={item.id}
@@ -227,12 +239,11 @@ export async function UpcomingMaintenanceCard() {
                   >
                     {item.dueStatus === "OVERDUE"
                       ? t("overdue")
-                      : item.dueInDays != null
-                        ? t("dueInDays", { days: Math.max(0, item.dueInDays) })
-                        : item.dueInKm != null
-                          ? t("dueInKm", { km: item.dueInKm })
-                          : "—"}
+                      : t("dueSoon")}
                   </span>
+                  <p className="mt-1 max-w-40 text-xs tabular-nums text-muted-foreground">
+                    {dueParts.length > 0 ? dueParts.join(" · ") : "—"}
+                  </p>
                 </div>
               </Link>
             );

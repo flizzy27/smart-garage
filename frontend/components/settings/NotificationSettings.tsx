@@ -208,20 +208,38 @@ export function NotificationSettings({ initial }: Props) {
               description={t("eventMaintenanceDueSoonHint")}
               defaultChecked={initial?.eventMaintenanceDueSoon ?? true}
             />
-            <ToggleRow
-              id="eventMaintenanceLogged"
-              label={t("eventMaintenanceLogged")}
-              description={t("eventMaintenanceLoggedHint")}
-              defaultChecked={initial?.eventMaintenanceLogged ?? false}
-              disabled
-            />
-            <ToggleRow
-              id="eventExpenseAdded"
-              label={t("eventExpenseAdded")}
-              description={t("eventExpenseAddedHint")}
-              defaultChecked={initial?.eventExpenseAdded ?? false}
-              disabled
-            />
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title={t("odometerReminderTitle")}
+          description={t("odometerReminderDescription")}
+        >
+          <ToggleRow
+            id="eventOdometerReminder"
+            label={t("eventOdometerReminder")}
+            description={t("eventOdometerReminderHint")}
+            defaultChecked={initial?.eventOdometerReminder ?? false}
+          />
+          <div className="grid gap-4 border-t border-border-subtle pt-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="odometerReminderDays">{t("odometerReminderDays")}</Label>
+              <Select
+                id="odometerReminderDays"
+                name="odometerReminderDays"
+                defaultValue={String(initial?.odometerReminderDays ?? 7)}
+              >
+                <option value="1">{t("odometerEvery1d")}</option>
+                <option value="3">{t("odometerEvery3d")}</option>
+                <option value="7">{t("odometerEvery7d")}</option>
+                <option value="14">{t("odometerEvery14d")}</option>
+                <option value="30">{t("odometerEvery30d")}</option>
+                <option value="60">{t("odometerEvery60d")}</option>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {t("odometerReminderDaysHint")}
+              </p>
+            </div>
           </div>
         </SectionCard>
 

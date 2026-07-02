@@ -11,6 +11,8 @@ export type NotificationSettingsRecord = {
   eventMaintenanceDueSoon: boolean;
   eventMaintenanceLogged: boolean;
   eventExpenseAdded: boolean;
+  eventOdometerReminder: boolean;
+  odometerReminderDays: number;
   deliveryImmediate: boolean;
   deliveryScheduled: boolean;
   scheduledTime: string | null;
@@ -21,6 +23,7 @@ export type NotificationSettingsRecord = {
   quietHoursEnd: string | null;
   timezone: string;
   lastMaintenanceAlertAt: Date | null;
+  lastOdometerReminderAt: Date | null;
 };
 
 const selectFields = {
@@ -34,6 +37,8 @@ const selectFields = {
   eventMaintenanceDueSoon: true,
   eventMaintenanceLogged: true,
   eventExpenseAdded: true,
+  eventOdometerReminder: true,
+  odometerReminderDays: true,
   deliveryImmediate: true,
   deliveryScheduled: true,
   scheduledTime: true,
@@ -44,6 +49,7 @@ const selectFields = {
   quietHoursEnd: true,
   timezone: true,
   lastMaintenanceAlertAt: true,
+  lastOdometerReminderAt: true,
 } as const;
 
 export async function findNotificationSettings(
@@ -57,7 +63,10 @@ export async function findNotificationSettings(
 
 export async function upsertNotificationSettings(
   userId: string,
-  data: Omit<NotificationSettingsRecord, "lastMaintenanceAlertAt">,
+  data: Omit<
+    NotificationSettingsRecord,
+    "lastMaintenanceAlertAt" | "lastOdometerReminderAt"
+  >,
 ) {
   return prisma.userNotificationSettings.upsert({
     where: { userId },
@@ -73,5 +82,12 @@ export async function touchMaintenanceAlertSent(userId: string) {
   return prisma.userNotificationSettings.update({
     where: { userId },
     data: { lastMaintenanceAlertAt: new Date() },
+  });
+}
+
+export async function touchOdometerReminderSent(userId: string) {
+  return prisma.userNotificationSettings.update({
+    where: { userId },
+    data: { lastOdometerReminderAt: new Date() },
   });
 }

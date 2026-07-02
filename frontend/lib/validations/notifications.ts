@@ -17,6 +17,8 @@ export const notificationSettingsSchema = z.object({
   eventMaintenanceDueSoon: z.coerce.boolean(),
   eventMaintenanceLogged: z.coerce.boolean(),
   eventExpenseAdded: z.coerce.boolean(),
+  eventOdometerReminder: z.coerce.boolean(),
+  odometerReminderDays: z.coerce.number().int().min(1).max(365),
   deliveryImmediate: z.coerce.boolean(),
   deliveryScheduled: z.coerce.boolean(),
   scheduledTime: timeSchema,

@@ -238,6 +238,26 @@ export async function countAccessibleVehicles(userId: string) {
   });
 }
 
+export async function listEditableVehiclesForOdometerReminder(userId: string) {
+  return prisma.vehicle.findMany({
+    where: {
+      deletedAt: null,
+      OR: [
+        { ownerUserId: userId },
+        { shares: { some: { userId, role: "EDITOR" } } },
+      ],
+    },
+    select: {
+      id: true,
+      make: true,
+      model: true,
+      licensePlate: true,
+      currentOdometerKm: true,
+    },
+    orderBy: [{ updatedAt: "desc" }],
+  });
+}
+
 function mapFactorySpec(spec: VehicleSpecInput) {
   return {
     engineCode: spec.engineCode ?? null,

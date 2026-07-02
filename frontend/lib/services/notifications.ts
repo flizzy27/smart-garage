@@ -12,10 +12,12 @@ import { sendTelegramNotification } from "@/lib/notifications/telegram";
 import {
   findNotificationSettings,
   touchMaintenanceAlertSent,
+  touchOdometerReminderSent,
   upsertNotificationSettings,
   type NotificationSettingsRecord,
 } from "@/lib/repositories/notifications";
 import { getUpcomingSchedulesForOwner } from "@/lib/repositories/maintenance";
+import { listEditableVehiclesForOdometerReminder } from "@/lib/repositories/vehicles";
 import type { NotificationSettingsInput } from "@/lib/validations/notifications";
 
 export async function getNotificationSettingsForCurrentUser(): Promise<NotificationSettingsRecord | null> {
@@ -53,7 +55,8 @@ export async function saveNotificationSettings(input: NotificationSettingsInput)
     !input.eventMaintenanceOverdue &&
     !input.eventMaintenanceDueSoon &&
     !input.eventMaintenanceLogged &&
-    !input.eventExpenseAdded
+    !input.eventExpenseAdded &&
+    !input.eventOdometerReminder
   ) {
     throw new Error("Select at least one notification event");
   }
@@ -69,6 +72,8 @@ export async function saveNotificationSettings(input: NotificationSettingsInput)
     eventMaintenanceDueSoon: input.eventMaintenanceDueSoon,
     eventMaintenanceLogged: input.eventMaintenanceLogged,
     eventExpenseAdded: input.eventExpenseAdded,
+    eventOdometerReminder: input.eventOdometerReminder,
+    odometerReminderDays: input.odometerReminderDays,
     deliveryImmediate: input.deliveryImmediate,
     deliveryScheduled: input.deliveryScheduled,
     scheduledTime: input.scheduledTime ?? "08:00",
@@ -134,10 +139,27 @@ export async function maybeSendMaintenanceAlerts(userId: string, locale: "en" | 
 
   if (getEnabledChannels(settings).length === 0) return;
   if (!canDeliverNow(settings)) return;
-  if (!minIntervalElapsed(settings.lastMaintenanceAlertAt, settings.minIntervalHours)) {
-    return;
+
+  if (minIntervalElapsed(settings.lastMaintenanceAlertAt, settings.minIntervalHours)) {
+    await sendMaintenanceDueAlerts(userId, locale, settings);
   }
 
+  if (
+    settings.eventOdometerReminder &&
+    minIntervalElapsed(
+      settings.lastOdometerReminderAt,
+      settings.odometerReminderDays * 24,
+    )
+  ) {
+    await sendOdometerReminder(userId, locale, settings);
+  }
+}
+
+async function sendMaintenanceDueAlerts(
+  userId: string,
+  locale: "en" | "de",
+  settings: NotificationSettingsRecord,
+) {
   const upcoming = await getUpcomingSchedulesForOwner(userId, locale, 30);
   const matched = upcoming.filter((item) => {
     if (item.dueStatus === "OVERDUE") return settings.eventMaintenanceOverdue;
@@ -177,6 +199,47 @@ export async function maybeSendMaintenanceAlerts(userId: string, locale: "en" | 
   if (result.sentChannels.length === 0) return;
 
   await touchMaintenanceAlertSent(userId);
+}
+
+async function sendOdometerReminder(
+  userId: string,
+  locale: "en" | "de",
+  settings: NotificationSettingsRecord,
+) {
+  const vehicles = await listEditableVehiclesForOdometerReminder(userId);
+  if (vehicles.length === 0) return;
+
+  const title =
+    locale === "de" ? "Kilometerstand aktualisieren" : "Update odometer";
+  const intro =
+    locale === "de"
+      ? "Bitte trage deinen aktuellen Kilometerstand ein."
+      : "Please enter your current odometer reading.";
+  const fallbackVehicle = locale === "de" ? "Fahrzeug" : "Vehicle";
+  const lines = vehicles.slice(0, 6).map((vehicle) => {
+    const label =
+      [vehicle.make, vehicle.model].filter(Boolean).join(" ") ||
+      vehicle.licensePlate ||
+      fallbackVehicle;
+    return `- ${label}: ${vehicle.currentOdometerKm.toLocaleString(locale)} km`;
+  });
+  const more =
+    vehicles.length > 6
+      ? locale === "de"
+        ? `\n+ ${vehicles.length - 6} weitere`
+        : `\n+ ${vehicles.length - 6} more`
+      : "";
+  const message = `${intro}\n${lines.join("\n")}${more}`;
+
+  const result = await dispatchToEnabledChannels(settings, {
+    title,
+    message,
+    telegramHtml: `<b>${title}</b>\n${message}`,
+  });
+
+  if (result.sentChannels.length === 0) return;
+
+  await touchOdometerReminderSent(userId);
 }
 
 export async function notifyMaintenanceLogged(

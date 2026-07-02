@@ -115,6 +115,15 @@ export async function readStoredFile(storageKey: string): Promise<Buffer> {
   return readFile(absolutePath);
 }
 
+export async function restoreStoredFile(
+  storageKey: string,
+  data: Buffer,
+): Promise<void> {
+  const absolutePath = resolveStoredFilePath(storageKey);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, data);
+}
+
 export async function deleteStoredFile(storageKey: string): Promise<void> {
   const absolutePath = resolveStoredFilePath(storageKey);
   try {

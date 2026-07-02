@@ -15,6 +15,18 @@ type Props = {
 export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Props) {
   const t = await getTranslations("maintenance");
   const tDetail = await getTranslations("maintenance.detail");
+  const dueParts = [
+    schedule.dueInDays != null
+      ? schedule.dueInDays < 0
+        ? t("overdueByDays", { days: Math.abs(schedule.dueInDays) })
+        : t("dueInDays", { days: schedule.dueInDays })
+      : null,
+    schedule.dueInKm != null
+      ? schedule.dueInKm < 0
+        ? t("overdueByKm", { km: Math.abs(schedule.dueInKm) })
+        : t("dueInKm", { km: schedule.dueInKm })
+      : null,
+  ].filter(Boolean);
 
   return (
     <section
@@ -44,11 +56,7 @@ export async function ScheduleDetailHeader({ schedule, recordCount, locale }: Pr
             {t(`status.${schedule.dueStatus}`)}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {schedule.dueInDays != null
-              ? t("dueInDays", { days: schedule.dueInDays })
-              : schedule.dueInKm != null
-                ? t("dueInKm", { km: schedule.dueInKm })
-                : "—"}
+            {dueParts.length > 0 ? dueParts.join(" · ") : "—"}
           </p>
         </div>
       </div>

@@ -256,6 +256,8 @@ model UserNotificationSettings {
   eventMaintenanceDueSoon Boolean   @default(true)
   eventMaintenanceLogged  Boolean   @default(false)
   eventExpenseAdded       Boolean   @default(false)
+  eventOdometerReminder   Boolean   @default(false)
+  odometerReminderDays    Int       @default(7)
   deliveryImmediate       Boolean   @default(true)
   deliveryScheduled       Boolean   @default(false)
   scheduledTime           String?   @default("08:00")
@@ -266,6 +268,7 @@ model UserNotificationSettings {
   quietHoursEnd           String?   @default("07:00")
   timezone                String    @default("Europe/Berlin")
   lastMaintenanceAlertAt  DateTime?
+  lastOdometerReminderAt  DateTime?
   updatedAt               DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

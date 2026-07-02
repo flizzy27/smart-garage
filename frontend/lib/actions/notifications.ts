@@ -31,6 +31,8 @@ function parseSettingsForm(formData: FormData) {
     eventMaintenanceDueSoon: formData.get("eventMaintenanceDueSoon") === "on",
     eventMaintenanceLogged: formData.get("eventMaintenanceLogged") === "on",
     eventExpenseAdded: formData.get("eventExpenseAdded") === "on",
+    eventOdometerReminder: formData.get("eventOdometerReminder") === "on",
+    odometerReminderDays: formData.get("odometerReminderDays") || 7,
     deliveryImmediate: formData.get("deliveryImmediate") === "on",
     deliveryScheduled: formData.get("deliveryScheduled") === "on",
     scheduledTime: formData.get("scheduledTime") || null,

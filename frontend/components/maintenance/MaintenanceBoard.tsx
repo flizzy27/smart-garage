@@ -259,6 +259,18 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
   const t = useTranslations("maintenance");
   const locale = useLocale();
   const [editing, setEditing] = useState(false);
+  const dueParts = [
+    schedule.dueInDays != null
+      ? schedule.dueInDays < 0
+        ? t("overdueByDays", { days: Math.abs(schedule.dueInDays) })
+        : t("dueInDays", { days: schedule.dueInDays })
+      : null,
+    schedule.dueInKm != null
+      ? schedule.dueInKm < 0
+        ? t("overdueByKm", { km: Math.abs(schedule.dueInKm) })
+        : t("dueInKm", { km: schedule.dueInKm })
+      : null,
+  ].filter(Boolean);
 
   return (
     <article
@@ -286,11 +298,7 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
             {t(`status.${schedule.dueStatus}`)}
           </p>
           <p className="mt-0.5 text-xs tabular-nums text-muted-foreground">
-            {schedule.dueInDays != null
-              ? t("dueInDays", { days: schedule.dueInDays })
-              : schedule.dueInKm != null
-                ? t("dueInKm", { km: schedule.dueInKm })
-                : "—"}
+            {dueParts.length > 0 ? dueParts.join(" · ") : "—"}
           </p>
         </div>
       </div>
