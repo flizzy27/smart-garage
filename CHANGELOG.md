@@ -9,6 +9,24 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.9.0] - 2026-07-02
+
+### Added
+
+- **Expanded offline vehicle catalog** — the bundled catalog now includes normalized technical specs from the Kaggle Cars Datasets 2025 and Automobile datasets on top of the existing catalog sources. The generated seed now contains 113 manufacturers, 4,033 models, and 1,604 engine configurations with fields such as power, torque, displacement, cylinders, fuel type, seats, and source metadata where available.
+- **Smarter model-year dropdowns** — the quick catalog flow now groups consecutive years when the available engine/variant configuration set is unchanged. If a selected year/range has exactly one matching configuration, the app auto-selects it and fills the technical fields immediately.
+- **Catalog dataset generator and tests** — added a reproducible Kaggle normalization script plus tests for manufacturer/model dedupe, fuel/electric parsing, year-range grouping, and representative autofill data such as Volkswagen Scirocco.
+
+### Changed
+
+- **Existing Unraid installs receive catalog updates automatically** — container startup now uses a versioned bundled-catalog seed. Existing `/data` databases are updated idempotently on restart instead of only seeding empty catalogs.
+- **Catalog choices are deduplicated more aggressively** — manufacturer aliases, duplicate manufacturer names, model names with repeated make prefixes, and placeholder `Standard/Base` entries are folded or hidden when better technical data is available.
+
+### Notes
+
+- No schema migration in this release. Existing installs only need the normal container update/restart path; `prisma migrate deploy` still runs first, then the versioned catalog seed adds missing reference data without touching user vehicles.
+- The new Kaggle sources do not contain exact engine-code production spans for every model. When a source lacks exact year ranges, the app imports the best available representative spec and keeps the existing broader model-year catalog data.
+
 ## [0.8.2] - 2026-07-02
 
 ### Fixed
