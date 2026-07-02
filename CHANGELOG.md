@@ -9,6 +9,18 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.8.1] - 2026-07-02
+
+### Fixed
+
+- **Sidebar version now always current** — the version shown in the sidebar was a hardcoded `v0.1 · Preview` string that never moved. It is now sourced from `package.json` at build time (`NEXT_PUBLIC_APP_VERSION`) and shows the real release (`v0.8.1`), with no "Preview" tag now that the app is in production. Bumping the version in one place updates the sidebar automatically going forward.
+- **One source of truth for the version** — the JSON export previously stamped a stale `0.4.4` fallback and the health endpoint reported `unknown` when `APP_VERSION` was absent. Both now use a shared `APP_VERSION` constant derived from `package.json` (or the container's build-time `APP_VERSION`).
+- **Shared vehicles show their images and documents** — images and documents of a vehicle shared with you (Family garage) returned 404 because file access was scoped to the owner only. Downloads and inline viewing now follow vehicle access (owner or share), matching the rest of the sharing feature. Deletion stays owner-scoped.
+
+### Security
+
+- **`X-Content-Type-Options: nosniff`** is now sent on the document and vehicle-image file responses, preventing browser MIME-sniffing of stored files (defense in depth on top of the existing upload MIME allow-list).
+
 ## [0.8.0] - 2026-07-02
 
 ### Added

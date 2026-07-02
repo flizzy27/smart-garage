@@ -26,6 +26,7 @@ export async function GET(_request: Request, context: RouteContext) {
       headers: {
         "Content-Type": document.mimeType,
         "Cache-Control": "private, max-age=3600",
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch {

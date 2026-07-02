@@ -1,5 +1,6 @@
 import type { DocumentCategory, DocumentPurpose } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { vehicleAccessWhere } from "@/lib/vehicles/access";
 import type { SavedFile } from "@/lib/storage/local";
 
 const fileDocumentPurposes: DocumentPurpose[] = [
@@ -139,6 +140,26 @@ export async function findDocumentForOwner(documentId: string, ownerUserId: stri
           vehicle: { ownerUserId, deletedAt: null },
         },
         { uploadedByUserId: ownerUserId },
+      ],
+    },
+    include: documentInclude,
+  });
+}
+
+/**
+ * Documents a user is allowed to *view*: those attached to a vehicle they can
+ * access (owner or via a share), plus anything they uploaded themselves. Used
+ * for downloads/inline viewing so shared vehicles show their images and files.
+ * Mutations (delete) stay owner-scoped via {@link findDocumentForOwner}.
+ */
+export async function findAccessibleDocument(documentId: string, userId: string) {
+  return prisma.document.findFirst({
+    where: {
+      id: documentId,
+      deletedAt: null,
+      OR: [
+        { vehicle: vehicleAccessWhere(userId) },
+        { uploadedByUserId: userId },
       ],
     },
     include: documentInclude,

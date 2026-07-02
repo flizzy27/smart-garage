@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { vehicleAccessWhere } from "@/lib/vehicles/access";
+import { APP_VERSION } from "@/lib/app-version";
 
 export async function buildUserExport(userId: string) {
   const [vehicles, expenses, fuelEntries, wishlistItems, preferences] =
@@ -26,7 +27,7 @@ export async function buildUserExport(userId: string) {
 
   return {
     exportedAt: new Date().toISOString(),
-    version: process.env.APP_VERSION ?? "0.4.4",
+    version: APP_VERSION,
     preferences: preferences
       ? {
           theme: preferences.theme,

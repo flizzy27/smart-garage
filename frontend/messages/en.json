@@ -2,7 +2,6 @@
   "app": {
     "name": "Smart Garage",
     "tagline": "Self-hosted vehicle management",
-    "version": "v0.1 · Preview",
     "creator": "Created by"
   },
   "nav": {

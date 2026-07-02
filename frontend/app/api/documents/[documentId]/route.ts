@@ -33,6 +33,7 @@ export async function GET(request: Request, context: RouteContext) {
         "Content-Type": document.mimeType,
         "Content-Length": String(buffer.length),
         "Cache-Control": "private, max-age=3600",
+        "X-Content-Type-Options": "nosniff",
         "Content-Disposition": inline
           ? `inline; filename="${filename}"`
           : `attachment; filename="${filename}"`,

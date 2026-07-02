@@ -20,6 +20,9 @@ export function Sidebar({ mobileOpen, onMobileClose, translucent = false, blurSt
   const tNav = useTranslations("nav");
   const { collapsed, toggleCollapsed } = useSidebar();
   const { designPreset } = useAppearance();
+  // Injected at build time from package.json (see next.config.ts). Always
+  // reflects the current release — no hardcoded version string to update.
+  const appVersion = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
 
   const sidebarBg = translucent ? "bg-sidebar/92" : "bg-sidebar";
   const hasGradient = designPreset !== "default";
@@ -96,7 +99,7 @@ export function Sidebar({ mobileOpen, onMobileClose, translucent = false, blurSt
         {!collapsed ? (
           <div className="hidden border-t border-sidebar-border px-4 py-3 lg:block">
             <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              {t("version")}
+              v{appVersion}
             </p>
             <p className="mt-1 text-[11px] text-muted-foreground">
               {t("creator")} <span className="font-semibold text-foreground">Flizzy</span>

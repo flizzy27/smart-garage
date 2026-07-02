@@ -1,6 +1,7 @@
 import { getCurrentUserId } from "@/lib/auth/current-user";
 import {
   createVehicleFileDocument,
+  findAccessibleDocument,
   findDocumentForOwner,
   listFileDocumentsForOwner,
   serializeDocument,
@@ -67,9 +68,9 @@ export async function deleteVehicleDocument(documentId: string) {
 
 export async function getDocumentForDownload(
   documentId: string,
-  ownerUserId: string,
+  userId: string,
 ) {
-  const document = await findDocumentForOwner(documentId, ownerUserId);
+  const document = await findAccessibleDocument(documentId, userId);
   if (!document) return null;
   return document;
 }
