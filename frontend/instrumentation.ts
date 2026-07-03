@@ -1,5 +1,3 @@
-import { runMaintenanceAlertsForAllUsers } from "@/lib/services/notifications";
-
 const TICK_INTERVAL_MS = 15 * 60 * 1000;
 
 let workerHandle: NodeJS.Timeout | null = null;
@@ -9,6 +7,9 @@ async function notificationTick() {
   if (workerRunning) return;
   workerRunning = true;
   try {
+    const { runMaintenanceAlertsForAllUsers } = await import(
+      "@/lib/services/notifications"
+    );
     await runMaintenanceAlertsForAllUsers();
   } catch {
     // Never let the background worker crash the process.
