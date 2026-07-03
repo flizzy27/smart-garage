@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { withDbRetry } from "@/lib/db/retry";
+import { getEnabledChannels } from "@/lib/notifications/dispatch";
 
 export type NotificationSettingsRecord = {
   pushoverEnabled: boolean;
@@ -61,6 +63,80 @@ export async function findNotificationSettings(
   });
 }
 
+/**
+ * Returns the userId + locale (via preferences) + notification settings for
+ * every user that has notification settings with at least one channel enabled.
+ * Used by the background scheduler to deliver alerts without a page request.
+ */
+export async function listUsersForNotificationScheduling(): Promise<
+  Array<{
+    userId: string;
+    locale: "en" | "de";
+    settings: NotificationSettingsRecord;
+  }>
+> {
+  const rows = await prisma.userNotificationSettings.findMany({
+    select: {
+      userId: true,
+      ...selectFields,
+      user: {
+        select: {
+          preferences: { select: { locale: true } },
+        },
+      },
+    },
+  });
+
+  const result: Array<{
+    userId: string;
+    locale: "en" | "de";
+    settings: NotificationSettingsRecord;
+  }> = [];
+
+  for (const row of rows) {
+    const settings: NotificationSettingsRecord = {
+      pushoverEnabled: row.pushoverEnabled,
+      pushoverUserKey: row.pushoverUserKey,
+      pushoverAppToken: row.pushoverAppToken,
+      telegramEnabled: row.telegramEnabled,
+      telegramBotToken: row.telegramBotToken,
+      telegramChatId: row.telegramChatId,
+      eventMaintenanceOverdue: row.eventMaintenanceOverdue,
+      eventMaintenanceDueSoon: row.eventMaintenanceDueSoon,
+      eventMaintenanceLogged: row.eventMaintenanceLogged,
+      eventExpenseAdded: row.eventExpenseAdded,
+      eventOdometerReminder: row.eventOdometerReminder,
+      odometerReminderDays: row.odometerReminderDays,
+      deliveryImmediate: row.deliveryImmediate,
+      deliveryScheduled: row.deliveryScheduled,
+      scheduledTime: row.scheduledTime,
+      scheduledDays: row.scheduledDays,
+      minIntervalHours: row.minIntervalHours,
+      quietHoursEnabled: row.quietHoursEnabled,
+      quietHoursStart: row.quietHoursStart,
+      quietHoursEnd: row.quietHoursEnd,
+      timezone: row.timezone,
+      lastMaintenanceAlertAt: row.lastMaintenanceAlertAt,
+      lastOdometerReminderAt: row.lastOdometerReminderAt,
+    };
+
+    if (getEnabledChannels(settings).length === 0) continue;
+    if (
+      !settings.eventMaintenanceOverdue &&
+      !settings.eventMaintenanceDueSoon &&
+      !settings.eventOdometerReminder
+    ) {
+      continue;
+    }
+
+    const localeRaw = row.user?.preferences?.locale;
+    const locale: "en" | "de" = localeRaw === "en" ? "en" : "de";
+    result.push({ userId: row.userId, locale, settings });
+  }
+
+  return result;
+}
+
 export async function upsertNotificationSettings(
   userId: string,
   data: Omit<
@@ -68,26 +144,32 @@ export async function upsertNotificationSettings(
     "lastMaintenanceAlertAt" | "lastOdometerReminderAt"
   >,
 ) {
-  return prisma.userNotificationSettings.upsert({
-    where: { userId },
-    create: {
-      userId,
-      ...data,
-    },
-    update: data,
-  });
+  return withDbRetry(() =>
+    prisma.userNotificationSettings.upsert({
+      where: { userId },
+      create: {
+        userId,
+        ...data,
+      },
+      update: data,
+    }),
+  );
 }
 
 export async function touchMaintenanceAlertSent(userId: string) {
-  return prisma.userNotificationSettings.update({
-    where: { userId },
-    data: { lastMaintenanceAlertAt: new Date() },
-  });
+  return withDbRetry(() =>
+    prisma.userNotificationSettings.update({
+      where: { userId },
+      data: { lastMaintenanceAlertAt: new Date() },
+    }),
+  );
 }
 
 export async function touchOdometerReminderSent(userId: string) {
-  return prisma.userNotificationSettings.update({
-    where: { userId },
-    data: { lastOdometerReminderAt: new Date() },
-  });
+  return withDbRetry(() =>
+    prisma.userNotificationSettings.update({
+      where: { userId },
+      data: { lastOdometerReminderAt: new Date() },
+    }),
+  );
 }

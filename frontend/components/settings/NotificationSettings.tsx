@@ -123,7 +123,12 @@ export function NotificationSettings({ initial }: Props) {
         <Alert variant="error">{testState.partialErrors.join("; ")}</Alert>
       ) : null}
 
-      <form action={saveAction} className="space-y-6">
+      <Alert variant="info">
+        <p className="text-sm">{t("backgroundInfo")}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{t("messageFormatInfo")}</p>
+      </Alert>
+
+      <form id="notification-settings-form" action={saveAction} className="space-y-6">
         {saveState?.error ? <Alert variant="error">{saveState.error}</Alert> : null}
         {saveState?.ok ? <Alert variant="success">{t("saved")}</Alert> : null}
 
@@ -357,6 +362,17 @@ export function NotificationSettings({ initial }: Props) {
           {saving ? t("saving") : t("save")}
         </Button>
       </form>
+
+      <div className="sticky bottom-4 z-10 flex justify-end lg:hidden">
+        <Button
+          type="submit"
+          form="notification-settings-form"
+          disabled={saving}
+          className="shadow-lg"
+        >
+          {saving ? t("saving") : t("save")}
+        </Button>
+      </div>
     </div>
   );
 }

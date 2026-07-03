@@ -11,6 +11,7 @@ import { sendPushoverNotification, validatePushoverUser } from "@/lib/notificati
 import { sendTelegramNotification } from "@/lib/notifications/telegram";
 import {
   findNotificationSettings,
+  listUsersForNotificationScheduling,
   touchMaintenanceAlertSent,
   touchOdometerReminderSent,
   upsertNotificationSettings,
@@ -157,6 +158,39 @@ export async function maybeSendMaintenanceAlerts(userId: string, locale: "en" | 
   }
 }
 
+/**
+ * Background-worker entry point: iterates every user with notification
+ * settings + at least one enabled channel and fires their due/overdue /
+ * odometer alerts if delivery rules allow. Called on a schedule by the
+ * instrumentation worker — NOT on page requests.
+ */
+export async function runMaintenanceAlertsForAllUsers() {
+  const users = await listUsersForNotificationScheduling();
+  for (const { userId, locale, settings } of users) {
+    try {
+      if (!canDeliverNow(settings)) continue;
+
+      if (
+        minIntervalElapsed(settings.lastMaintenanceAlertAt, settings.minIntervalHours)
+      ) {
+        await sendMaintenanceDueAlerts(userId, locale, settings);
+      }
+
+      if (
+        settings.eventOdometerReminder &&
+        minIntervalElapsed(
+          settings.lastOdometerReminderAt,
+          settings.odometerReminderDays * 24,
+        )
+      ) {
+        await sendOdometerReminder(userId, locale, settings);
+      }
+    } catch {
+      // Keep the worker resilient — one user failing must not stop others.
+    }
+  }
+}
+
 async function sendMaintenanceDueAlerts(
   userId: string,
   locale: "en" | "de",
@@ -185,7 +219,39 @@ async function sendMaintenanceDueAlerts(
         : locale === "de"
           ? "bald fällig"
           : "due soon";
-    return `• ${item.vehicleName}: ${item.name} (${status})`;
+
+    const detailParts: string[] = [];
+    if (item.dueInDays != null) {
+      const days = item.dueInDays;
+      const daysLabel =
+        locale === "de"
+          ? days < 0
+            ? `${Math.abs(days)} Tage drüber`
+            : days === 0
+              ? "heute"
+              : `noch ${days} Tage`
+          : days < 0
+            ? `${Math.abs(days)} days past`
+            : days === 0
+              ? "today"
+              : `${days} days left`;
+      detailParts.push(daysLabel);
+    }
+    if (item.dueInKm != null) {
+      const km = item.dueInKm;
+      const kmLabel =
+        locale === "de"
+          ? km < 0
+            ? `${Math.abs(km).toLocaleString("de-DE")} km drüber`
+            : `noch ${km.toLocaleString("de-DE")} km`
+          : km < 0
+            ? `${Math.abs(km).toLocaleString("en-US")} km past`
+            : `${km.toLocaleString("en-US")} km left`;
+      detailParts.push(kmLabel);
+    }
+
+    const detail = detailParts.length > 0 ? ` (${detailParts.join(", ")})` : "";
+    return `• ${item.vehicleName}: ${item.name} — ${status}${detail}`;
   });
 
   const message = lines.join("\n");

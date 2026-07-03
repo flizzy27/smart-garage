@@ -100,5 +100,5 @@ export function applyDesignPresetToDocument(presetId: DesignPresetId) {
 
 export function clampBackgroundBlur(px: number): number {
   if (!Number.isFinite(px)) return DEFAULT_BACKGROUND_BLUR_PX;
-  return Math.min(MAX_BACKGROUND_BLUR_PX, Math.max(0, Math.round(px)));
+  return Math.min(MAX_BACKGROUND_BLUR_PX, Math.max(0, Math.round(px * 2) / 2));
 }

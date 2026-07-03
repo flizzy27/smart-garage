@@ -234,7 +234,7 @@ model UserPreferences {
   currency               String   @default("EUR")
   distanceUnit           String   @default("km")
   designPreset           String   @default("default")
-  backgroundBlurPx       Int      @default(8)
+  backgroundBlurPx       Float    @default(8)
   backgroundImageKey     String?
   backgroundMimeType     String?
   quickFuelEnabled       Boolean  @default(true)

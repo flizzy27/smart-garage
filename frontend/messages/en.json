@@ -280,6 +280,8 @@
         "description": "Choose where, what, and when you receive alerts",
         "testAllTitle": "Test notification",
         "testAllDescription": "Sends a test message to all enabled channels using your saved settings.",
+        "backgroundInfo": "Alerts are checked automatically in the background — no need to keep the page open. Your delivery rules below control exactly when and how often they are sent.",
+        "messageFormatInfo": "Each alert lists the vehicle, service, status, and remaining days or kilometers until due.",
         "testAllButton": "Send test to all channels",
         "testSuccessChannels": "Test sent via: {channels}",
         "channelsTitle": "Channels (where)",

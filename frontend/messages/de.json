@@ -280,6 +280,8 @@
         "description": "Wählen Sie, wo, wann und wofür Sie Benachrichtigungen erhalten",
         "testAllTitle": "Testbenachrichtigung",
         "testAllDescription": "Sendet eine Testnachricht an alle aktivierten Kanäle mit Ihren gespeicherten Einstellungen.",
+        "backgroundInfo": "Benachrichtigungen werden automatisch im Hintergrund geprüft — die Seite muss nicht geöffnet bleiben. Ihre Zustellregeln unten steuern genau, wann und wie oft sie gesendet werden.",
+        "messageFormatInfo": "Jede Benachrichtigung listet Fahrzeug, Service, Status und verbleibende Tage oder Kilometer bis zur Fälligkeit.",
         "testAllButton": "Test an alle Kanäle senden",
         "testSuccessChannels": "Test gesendet über: {channels}",
         "channelsTitle": "Kanäle (wo)",

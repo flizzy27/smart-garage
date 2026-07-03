@@ -91,12 +91,12 @@ export function BackgroundBlurSettings({ hasBackground }: { hasBackground: boole
             type="range"
             min={0}
             max={MAX_BACKGROUND_BLUR_PX}
-            step={1}
+            step={0.5}
             value={localBlur}
             onChange={(e) => setLocalBlur(Number(e.target.value))}
             className="flex-1 accent-accent"
           />
-          <span className="w-12 text-right text-sm tabular-nums text-muted-foreground">
+          <span className="w-14 text-right text-sm tabular-nums text-muted-foreground">
             {localBlur}px
           </span>
         </div>

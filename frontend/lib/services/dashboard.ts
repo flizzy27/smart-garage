@@ -16,7 +16,6 @@ import {
   findPreferencesForUser,
   getMaintenanceThresholds,
 } from "@/lib/repositories/preferences";
-import { maybeSendMaintenanceAlerts } from "@/lib/services/notifications";
 
 export const getDashboardStats = cache(async () => {
   const ownerUserId = await getCurrentUserId();
@@ -38,8 +37,6 @@ export const getDashboardStats = cache(async () => {
       getMaintenanceThresholds(ownerUserId),
       findPreferencesForUser(ownerUserId),
     ]);
-
-  void maybeSendMaintenanceAlerts(ownerUserId, locale);
 
   const vehicleAlerts =
     primaryVehicle?.maintenanceSchedules.map((schedule) => {

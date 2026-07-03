@@ -149,7 +149,6 @@ export async function updateAppearanceForUser(
   userId: string,
   data: Partial<Pick<UserSettings, "designPreset" | "backgroundBlurPx">>,
 ) {
-  const existing = await prisma.userPreferences.findUnique({ where: { userId } });
   const create = {
     userId,
     designPreset: data.designPreset ?? DEFAULT_SETTINGS.designPreset,
@@ -158,17 +157,20 @@ export async function updateAppearanceForUser(
     ),
   };
 
-  if (!existing) {
-    return prisma.userPreferences.create({ data: create });
-  }
+  return withDbRetry(async () => {
+    const existing = await prisma.userPreferences.findUnique({ where: { userId } });
+    if (!existing) {
+      return prisma.userPreferences.create({ data: create });
+    }
 
-  return prisma.userPreferences.update({
-    where: { userId },
-    data: {
-      ...(data.designPreset != null ? { designPreset: data.designPreset } : {}),
-      ...(data.backgroundBlurPx != null
-        ? { backgroundBlurPx: clampBackgroundBlur(data.backgroundBlurPx) }
-        : {}),
-    },
+    return prisma.userPreferences.update({
+      where: { userId },
+      data: {
+        ...(data.designPreset != null ? { designPreset: data.designPreset } : {}),
+        ...(data.backgroundBlurPx != null
+          ? { backgroundBlurPx: clampBackgroundBlur(data.backgroundBlurPx) }
+          : {}),
+      },
+    });
   });
 }

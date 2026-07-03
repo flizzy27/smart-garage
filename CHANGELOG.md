@@ -9,6 +9,38 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.9.3] - 2026-07-03
+
+### Changed
+
+- **Finer background blur control** — the blur slider now works in 0.5px increments (previously 1px), so you can dial in a subtle blur well below the old minimum step. The `UserPreferences.backgroundBlurPx` column is now stored as `Float` instead of `Integer`, so fractional values persist correctly. Existing installs keep their current blur value, now stored as a float.
+
+### Fixed
+
+- **Notification save button is always reachable on mobile** — a sticky save button floats above the content on small screens so you no longer have to scroll all the way to the bottom of the settings form to confirm your changes. The inline save button remains on desktop.
+- **More reliable settings persistence** — appearance saves (design preset, background blur) and notification settings saves (including the "last alert sent" timestamps touched by the background worker) are now retried on transient SQLite write locks, matching the protection already in place for general preference saves. A brief lock contention no longer silently drops a save.
+
+### Migrations
+
+- `20260703010000_background_blur_float` — changes `UserPreferences.backgroundBlurPx` from `INTEGER` to `REAL` (float). Runs automatically on container start; existing integer values are preserved as float equivalents (e.g. `8` becomes `8.0`).
+
+## [0.9.2] - 2026-07-03
+
+### Fixed
+
+- **Maintenance alerts no longer fire on every page load** — previously the dashboard triggered a notification check on every render, so visiting the site could send a duplicate alert (especially with the "No minimum interval" option). Alerts are now delivered by a background worker started via Next.js `instrumentation.ts`, completely independent of page visits. The page no longer needs to be open for notifications to arrive.
+- **Scheduled delivery window now actually works** — the "Zeitfenster" / scheduled-window setting previously only fired if someone happened to load the dashboard within ±30 minutes of the configured time. The background worker checks every 15 minutes, so alerts respect your chosen weekday/time window, quiet hours, and minimum interval reliably.
+
+### Changed
+
+- **Notification messages now show remaining days and kilometers** — each due/overdue alert line includes how many days and/or kilometers are left until the service is due (or by how much it is already overdue), e.g. `• VW Golf: Oil change — due soon (noch 12 Tage, noch 340 km)`.
+- **Self-hosted background delivery** — a single `setInterval` worker (15-minute tick, 30s startup delay, `unref`'d so it never keeps the process alive on its own) iterates all users with notification settings and sends their due/overdue/odometer reminders according to their own delivery rules. No external cron or cloud service required.
+
+### Notes
+
+- No schema migration in this release. Existing notification settings (`minIntervalHours`, `deliveryScheduled`, `scheduledTime`, `scheduledDays`, `quietHours*`, `odometerReminderDays`) already control timing and frequency — they now work as originally intended thanks to the background worker.
+- The "Mindestabstand zwischen Benachrichtigungen" / minimum interval setting still limits how often a user can receive a repeat alert (default 6h). Set it to your preferred repeat cadence.
+
 ## [0.9.1] - 2026-07-02
 
 ### Added
