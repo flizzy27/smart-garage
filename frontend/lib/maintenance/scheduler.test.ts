@@ -86,6 +86,23 @@ describe("pickLastService — the actual last service is derived from history", 
     expect(pickLastService([])).toBeNull();
   });
 
+  it("bug report: 141,834 km (Mar 2026) stays latest over 132,511 km (Nov 2025)", () => {
+    const newer = record({
+      id: "newer-oil",
+      odometerKm: 141_834,
+      performedAt: new Date("2026-03-19"),
+      createdAt: new Date("2026-03-20T00:00:00Z"),
+    });
+    const older = record({
+      id: "older-oil",
+      odometerKm: 132_511,
+      performedAt: new Date("2025-11-10"),
+      createdAt: new Date("2026-03-21T00:00:00Z"), // inserted later, still older service
+    });
+    expect(pickLastService([newer, older])?.id).toBe("newer-oil");
+    expect(pickLastService([older, newer])?.id).toBe("newer-oil");
+  });
+
   it("ranks a service with an odometer above one without", () => {
     const withKm = record({ id: "withKm", odometerKm: 50_000, performedAt: new Date("2020-01-01") });
     const noKm = record({ id: "noKm", odometerKm: null, performedAt: new Date("2026-01-01") });

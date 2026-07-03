@@ -64,7 +64,7 @@ export function EditMaintenanceRecordDialog({
       description={record.serviceName}
       size="xl"
     >
-      <form action={formAction} className="space-y-4">
+      <form data-edit-form={record.id} action={formAction} className="space-y-4">
         <input type="hidden" name="recordId" value={record.id} />
         <input type="hidden" name="vehicleId" value={record.vehicleId} />
         <input type="hidden" name="currency" value={settings.currency} />
@@ -143,16 +143,25 @@ export function EditMaintenanceRecordDialog({
             {t("saveAsDefault")}
           </label>
         ) : null}
-
-        <div className="flex flex-wrap justify-end gap-2 border-t border-border-subtle pt-4">
-          <Button type="button" variant="secondary" onClick={onClose}>
-            {t("cancelAdd")}
-          </Button>
-          <Button type="submit" disabled={pending}>
-            {pending ? t("saving") : t("saveChanges")}
-          </Button>
-        </div>
       </form>
+
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button type="button" variant="secondary" onClick={onClose} disabled={pending}>
+          {t("cancelAdd")}
+        </Button>
+        <Button
+          type="button"
+          disabled={pending}
+          onClick={() => {
+            const form = document.querySelector<HTMLFormElement>(
+              `form[data-edit-form="${record.id}"]`,
+            );
+            form?.requestSubmit();
+          }}
+        >
+          {pending ? t("saving") : t("saveChanges")}
+        </Button>
+      </div>
     </Modal>
   );
 }

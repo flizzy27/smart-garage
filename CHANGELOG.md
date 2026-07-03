@@ -9,6 +9,25 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.9.6] - 2026-07-04
+
+### Fixed
+
+- **Dialogs, modals, and overlays now render correctly above everything** — the shared `Modal` and `Dialog` components now render through a React portal at `document.body`, escaping any ancestor stacking context (notably the `backdrop-filter` applied to the main content column when a custom background image is set, which previously trapped `position: fixed` dialogs and could clip or hide them). This fixes the global issue affecting edit-service, delete-service, add-service, maintenance-item editing, delete confirmations, the modifications panel, the document preview, and the reminders wizard on desktop and mobile.
+- **Body scroll locking is now consistent and leak-proof** — both `Modal` and `Dialog` now lock body scroll via a shared `useBodyScrollLock` hook with an open-count ref, so nested dialogs (e.g. a delete confirmation opened from within an edit modal) no longer reset scroll prematurely. Scroll position is saved on open and restored on close, and the scrollbar gap is compensated to avoid layout shift on desktop.
+- **Dialog action buttons stay reachable on long forms** — `Dialog` now uses a fixed header / scrollable body / fixed footer layout (matching `Modal`), so Save/Cancel/Delete buttons remain visible even when the form content is long. The maintenance-record edit dialog was refactored to use this footer so its save/cancel buttons no longer scroll out of view.
+- **Focus is trapped inside open dialogs** — a shared `useFocusTrap` hook moves focus into the dialog on open, keeps Tab/Shift-Tab cycling within the dialog, and restores focus to the previously-focused element on close. Improves keyboard accessibility across all overlays.
+- **Safe-area insets on dialog headers/footers** — dialog header and footer now respect `safe-pt`/`safe-pb` so they stay clear of notches and home indicators on mobile.
+
+### Changed
+
+- **Elevated z-index for overlays** — portals now use `z-[100]` so they always paint above the sidebar (`z-50`), header (`z-30`), and sticky save bars, eliminating the previous z-index conflict where a dialog could render under the mobile sidebar.
+
+### Notes
+
+- No schema migration in this release. The service-history and latest-service fixes from v0.9.4/v0.9.5 remain in place; this release is a UI/overlay-only fix.
+- Existing Unraid installs update via the normal container Force Update path — no manual DB steps.
+
 ## [0.9.5] - 2026-07-04
 
 ### Fixed

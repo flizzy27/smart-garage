@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "./Button";
+import { useBodyScrollLock, useFocusTrap } from "./useOverlay";
 
 type ModalProps = {
   open: boolean;
@@ -9,6 +11,7 @@ type ModalProps = {
   description?: string;
   onClose: () => void;
   children: ReactNode;
+  footer?: ReactNode;
   size?: "md" | "lg" | "xl";
 };
 
@@ -24,25 +27,26 @@ export function Modal({
   description,
   onClose,
   children,
+  footer,
   size = "lg",
 }: ModalProps) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  useBodyScrollLock(open);
+  useFocusTrap(panelRef, open);
+
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
-    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", onKeyDown);
-    };
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex min-h-dvh items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex min-h-dvh items-end justify-center p-0 sm:items-center sm:p-4">
       <button
         type="button"
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -50,13 +54,14 @@ export function Modal({
         aria-label="Close"
       />
       <div
-        className={`relative z-10 flex max-h-[calc(100dvh-1rem)] w-full flex-col rounded-t-2xl border border-border bg-card shadow-xl sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl ${sizeClass[size]}`}
+        ref={panelRef}
+        className={`relative z-10 flex max-h-[calc(100dvh-0.5rem)] w-full flex-col rounded-t-2xl border border-border bg-card shadow-xl sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl ${sizeClass[size]}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="shrink-0 flex items-start justify-between gap-4 border-b border-border-subtle px-5 py-4">
-          <div>
+        <div className="safe-pt shrink-0 flex items-start justify-between gap-4 border-b border-border-subtle px-5 py-4">
+          <div className="min-w-0">
             <h2 id="modal-title" className="text-lg font-semibold text-foreground">
               {title}
             </h2>
@@ -71,7 +76,13 @@ export function Modal({
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5">
           {children}
         </div>
+        {footer ? (
+          <div className="safe-pb shrink-0 border-t border-border-subtle px-5 py-4">
+            {footer}
+          </div>
+        ) : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
