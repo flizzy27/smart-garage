@@ -7,6 +7,7 @@ import type {
 import type { Locale } from "@/lib/i18n/routing";
 import {
   computeNextDue,
+  pickLastService,
   DEFAULT_MAINTENANCE_THRESHOLDS,
   type MaintenanceThresholds,
 } from "@/lib/maintenance/scheduler";
@@ -63,8 +64,27 @@ export async function findScheduleById(scheduleId: string, ownerUserId: string) 
   });
 }
 
+/**
+ * Prisma client or an interactive-transaction client. Both expose the model
+ * delegates we need, so callers can recompute a schedule either standalone or
+ * atomically inside a `$transaction`.
+ */
+type PrismaLike = PrismaClient | Prisma.TransactionClient;
+
+/**
+ * Recomputes a schedule's cached "last service" + due status from its actual
+ * maintenance history. The history (`MaintenanceRecord`) is the single source
+ * of truth: the last service is the record with the highest odometer, then the
+ * latest date, then a stable tie-breaker (see `pickLastService`) — never the
+ * most recently *inserted* row. This is what keeps back-dated services from
+ * overwriting a newer one.
+ *
+ * The schedule's own `lastPerformedAt`/`lastOdometerKm` columns are treated as
+ * a derived cache and are only used as a fallback baseline when no records
+ * exist yet (e.g. a rough estimate captured during setup).
+ */
 export async function refreshScheduleDueStatus(
-  client: PrismaClient,
+  client: PrismaLike,
   scheduleId: string,
   thresholds: MaintenanceThresholds = DEFAULT_MAINTENANCE_THRESHOLDS,
 ): Promise<void> {
@@ -74,15 +94,26 @@ export async function refreshScheduleDueStatus(
   });
   if (!schedule) return;
 
+  const records = await client.maintenanceRecord.findMany({
+    where: { scheduleId },
+    select: { id: true, performedAt: true, odometerKm: true, createdAt: true },
+  });
+
+  const lastRecord = pickLastService(records);
+
+  const baseline = lastRecord
+    ? { performedAt: lastRecord.performedAt, odometerKm: lastRecord.odometerKm }
+    : {
+        performedAt: schedule.lastPerformedAt,
+        odometerKm: schedule.lastOdometerKm,
+      };
+
   const computed = computeNextDue(
     {
       intervalKm: schedule.intervalKm,
       intervalMonths: schedule.intervalMonths,
     },
-    {
-      performedAt: schedule.lastPerformedAt,
-      odometerKm: schedule.lastOdometerKm,
-    },
+    baseline,
     schedule.vehicle.currentOdometerKm,
     new Date(),
     thresholds,
@@ -91,6 +122,8 @@ export async function refreshScheduleDueStatus(
   await client.vehicleMaintenanceSchedule.update({
     where: { id: scheduleId },
     data: {
+      lastPerformedAt: baseline.performedAt,
+      lastOdometerKm: baseline.odometerKm,
       nextDueAt: computed.nextDueAt,
       nextDueOdometerKm: computed.nextDueOdometerKm,
       dueStatus: computed.dueStatus,

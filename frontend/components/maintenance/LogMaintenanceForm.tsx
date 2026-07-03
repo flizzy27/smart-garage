@@ -21,6 +21,7 @@ import {
 import {
   distanceUnitLabel,
   formDistanceValue,
+  preferredToKm,
 } from "@/lib/regional/distance";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedMaintenanceItem } from "@/lib/repositories/maintenance-items";
@@ -33,6 +34,9 @@ type LogMaintenanceFormProps = {
   defaultNote?: string | null;
   suggestedCategories?: MaintenanceItemCategory[];
   idPrefix?: string;
+  /** Current last-service reference used to warn about back-dated entries. */
+  lastServiceOdometerKm?: number | null;
+  lastServicePerformedAt?: string | null;
 };
 
 export function LogMaintenanceForm({
@@ -43,6 +47,8 @@ export function LogMaintenanceForm({
   defaultNote,
   suggestedCategories = [],
   idPrefix = "log",
+  lastServiceOdometerKm,
+  lastServicePerformedAt,
 }: LogMaintenanceFormProps) {
   const t = useTranslations("maintenance");
   const { settings } = useUserSettings();
@@ -51,6 +57,26 @@ export function LogMaintenanceForm({
   const [items, setItems] = useState<EditableMaintenanceItem[]>(() =>
     itemsFromSerialized(defaultItems),
   );
+  const [performedAt, setPerformedAt] = useState(() =>
+    new Date().toISOString().slice(0, 10),
+  );
+  const [odometerValue, setOdometerValue] = useState(() =>
+    String(formDistanceValue(defaultOdometerKm, distanceUnit) ?? ""),
+  );
+
+  // A back-dated entry is one that happened before the current last service —
+  // by odometer (primary) or, if km is unknown, by date. It is still allowed;
+  // we only inform the user it won't become the reference for the next due.
+  const enteredKm =
+    odometerValue.trim() !== "" && Number.isFinite(Number(odometerValue))
+      ? preferredToKm(Number(odometerValue), distanceUnit)
+      : null;
+  const isBackdated =
+    lastServiceOdometerKm != null && enteredKm != null
+      ? enteredKm < lastServiceOdometerKm
+      : lastServicePerformedAt != null && performedAt !== ""
+        ? new Date(performedAt) < new Date(lastServicePerformedAt.slice(0, 10))
+        : false;
   const [state, formAction, pending] = useActionState<
     MaintenanceActionResult | null,
     FormData
@@ -73,6 +99,7 @@ export function LogMaintenanceForm({
 
       {state?.error ? <Alert variant="error">{state.error}</Alert> : null}
       {state?.ok ? <Alert variant="success">{t("serviceLogged")}</Alert> : null}
+      {isBackdated ? <Alert variant="info">{t("backdatedHint")}</Alert> : null}
 
       <input type="hidden" name="scheduleId" value={scheduleId} />
       <input type="hidden" name="vehicleId" value={vehicleId} />
@@ -89,7 +116,8 @@ export function LogMaintenanceForm({
             name="performedAt"
             type="date"
             required
-            defaultValue={new Date().toISOString().slice(0, 10)}
+            value={performedAt}
+            onChange={(e) => setPerformedAt(e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -101,7 +129,8 @@ export function LogMaintenanceForm({
             name="odometerKm"
             type="number"
             min={0}
-            defaultValue={formDistanceValue(defaultOdometerKm, distanceUnit)}
+            value={odometerValue}
+            onChange={(e) => setOdometerValue(e.target.value)}
             placeholder={distanceUnitLabel(distanceUnit)}
           />
         </div>

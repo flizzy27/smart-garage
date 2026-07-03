@@ -103,3 +103,68 @@ export function pickSoonestDue(a: ComputedDue, b: ComputedDue): ComputedDue {
   if (aDays !== bDays) return aDays <= bDays ? a : b;
   return aKm <= bKm ? a : b;
 }
+
+/**
+ * Minimal shape of a maintenance-history row needed to decide which service
+ * counts as the most recent one. Kept framework-free so it can be unit tested
+ * without Prisma.
+ */
+export type ServiceRecordLike = {
+  id: string;
+  performedAt: Date;
+  odometerKm: number | null;
+  createdAt: Date;
+};
+
+/**
+ * Compares two service records by real-world recency. Returns a positive
+ * number when `a` was performed *later* than `b`, negative when `b` is later,
+ * and 0 only when they are genuinely indistinguishable.
+ *
+ * Priority (per product spec, most significant first):
+ *   1. odometer reading — a service at a higher km is the more recent one
+ *   2. performed date
+ *   3. stable DB tie-breaker: row `createdAt`, then `id`
+ *
+ * The row's own `createdAt` is used *only* as a last-resort tie-breaker — never
+ * to decide which service is newest. This is what lets a user back-date an old
+ * service without it hijacking the "last service" just because its row was
+ * inserted most recently. Records without an odometer sort below those that
+ * have one (they cannot advance a km-based interval).
+ */
+export function compareServiceRecency(
+  a: ServiceRecordLike,
+  b: ServiceRecordLike,
+): number {
+  const aKm = a.odometerKm ?? Number.NEGATIVE_INFINITY;
+  const bKm = b.odometerKm ?? Number.NEGATIVE_INFINITY;
+  if (aKm !== bKm) return aKm - bKm;
+
+  const aTime = a.performedAt.getTime();
+  const bTime = b.performedAt.getTime();
+  if (aTime !== bTime) return aTime - bTime;
+
+  const aCreated = a.createdAt.getTime();
+  const bCreated = b.createdAt.getTime();
+  if (aCreated !== bCreated) return aCreated - bCreated;
+
+  if (a.id === b.id) return 0;
+  return a.id < b.id ? -1 : 1;
+}
+
+/**
+ * Picks the record that represents the actual last service from a schedule's
+ * full history. Returns `null` when there are no records. This — not the DB
+ * insertion order — is the single source of truth for "last service".
+ */
+export function pickLastService<T extends ServiceRecordLike>(
+  records: readonly T[],
+): T | null {
+  let best: T | null = null;
+  for (const record of records) {
+    if (best === null || compareServiceRecency(record, best) > 0) {
+      best = record;
+    }
+  }
+  return best;
+}

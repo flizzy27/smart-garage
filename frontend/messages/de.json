@@ -378,6 +378,7 @@
     "scheduleCreated": "Plan hinzugefügt",
     "scheduleUpdated": "Intervalle aktualisiert",
     "serviceLogged": "Service erfasst — nächster Termin berechnet",
+    "backdatedHint": "Dieser Eintrag liegt vor einem bereits vorhandenen neueren Service und wird deshalb nicht als letzter Service verwendet. Er wird trotzdem im Verlauf gespeichert.",
     "empty": "Noch keine Wartungspläne. Vorlage wählen oder eigenen Service anlegen.",
     "editOrLog": "Erfassen / bearbeiten",
     "hideDetails": "Ausblenden",

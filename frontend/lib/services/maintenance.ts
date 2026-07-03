@@ -227,45 +227,82 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
   const lastPerformedAt = input.lastPerformedAt
     ? new Date(input.lastPerformedAt)
     : null;
+  const lastOdometerKm = input.lastOdometerKm ?? null;
 
   const thresholds = await getMaintenanceThresholds(ownerUserId);
   const computed = computeNextDue(
     { intervalKm, intervalMonths },
     {
       performedAt: lastPerformedAt,
-      odometerKm: input.lastOdometerKm ?? null,
+      odometerKm: lastOdometerKm,
     },
     vehicle.currentOdometerKm,
     new Date(),
     thresholds,
   );
 
-  const schedule = await prisma.vehicleMaintenanceSchedule.create({
-    data: {
-      vehicleId: input.vehicleId,
-      templateId: template?.id,
-      customName: input.customName?.trim() || null,
-      category:
-        (input.category as MaintenanceCategory | undefined) ??
-        template?.category ??
-        "OTHER",
-      intervalKm,
-      intervalMonths,
-      lastPerformedAt,
-      lastOdometerKm: input.lastOdometerKm ?? null,
-      estimatedCostCents:
-        input.estimatedCostCents != null
-          ? BigInt(input.estimatedCostCents)
-          : template?.defaultCostCentsMin ?? undefined,
-      currency: input.currency ?? vehicle.purchaseCurrency ?? preferences.currency,
-      notes: input.notes?.trim() || null,
-      nextDueAt: computed.nextDueAt,
-      nextDueOdometerKm: computed.nextDueOdometerKm,
-      dueStatus: computed.dueStatus,
-    },
+  const currency =
+    input.currency ?? vehicle.purchaseCurrency ?? preferences.currency;
+  const serviceTitle =
+    input.customName?.trim() || template?.nameEn || "Maintenance";
+
+  const scheduleId = await prisma.$transaction(async (tx) => {
+    const schedule = await tx.vehicleMaintenanceSchedule.create({
+      data: {
+        vehicleId: input.vehicleId,
+        templateId: template?.id,
+        customName: input.customName?.trim() || null,
+        category:
+          (input.category as MaintenanceCategory | undefined) ??
+          template?.category ??
+          "OTHER",
+        intervalKm,
+        intervalMonths,
+        lastPerformedAt,
+        lastOdometerKm,
+        estimatedCostCents:
+          input.estimatedCostCents != null
+            ? BigInt(input.estimatedCostCents)
+            : template?.defaultCostCentsMin ?? undefined,
+        currency,
+        notes: input.notes?.trim() || null,
+        nextDueAt: computed.nextDueAt,
+        nextDueOdometerKm: computed.nextDueOdometerKm,
+        dueStatus: computed.dueStatus,
+      },
+    });
+
+    // When the user states the service was already performed, persist it as a
+    // real history entry so the schedule, the "last service" and the timeline
+    // all read from one source of truth (no divergent data states).
+    if (lastPerformedAt) {
+      await tx.maintenanceRecord.create({
+        data: {
+          vehicleId: input.vehicleId,
+          scheduleId: schedule.id,
+          performedAt: lastPerformedAt,
+          odometerKm: lastOdometerKm,
+          costCents: BigInt(0),
+          currency,
+          title: serviceTitle,
+          createdByUserId: ownerUserId,
+        },
+      });
+
+      if (lastOdometerKm != null && lastOdometerKm > vehicle.currentOdometerKm) {
+        await tx.vehicle.update({
+          where: { id: input.vehicleId },
+          data: { currentOdometerKm: lastOdometerKm },
+        });
+      }
+
+      await refreshScheduleDueStatus(tx, schedule.id, thresholds);
+    }
+
+    return schedule.id;
   });
 
-  return schedule.id;
+  return scheduleId;
 }
 
 export async function updateMaintenanceSchedule(input: UpdateScheduleInput) {
@@ -293,13 +330,6 @@ export async function updateMaintenanceSchedule(input: UpdateScheduleInput) {
       : schedule.lastOdometerKm;
 
   const thresholds = await getMaintenanceThresholds(ownerUserId);
-  const computed = computeNextDue(
-    { intervalKm, intervalMonths },
-    { performedAt: lastPerformedAt, odometerKm: lastOdometerKm },
-    schedule.vehicle.currentOdometerKm,
-    new Date(),
-    thresholds,
-  );
 
   await prisma.vehicleMaintenanceSchedule.update({
     where: { id: input.scheduleId },
@@ -308,6 +338,8 @@ export async function updateMaintenanceSchedule(input: UpdateScheduleInput) {
       category: (input.category as MaintenanceCategory | undefined) ?? schedule.category,
       intervalKm,
       intervalMonths,
+      // Stored as the fallback baseline only; if the schedule already has real
+      // history, refreshScheduleDueStatus below re-derives these from records.
       lastPerformedAt,
       lastOdometerKm,
       estimatedCostCents:
@@ -317,11 +349,12 @@ export async function updateMaintenanceSchedule(input: UpdateScheduleInput) {
       currency: input.currency ?? schedule.currency,
       notes: input.notes !== undefined ? input.notes?.trim() || null : schedule.notes,
       isActive: input.isActive ?? schedule.isActive,
-      nextDueAt: computed.nextDueAt,
-      nextDueOdometerKm: computed.nextDueOdometerKm,
-      dueStatus: computed.dueStatus,
     },
   });
+
+  // Records are authoritative — reconcile the cached last-service + due status
+  // so a manual interval edit can never contradict the actual history.
+  await refreshScheduleDueStatus(prisma, input.scheduleId, thresholds);
 }
 
 export async function logMaintenanceService(
@@ -336,6 +369,7 @@ export async function logMaintenanceService(
   const odometerKm = input.odometerKm ?? schedule.vehicle.currentOdometerKm;
   const costCents = input.costCents ?? 0;
   const cleanItems = dropBlankItems(items);
+  const thresholds = await getMaintenanceThresholds(ownerUserId);
 
   const record = await prisma.$transaction(async (tx) => {
     const created = await tx.maintenanceRecord.create({
@@ -355,14 +389,8 @@ export async function logMaintenanceService(
 
     await createRecordItems(tx, created.id, cleanItems);
 
-    await tx.vehicleMaintenanceSchedule.update({
-      where: { id: schedule.id },
-      data: {
-        lastPerformedAt: performedAt,
-        lastOdometerKm: odometerKm,
-      },
-    });
-
+    // Only advance the vehicle odometer for a forward-dated service; a
+    // back-dated entry must never lower the current reading.
     if (odometerKm > schedule.vehicle.currentOdometerKm) {
       await tx.vehicle.update({
         where: { id: schedule.vehicleId },
@@ -370,18 +398,18 @@ export async function logMaintenanceService(
       });
     }
 
+    // Recompute last service + due status from the full history (including the
+    // row just created) inside the same transaction — the new record only wins
+    // if it is genuinely the most recent service, so old entries can't clobber
+    // a newer one.
+    await refreshScheduleDueStatus(tx, schedule.id, thresholds);
+
     return created;
   });
 
   if (input.saveAsDefault) {
     await replaceScheduleDefaults(schedule.id, cleanItems);
   }
-
-  await refreshScheduleDueStatus(
-    prisma,
-    schedule.id,
-    await getMaintenanceThresholds(ownerUserId),
-  );
 
   if (costCents > 0) {
     const { createExpenseFromMaintenance } = await import("@/lib/services/expenses");

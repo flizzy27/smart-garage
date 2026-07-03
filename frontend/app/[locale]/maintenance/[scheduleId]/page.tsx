@@ -75,6 +75,8 @@ export default async function ScheduleDetailPage({ params }: Props) {
         defaultItems={itemDefaults}
         defaultNote={schedule.notes}
         suggestedCategories={suggestedCategories}
+        lastServiceOdometerKm={schedule.lastOdometerKm}
+        lastServicePerformedAt={schedule.lastPerformedAt}
       />
 
       <RelatedNotesCard

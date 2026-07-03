@@ -9,6 +9,21 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.9.4] - 2026-07-03
+
+### Fixed
+
+- **Back-dating an old service no longer breaks the maintenance status** — the "last service" for a schedule is now derived from the actual maintenance history (highest odometer, then latest date, then a stable tie-breaker), not from whichever record was inserted most recently. Adding an older service (e.g. an oil change at 130,000 km / 2025 after one already exists at 150,000 km / 2026) keeps the 150,000 km service as the reference and no longer flips the item to "overdue". This central logic is used everywhere the last service or next due is computed (dashboard, maintenance tab, schedule detail, reminders, notifications, history).
+- **Creating a schedule with a stated last service now records real history** — when you add a maintenance interval and enter when it was last performed, a full maintenance-history entry is created automatically (date + odometer). It appears immediately in the timeline and drives the next-due calculation, instead of the value living only on the schedule. The schedule, the last service and the history can no longer drift apart.
+
+### Added
+
+- **Back-dated entry hint** — when logging a service that is older than the current last service (by odometer, or by date when no odometer is given), the form now explains that the entry is still saved but won't be used as the last service. Saving an older entry is never blocked.
+
+### Migrations
+
+- `20260703200000_backfill_maintenance_history` — promotes each schedule's stored last-service date/odometer into a real `MaintenanceRecord` for existing installs. Idempotent (schedules that already have history are skipped, so no duplicates) and non-destructive (insert-only). Runs automatically on container start.
+
 ## [0.9.3] - 2026-07-03
 
 ### Changed

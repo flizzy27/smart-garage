@@ -378,6 +378,7 @@
     "scheduleCreated": "Schedule added",
     "scheduleUpdated": "Intervals updated",
     "serviceLogged": "Service logged — next due date recalculated",
+    "backdatedHint": "This entry is older than an existing, more recent service, so it will not be used as the last service. It is still saved to the history.",
     "empty": "No maintenance schedules yet. Add a template or create a custom service.",
     "editOrLog": "Log / edit",
     "hideDetails": "Hide",
