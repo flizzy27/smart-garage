@@ -73,6 +73,11 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
   const filteredSchedules = vehicleFilter
     ? schedules.filter((s) => s.vehicleId === vehicleFilter)
     : schedules;
+  const statusCounts = {
+    OVERDUE: filteredSchedules.filter((s) => s.dueStatus === "OVERDUE").length,
+    DUE_SOON: filteredSchedules.filter((s) => s.dueStatus === "DUE_SOON").length,
+    OK: filteredSchedules.filter((s) => s.dueStatus === "OK").length,
+  };
 
   const [createState, createAction, creating] = useActionState<
     MaintenanceActionResult | null,
@@ -233,19 +238,6 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
             </p>
           ) : null}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="lastPerformedAt">{t("lastPerformed")}</Label>
-              <Input id="lastPerformedAt" name="lastPerformedAt" type="date" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastOdometerKm">
-                {t("lastOdometer")} ({distanceUnitLabel(distanceUnit)})
-              </Label>
-              <Input id="lastOdometerKm" name="lastOdometerKm" type="number" min={0} />
-            </div>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="notes">{t("notes")}</Label>
             <Textarea id="notes" name="notes" rows={2} />
@@ -256,6 +248,22 @@ export function MaintenanceBoard({ schedules, templates, vehicles, defaultVehicl
           </Button>
         </form>
       ) : null}
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        {(["OVERDUE", "DUE_SOON", "OK"] as const).map((status) => (
+          <div
+            key={status}
+            className={`rounded-xl border px-4 py-3 ${MAINTENANCE_STATUS_CARD_CLASS[status]}`}
+          >
+            <p className={`text-2xl font-bold tabular-nums ${MAINTENANCE_STATUS_TEXT_CLASS[status]}`}>
+              {statusCounts[status]}
+            </p>
+            <p className="mt-0.5 text-xs font-medium text-muted-foreground">
+              {t(`status.${status}`)}
+            </p>
+          </div>
+        ))}
+      </div>
 
       {filteredSchedules.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border px-6 py-12 text-center">
@@ -345,7 +353,7 @@ function ScheduleCard({ schedule }: { schedule: SerializedSchedule }) {
             {t("logOrHistory")}
           </Button>
         </Link>
-        <Link href={`/maintenance/${schedule.id}`}>
+        <Link href={`/maintenance/${schedule.id}?view=history`}>
           <Button type="button" variant="ghost" className="px-3 py-1.5 text-xs">
             {t("viewHistory")}
           </Button>

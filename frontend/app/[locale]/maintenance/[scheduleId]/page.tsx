@@ -19,10 +19,13 @@ export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ locale: string; scheduleId: string }>;
+  searchParams: Promise<{ view?: string }>;
 };
 
-export default async function ScheduleDetailPage({ params }: Props) {
+export default async function ScheduleDetailPage({ params, searchParams }: Props) {
   const { locale, scheduleId } = await params;
+  const { view } = await searchParams;
+  const historyOnly = view === "history";
   setRequestLocale(locale);
   const t = await getTranslations("maintenance.detail");
 
@@ -49,7 +52,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
           href="/maintenance"
           className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
         >
-          ← {t("back")}
+          {"<-"} {t("back")}
         </Link>
       </div>
 
@@ -60,38 +63,42 @@ export default async function ScheduleDetailPage({ params }: Props) {
         distanceUnit={settings.distanceUnit}
       />
 
-      <ScheduleDetailAdjust schedule={schedule} locale={locale as "en" | "de"} />
+      {historyOnly ? null : (
+        <>
+          <ScheduleDetailAdjust schedule={schedule} locale={locale as "en" | "de"} />
 
-      <ScheduleDefaultsPanel
-        scheduleId={schedule.id}
-        defaults={itemDefaults}
-        suggestedCategories={suggestedCategories}
-      />
+          <ScheduleDefaultsPanel
+            scheduleId={schedule.id}
+            defaults={itemDefaults}
+            suggestedCategories={suggestedCategories}
+          />
 
-      <LogMaintenanceForm
-        scheduleId={schedule.id}
-        vehicleId={schedule.vehicleId}
-        defaultOdometerKm={currentOdometerKm}
-        defaultItems={itemDefaults}
-        defaultNote={schedule.notes}
-        suggestedCategories={suggestedCategories}
-        lastServiceOdometerKm={schedule.lastOdometerKm}
-        lastServicePerformedAt={schedule.lastPerformedAt}
-      />
+          <LogMaintenanceForm
+            scheduleId={schedule.id}
+            vehicleId={schedule.vehicleId}
+            defaultOdometerKm={currentOdometerKm}
+            defaultItems={itemDefaults}
+            defaultNote={schedule.notes}
+            suggestedCategories={suggestedCategories}
+            lastServiceOdometerKm={schedule.lastOdometerKm}
+            lastServicePerformedAt={schedule.lastPerformedAt}
+          />
 
-      <RelatedNotesCard
-        notes={relatedNotes}
-        locale={locale as "en" | "de"}
-        newNoteHref={`/notes/new?vehicleId=${schedule.vehicleId}`}
-      />
+          <RelatedNotesCard
+            notes={relatedNotes}
+            locale={locale as "en" | "de"}
+            newNoteHref={`/notes/new?vehicleId=${schedule.vehicleId}`}
+          />
 
-      <MaintenanceReceiptUpload
-        vehicleId={schedule.vehicleId}
-        records={records.map((record) => ({
-          id: record.id,
-          label: `${record.serviceName} · ${new Date(record.performedAt).toLocaleDateString(locale)}`,
-        }))}
-      />
+          <MaintenanceReceiptUpload
+            vehicleId={schedule.vehicleId}
+            records={records.map((record) => ({
+              id: record.id,
+              label: `${record.serviceName} - ${new Date(record.performedAt).toLocaleDateString(locale)}`,
+            }))}
+          />
+        </>
+      )}
 
       <Card>
         <CardHeader>

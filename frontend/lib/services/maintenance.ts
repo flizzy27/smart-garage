@@ -46,6 +46,7 @@ import {
   estimateLastService,
 } from "@/lib/maintenance/setup-estimate";
 import { prisma } from "@/lib/prisma";
+import type { SerializedMaintenanceRecord } from "@/lib/repositories/maintenance-records";
 
 export async function getMaintenancePageData(locale: Locale) {
   const ownerUserId = await getCurrentUserId();
@@ -109,21 +110,165 @@ export async function getScheduleDetailData(scheduleId: string, locale: Locale) 
 
 export async function getHistoryPageData(locale: Locale, filters: HistoryFilters = {}) {
   const ownerUserId = await getCurrentUserId();
-  const [records, vehicles] = await Promise.all([
+  const dateRange = {
+    ...(filters.fromDate ? { gte: new Date(filters.fromDate) } : {}),
+    ...(filters.toDate ? { lte: new Date(`${filters.toDate}T23:59:59`) } : {}),
+  };
+  const hasDateRange = Boolean(filters.fromDate || filters.toDate);
+  const includeNonMaintenance = !filters.category;
+  const search = filters.search?.trim();
+  const vehicleWhere = { ownerUserId, deletedAt: null };
+
+  const [records, vehicles, fuelEntries, odometerLogs] = await Promise.all([
     listAllRecordsForOwner(ownerUserId, locale, 200, filters),
     prisma.vehicle.findMany({
       where: { ownerUserId, deletedAt: null },
       select: { id: true, make: true, model: true, licensePlate: true },
       orderBy: { createdAt: "asc" },
     }),
+    includeNonMaintenance
+      ? prisma.fuelEntry.findMany({
+          where: {
+            vehicle: vehicleWhere,
+            ...(filters.vehicleId ? { vehicleId: filters.vehicleId } : {}),
+            ...(hasDateRange ? { filledAt: dateRange } : {}),
+            ...(search
+              ? {
+                  OR: [
+                    { stationName: { contains: search } },
+                    { note: { contains: search } },
+                  ],
+                }
+              : {}),
+          },
+          include: {
+            vehicle: {
+              select: { id: true, make: true, model: true, licensePlate: true },
+            },
+          },
+          orderBy: [{ filledAt: "desc" }, { odometerKm: "desc" }],
+          take: 100,
+        })
+      : Promise.resolve([]),
+    includeNonMaintenance
+      ? prisma.odometerLog.findMany({
+          where: {
+            vehicle: vehicleWhere,
+            ...(filters.vehicleId ? { vehicleId: filters.vehicleId } : {}),
+            ...(hasDateRange ? { recordedAt: dateRange } : {}),
+          },
+          include: {
+            vehicle: {
+              select: { id: true, make: true, model: true, licensePlate: true },
+            },
+          },
+          orderBy: [{ recordedAt: "desc" }, { odometerKm: "desc" }],
+          take: 100,
+        })
+      : Promise.resolve([]),
   ]);
+  const events = buildHistoryEvents(records, fuelEntries, odometerLogs);
   return {
     records,
+    events,
     vehicles: vehicles.map((v) => ({
       id: v.id,
       name: [v.make, v.model].filter(Boolean).join(" ") || v.licensePlate || "Vehicle",
     })),
   };
+}
+
+type VehicleLabelInput = {
+  make: string | null;
+  model: string | null;
+  licensePlate: string | null;
+};
+
+function historyVehicleLabel(vehicle: VehicleLabelInput): string {
+  return [vehicle.make, vehicle.model].filter(Boolean).join(" ") || vehicle.licensePlate || "Vehicle";
+}
+
+export type HistoryEvent =
+  | { kind: "maintenance"; date: string; odometerKm: number | null; record: SerializedMaintenanceRecord }
+  | {
+      kind: "fuel";
+      id: string;
+      date: string;
+      vehicleId: string;
+      vehicleName: string;
+      odometerKm: number | null;
+      liters: number | null;
+      totalCostCents: number;
+      currency: string;
+      stationName: string | null;
+      note: string | null;
+    }
+  | {
+      kind: "odometer";
+      id: string;
+      date: string;
+      vehicleId: string;
+      vehicleName: string;
+      odometerKm: number;
+    };
+
+function buildHistoryEvents(
+  records: SerializedMaintenanceRecord[],
+  fuelEntries: Array<{
+    id: string;
+    vehicleId: string;
+    filledAt: Date;
+    odometerKm: number | null;
+    liters: number | null;
+    totalCostCents: bigint;
+    currency: string;
+    stationName: string | null;
+    note: string | null;
+    vehicle: VehicleLabelInput;
+  }>,
+  odometerLogs: Array<{
+    id: string;
+    vehicleId: string;
+    recordedAt: Date;
+    odometerKm: number;
+    vehicle: VehicleLabelInput;
+  }>,
+): HistoryEvent[] {
+  return [
+    ...records.map((record) => ({
+      kind: "maintenance" as const,
+      date: record.performedAt,
+      odometerKm: record.odometerKm,
+      record,
+    })),
+    ...fuelEntries.map((entry) => ({
+      kind: "fuel" as const,
+      id: entry.id,
+      date: entry.filledAt.toISOString(),
+      vehicleId: entry.vehicleId,
+      vehicleName: historyVehicleLabel(entry.vehicle),
+      odometerKm: entry.odometerKm,
+      liters: entry.liters,
+      totalCostCents: Number(entry.totalCostCents),
+      currency: entry.currency,
+      stationName: entry.stationName,
+      note: entry.note,
+    })),
+    ...odometerLogs.map((log) => ({
+      kind: "odometer" as const,
+      id: log.id,
+      date: log.recordedAt.toISOString(),
+      vehicleId: log.vehicleId,
+      vehicleName: historyVehicleLabel(log.vehicle),
+      odometerKm: log.odometerKm,
+    })),
+  ]
+    .sort((a, b) => {
+      const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (dateDiff !== 0) return dateDiff;
+      return (b.odometerKm ?? -1) - (a.odometerKm ?? -1);
+    })
+    .slice(0, 200);
 }
 
 export async function getVehicleMaintenanceData(vehicleId: string, locale: Locale) {
@@ -224,17 +369,12 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
   const intervalMonths =
     input.intervalMonths ?? template?.defaultIntervalMonths ?? null;
 
-  const lastPerformedAt = input.lastPerformedAt
-    ? new Date(input.lastPerformedAt)
-    : null;
-  const lastOdometerKm = input.lastOdometerKm ?? null;
-
   const thresholds = await getMaintenanceThresholds(ownerUserId);
   const computed = computeNextDue(
     { intervalKm, intervalMonths },
     {
-      performedAt: lastPerformedAt,
-      odometerKm: lastOdometerKm,
+      performedAt: null,
+      odometerKm: null,
     },
     vehicle.currentOdometerKm,
     new Date(),
@@ -243,8 +383,6 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
 
   const currency =
     input.currency ?? vehicle.purchaseCurrency ?? preferences.currency;
-  const serviceTitle =
-    input.customName?.trim() || template?.nameEn || "Maintenance";
 
   const scheduleId = await prisma.$transaction(async (tx) => {
     const schedule = await tx.vehicleMaintenanceSchedule.create({
@@ -258,8 +396,6 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
           "OTHER",
         intervalKm,
         intervalMonths,
-        lastPerformedAt,
-        lastOdometerKm,
         estimatedCostCents:
           input.estimatedCostCents != null
             ? BigInt(input.estimatedCostCents)
@@ -271,33 +407,6 @@ export async function createMaintenanceSchedule(input: CreateScheduleInput) {
         dueStatus: computed.dueStatus,
       },
     });
-
-    // When the user states the service was already performed, persist it as a
-    // real history entry so the schedule, the "last service" and the timeline
-    // all read from one source of truth (no divergent data states).
-    if (lastPerformedAt) {
-      await tx.maintenanceRecord.create({
-        data: {
-          vehicleId: input.vehicleId,
-          scheduleId: schedule.id,
-          performedAt: lastPerformedAt,
-          odometerKm: lastOdometerKm,
-          costCents: BigInt(0),
-          currency,
-          title: serviceTitle,
-          createdByUserId: ownerUserId,
-        },
-      });
-
-      if (lastOdometerKm != null && lastOdometerKm > vehicle.currentOdometerKm) {
-        await tx.vehicle.update({
-          where: { id: input.vehicleId },
-          data: { currentOdometerKm: lastOdometerKm },
-        });
-      }
-
-      await refreshScheduleDueStatus(tx, schedule.id, thresholds);
-    }
 
     return schedule.id;
   });
@@ -407,6 +516,8 @@ export async function logMaintenanceService(
     return created;
   });
 
+  await refreshAllScheduleDueStatuses(ownerUserId, thresholds);
+
   if (input.saveAsDefault) {
     await replaceScheduleDefaults(schedule.id, cleanItems);
   }
@@ -466,19 +577,23 @@ export async function updateMaintenanceRecord(
     });
 
     await replaceRecordItems(tx, record.id, cleanItems);
+
+    if (odometerKm != null && odometerKm > record.vehicle.currentOdometerKm) {
+      await tx.vehicle.update({
+        where: { id: record.vehicle.id },
+        data: { currentOdometerKm: odometerKm },
+      });
+    }
   });
 
   if (input.saveAsDefault && record.scheduleId) {
     await replaceScheduleDefaults(record.scheduleId, cleanItems);
   }
 
-  if (record.scheduleId) {
-    await refreshScheduleDueStatus(
-      prisma,
-      record.scheduleId,
-      await getMaintenanceThresholds(ownerUserId),
-    );
-  }
+  await refreshAllScheduleDueStatuses(
+    ownerUserId,
+    await getMaintenanceThresholds(ownerUserId),
+  );
 }
 
 export async function deleteMaintenanceRecordEntry(recordId: string) {

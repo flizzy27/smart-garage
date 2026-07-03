@@ -6,6 +6,7 @@ import {
   DueSoonCard,
   PrimaryVehicleCard,
   UpcomingMaintenanceCard,
+  VehicleStatusCard,
 } from "@/components/dashboard/DashboardCards";
 import { FuelQuickAddCard } from "@/components/dashboard/FuelQuickAddCard";
 
@@ -28,6 +29,7 @@ export default async function DashboardPage({ params }: Props) {
         <PrimaryVehicleCard locale={locale} />
         <DueSoonCard />
         <CostOverviewCard locale={locale} />
+        <VehicleStatusCard locale={locale} />
       </div>
       <UpcomingMaintenanceCard />
     </MainContentWidth>

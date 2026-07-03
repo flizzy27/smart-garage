@@ -128,6 +128,12 @@ export default async function VehicleDetailPage({ params }: Props) {
         }))}
       />
 
+      <RelatedNotesCard
+        notes={relatedNotes}
+        locale={locale}
+        newNoteHref={`/notes/new?vehicleId=${vehicle.id}`}
+      />
+
       <section className="space-y-4">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
@@ -146,12 +152,6 @@ export default async function VehicleDetailPage({ params }: Props) {
           }}
         />
       </section>
-
-      <RelatedNotesCard
-        notes={relatedNotes}
-        locale={locale}
-        newNoteHref={`/notes/new?vehicleId=${vehicle.id}`}
-      />
     </div>
   );
 }

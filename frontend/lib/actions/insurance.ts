@@ -5,6 +5,7 @@ import { getCurrentUserId } from "@/lib/auth/current-user";
 import {
   createInsurancePolicy,
   deleteInsurancePolicy,
+  updateInsurancePolicy,
 } from "@/lib/repositories/insurance";
 import type { InsuranceCoverageType } from "@prisma/client";
 
@@ -31,8 +32,9 @@ export async function saveInsuranceAction(
 
     const coverageRaw = String(formData.get("coverageType") ?? "LIABILITY");
     const coverageType = coverageRaw as InsuranceCoverageType;
+    const policyId = String(formData.get("policyId") ?? "");
 
-    const result = await createInsurancePolicy(vehicleId, userId, {
+    const payload = {
       provider,
       policyNumber: String(formData.get("policyNumber") ?? "") || null,
       premiumCents: BigInt(Math.round(premiumEuros * 100)),
@@ -42,7 +44,11 @@ export async function saveInsuranceAction(
       endDate,
       autoRenew: formData.get("autoRenew") === "on",
       notes: String(formData.get("notes") ?? "") || null,
-    });
+    };
+
+    const result = policyId
+      ? await updateInsurancePolicy(policyId, userId, payload)
+      : await createInsurancePolicy(vehicleId, userId, payload);
 
     if (!result) return { ok: false, error: "notAllowed" };
 

@@ -208,6 +208,7 @@ model User {
   expenses             Expense[]                 @relation("ExpenseCreatedBy")
   documents            Document[]                @relation("DocumentUploadedBy")
   fuelEntries          FuelEntry[]               @relation("FuelEntryCreatedBy")
+  odometerLogs         OdometerLog[]             @relation("OdometerLogCreatedBy")
   notificationSettings UserNotificationSettings?
   notes                Note[]
   noteTags             NoteTag[]
@@ -454,6 +455,7 @@ model Vehicle {
   expenses             Expense[]
   documents            Document[]
   fuelEntries          FuelEntry[]
+  odometerLogs         OdometerLog[]
   shares               VehicleShare[]
   inspections          VehicleInspection[]
   insurancePolicies    InsurancePolicy[]
@@ -726,6 +728,24 @@ model FuelEntry {
 
   @@index([vehicleId])
   @@index([filledAt])
+}
+
+model OdometerLog {
+  id              String   @id @default(cuid())
+  vehicleId       String
+  odometerKm      Int
+  recordedAt      DateTime @default(now())
+  source          String   @default("manual")
+  createdByUserId String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  createdBy User    @relation("OdometerLogCreatedBy", fields: [createdByUserId], references: [id])
+
+  @@index([vehicleId])
+  @@index([recordedAt])
+  @@index([createdByUserId])
 }
 
 model Expense {

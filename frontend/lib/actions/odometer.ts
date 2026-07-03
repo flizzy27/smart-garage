@@ -27,6 +27,7 @@ export async function updateOdometerAction(
   }
 
   revalidatePath("/");
+  revalidatePath("/history");
   revalidatePath(`/vehicles/${vehicleId}`);
   return { ok: true };
 }

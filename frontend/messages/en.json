@@ -86,6 +86,20 @@
       "title": "Due within 30 days",
       "description": "Maintenance tasks approaching"
     },
+    "vehicleStatus": {
+      "title": "Vehicle status",
+      "description": "Inspection, insurance, and recent fill-ups",
+      "inspection": "Next inspection",
+      "insurance": "Current insurance",
+      "recentFuel": "Recent fill-ups",
+      "emptyInspection": "No inspection date saved",
+      "emptyInsurance": "No insurance saved",
+      "emptyFuel": "No fill-ups recorded yet",
+      "inspectionTypes": {
+        "HU": "HU/TÜV",
+        "AU": "AU"
+      }
+    },
     "maintenanceTypes": {
       "oilChange": "Oil change",
       "inspection": "Inspection (HU)",
@@ -528,12 +542,18 @@
   },
   "history": {
     "title": "History",
-    "subtitle": "All logged services across your vehicles",
-    "empty": "No service entries yet. Log a service from the dashboard or maintenance page.",
+    "subtitle": "Maintenance, fuel, and odometer history across your vehicles",
+    "empty": "No history entries yet. Log a service, fill-up, or odometer reading.",
     "latest": "Latest",
     "odometer": "Odometer",
     "cost": "Cost",
     "vendor": "Workshop",
+    "liters": "Liters",
+    "eventTypes": {
+      "maintenance": "Maintenance",
+      "fuel": "Fill-up",
+      "odometer": "Odometer updated"
+    },
     "filters": {
       "search": "Search",
       "searchPlaceholder": "Search parts, oil, filters, notes…",
@@ -908,6 +928,9 @@
       "save": "Save",
       "saving": "Saving…",
       "saved": "Inspection saved",
+      "add": "Add",
+      "edit": "Edit",
+      "cancel": "Cancel",
       "remove": "Remove",
       "types": { "HU": "Main inspection (HU/TÜV)", "AU": "Emissions test (AU)" },
       "errors": {
@@ -932,6 +955,9 @@
       "year": "year",
       "until": "until",
       "add": "Add policy",
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
       "saving": "Saving…",
       "remove": "Remove",
       "coverage": {

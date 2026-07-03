@@ -62,11 +62,6 @@ export async function createScheduleAction(
       estimatedCostCents: formData.get("estimatedCostEuros") || undefined,
       currency: formData.get("currency") || undefined,
       notes: formData.get("notes") || undefined,
-      lastPerformedAt: formData.get("lastPerformedAt") || undefined,
-      lastOdometerKm: parseFormDistanceToKm(
-        formData.get("lastOdometerKm"),
-        distanceUnit,
-      ),
     });
 
     await createMaintenanceSchedule(parsed);
@@ -95,11 +90,6 @@ export async function updateScheduleAction(
       estimatedCostCents: formData.get("estimatedCostEuros") || undefined,
       currency: formData.get("currency") || undefined,
       notes: formData.get("notes") || undefined,
-      lastPerformedAt: formData.get("lastPerformedAt") || undefined,
-      lastOdometerKm: parseFormDistanceToKm(
-        formData.get("lastOdometerKm"),
-        distanceUnit,
-      ),
       isActive: formData.get("isActive") === "true" ? true : undefined,
     });
 

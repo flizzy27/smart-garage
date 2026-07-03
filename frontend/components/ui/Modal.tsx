@@ -42,7 +42,7 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-50 flex min-h-dvh items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-4">
       <button
         type="button"
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -50,12 +50,12 @@ export function Modal({
         aria-label="Close"
       />
       <div
-        className={`relative z-10 flex max-h-[90vh] w-full flex-col rounded-t-2xl border border-border bg-card shadow-xl sm:rounded-2xl ${sizeClass[size]}`}
+        className={`relative z-10 flex max-h-[calc(100dvh-1rem)] w-full flex-col rounded-t-2xl border border-border bg-card shadow-xl sm:max-h-[calc(100dvh-2rem)] sm:rounded-2xl ${sizeClass[size]}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-border-subtle px-5 py-4">
+        <div className="shrink-0 flex items-start justify-between gap-4 border-b border-border-subtle px-5 py-4">
           <div>
             <h2 id="modal-title" className="text-lg font-semibold text-foreground">
               {title}
@@ -68,7 +68,9 @@ export function Modal({
             ✕
           </Button>
         </div>
-        <div className="overflow-y-auto px-5 py-4">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5">
+          {children}
+        </div>
       </div>
     </div>
   );

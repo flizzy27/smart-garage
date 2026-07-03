@@ -40,7 +40,7 @@ export function Dialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex min-h-dvh items-end justify-center overflow-y-auto p-3 sm:items-center sm:p-4">
       <button
         type="button"
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -48,7 +48,7 @@ export function Dialog({
         aria-label={cancelLabel}
       />
       <div
-        className="relative z-10 w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-xl"
+        className="relative z-10 max-h-[calc(100dvh-1rem)] w-full max-w-md overflow-y-auto rounded-xl border border-border bg-card p-5 shadow-xl sm:p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"

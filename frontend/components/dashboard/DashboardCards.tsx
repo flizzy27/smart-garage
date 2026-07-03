@@ -184,6 +184,59 @@ export async function CostOverviewCard({ locale }: { locale: string }) {
   );
 }
 
+export async function VehicleStatusCard({ locale }: { locale: string }) {
+  const t = await getTranslations("dashboard.vehicleStatus");
+  const { nextInspection, currentInsurance, recentFuel } = await getDashboardStats();
+
+  return (
+    <Card>
+      <CardHeader>
+        <h2 className="text-sm font-semibold text-foreground">{t("title")}</h2>
+        <p className="mt-0.5 text-xs text-muted-foreground">{t("description")}</p>
+      </CardHeader>
+      <CardContent className="space-y-3 p-4 pt-0 text-sm">
+        <div className="rounded-lg border border-border-subtle bg-muted/20 px-3 py-2">
+          <p className="text-xs text-muted-foreground">{t("inspection")}</p>
+          <p className="mt-0.5 font-medium text-foreground">
+            {nextInspection
+              ? `${t(`inspectionTypes.${nextInspection.type}`)} - ${new Date(nextInspection.nextDueAt).toLocaleDateString(locale)}`
+              : t("emptyInspection")}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border-subtle bg-muted/20 px-3 py-2">
+          <p className="text-xs text-muted-foreground">{t("insurance")}</p>
+          <p className="mt-0.5 font-medium text-foreground">
+            {currentInsurance
+              ? `${currentInsurance.provider} - ${new Date(currentInsurance.endDate).toLocaleDateString(locale)}`
+              : t("emptyInsurance")}
+          </p>
+        </div>
+        <div>
+          <p className="mb-2 text-xs font-medium text-muted-foreground">{t("recentFuel")}</p>
+          {recentFuel.length === 0 ? (
+            <p className="rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+              {t("emptyFuel")}
+            </p>
+          ) : (
+            <ul className="space-y-1.5">
+              {recentFuel.map((entry) => (
+                <li key={entry.id} className="flex items-center justify-between gap-3 rounded-lg bg-muted/20 px-3 py-2 text-xs">
+                  <span className="min-w-0 truncate">
+                    {new Date(entry.filledAt).toLocaleDateString(locale)} - {entry.vehicleName}
+                  </span>
+                  <span className="shrink-0 font-medium tabular-nums text-foreground">
+                    {formatCurrency(entry.totalCostCents, entry.currency, locale)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export async function UpcomingMaintenanceCard() {
   const t = await getTranslations("dashboard.upcomingMaintenance");
   const { upcomingMaintenance, preferences } = await getDashboardStats();

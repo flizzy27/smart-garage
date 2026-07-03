@@ -110,6 +110,22 @@ export async function updateVehicleOdometer(
   });
 }
 
+export async function createOdometerLog(
+  vehicleId: string,
+  userId: string,
+  odometerKm: number,
+  source = "manual",
+) {
+  return prisma.odometerLog.create({
+    data: {
+      vehicleId,
+      odometerKm,
+      source,
+      createdByUserId: userId,
+    },
+  });
+}
+
 export type VehicleSpecInput = {
   engineCode?: string | null;
   engineDescription?: string | null;

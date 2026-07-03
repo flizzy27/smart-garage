@@ -6,6 +6,7 @@ import {
 } from "@/lib/repositories/documents";
 import {
   countAccessibleVehicles,
+  createOdometerLog,
   createVehicle,
   findAccessibleVehicle,
   listAccessibleVehicles,
@@ -200,6 +201,7 @@ export async function updateOdometerForCurrentUser(
     if (result.count === 0) {
       return { success: false, error: { code: "notFound" } };
     }
+    await createOdometerLog(vehicleId, userId, currentOdometerKm);
     return { success: true };
   } catch {
     return { success: false, error: { code: "unknown" } };

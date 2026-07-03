@@ -52,8 +52,8 @@ function vehicleLabel(
 }
 
 function serviceName(record: RecordRow, locale: Locale): string {
-  if (record.title?.trim()) return record.title.trim();
   if (record.schedule) return scheduleDisplayName(record.schedule, locale);
+  if (record.title?.trim()) return record.title.trim();
   return locale === "de" ? "Wartung" : "Maintenance";
 }
 
@@ -90,7 +90,7 @@ export async function listRecordsForSchedule(
       vehicle: { ownerUserId, deletedAt: null },
     },
     include: recordInclude,
-    orderBy: [{ performedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ performedAt: "desc" }, { odometerKm: "desc" }, { createdAt: "desc" }],
   });
 
   const itemsByRecord = await listItemsForRecords(records.map((r) => r.id));
@@ -209,7 +209,7 @@ export async function listAllRecordsForOwner(
   const records = await prisma.maintenanceRecord.findMany({
     where,
     include: recordInclude,
-    orderBy: [{ performedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ performedAt: "desc" }, { odometerKm: "desc" }, { createdAt: "desc" }],
     take: limit,
   });
 

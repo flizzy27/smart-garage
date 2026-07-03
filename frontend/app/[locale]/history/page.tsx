@@ -1,7 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { HistoryFilters } from "@/components/maintenance/HistoryFilters";
-import { MaintenanceHistoryTimeline } from "@/components/maintenance/MaintenanceHistoryTimeline";
+import { UnifiedHistoryTimeline } from "@/components/maintenance/UnifiedHistoryTimeline";
 import { Card, CardContent } from "@/components/ui/Card";
 import { getHistoryPageData } from "@/lib/services/maintenance";
 
@@ -23,7 +23,7 @@ export default async function HistoryPage({ params, searchParams }: Props) {
   const filters = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("history");
-  const { records, vehicles } = await getHistoryPageData(locale as "en" | "de", filters);
+  const { events, vehicles } = await getHistoryPageData(locale as "en" | "de", filters);
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
@@ -33,7 +33,7 @@ export default async function HistoryPage({ params, searchParams }: Props) {
 
       <Card>
         <CardContent className="py-6">
-          <MaintenanceHistoryTimeline records={records} />
+          <UnifiedHistoryTimeline events={events} />
         </CardContent>
       </Card>
     </div>

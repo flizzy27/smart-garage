@@ -88,30 +88,6 @@ export function ScheduleIntervalForm({
             placeholder="12"
           />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor={`last-at-${schedule.id}`}>{t("lastPerformed")}</Label>
-          <Input
-            id={`last-at-${schedule.id}`}
-            name="lastPerformedAt"
-            type="date"
-            defaultValue={schedule.lastPerformedAt?.slice(0, 10) ?? ""}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor={`last-km-${schedule.id}`}>
-            {t("lastOdometer")} ({distanceUnitLabel(distanceUnit)})
-          </Label>
-          <Input
-            id={`last-km-${schedule.id}`}
-            name="lastOdometerKm"
-            type="number"
-            min={0}
-            defaultValue={formDistanceValue(
-              schedule.lastOdometerKm ?? schedule.vehicleOdometerKm,
-              distanceUnit,
-            )}
-          />
-        </div>
       </div>
       <Button type="submit" className="px-3 py-1.5 text-xs" disabled={pending}>
         {pending ? t("saving") : t("saveIntervals")}

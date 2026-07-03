@@ -123,11 +123,6 @@ export function NotificationSettings({ initial }: Props) {
         <Alert variant="error">{testState.partialErrors.join("; ")}</Alert>
       ) : null}
 
-      <Alert variant="info">
-        <p className="text-sm">{t("backgroundInfo")}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{t("messageFormatInfo")}</p>
-      </Alert>
-
       <form id="notification-settings-form" action={saveAction} className="space-y-6">
         {saveState?.error ? <Alert variant="error">{saveState.error}</Alert> : null}
         {saveState?.ok ? <Alert variant="success">{t("saved")}</Alert> : null}
@@ -140,19 +135,27 @@ export function NotificationSettings({ initial }: Props) {
         <input type="hidden" name="eventExpenseAdded" value="off" />
 
         <SectionCard title={t("channelsTitle")} description={t("channelsDescription")}>
-          <div className="space-y-4">
-            <ToggleRow
-              id="pushoverEnabled"
-              label={t("pushoverEnabled")}
-              description={t("pushoverChannelHint")}
-              defaultChecked={initial?.pushoverEnabled ?? false}
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
+          <details className="rounded-lg border border-border bg-muted/20" open={initial?.pushoverEnabled ?? false}>
+            <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-foreground">
+              <span className="inline-flex w-full items-center justify-between gap-3">
+                <span>{t("pushoverEnabled")}</span>
+                <span className="text-xs text-muted-foreground">v</span>
+              </span>
+            </summary>
+            <div className="space-y-4 border-t border-border-subtle px-4 py-4">
+              <ToggleRow
+                id="pushoverEnabled"
+                label={t("pushoverEnabled")}
+                description={t("pushoverChannelHint")}
+                defaultChecked={initial?.pushoverEnabled ?? false}
+              />
+              <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="pushoverUserKey">{t("pushoverUserKey")}</Label>
                 <Input
                   id="pushoverUserKey"
                   name="pushoverUserKey"
+                  type="password"
                   defaultValue={initial?.pushoverUserKey ?? ""}
                   autoComplete="off"
                 />
@@ -162,26 +165,36 @@ export function NotificationSettings({ initial }: Props) {
                 <Input
                   id="pushoverAppToken"
                   name="pushoverAppToken"
+                  type="password"
                   defaultValue={initial?.pushoverAppToken ?? ""}
                   autoComplete="off"
                 />
               </div>
+              </div>
             </div>
-          </div>
+          </details>
 
-          <div className="space-y-4 border-t border-border-subtle pt-4">
-            <ToggleRow
-              id="telegramEnabled"
-              label={t("telegramEnabled")}
-              description={t("telegramChannelHint")}
-              defaultChecked={initial?.telegramEnabled ?? false}
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
+          <details className="rounded-lg border border-border bg-muted/20" open={initial?.telegramEnabled ?? false}>
+            <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-foreground">
+              <span className="inline-flex w-full items-center justify-between gap-3">
+                <span>{t("telegramEnabled")}</span>
+                <span className="text-xs text-muted-foreground">v</span>
+              </span>
+            </summary>
+            <div className="space-y-4 border-t border-border-subtle px-4 py-4">
+              <ToggleRow
+                id="telegramEnabled"
+                label={t("telegramEnabled")}
+                description={t("telegramChannelHint")}
+                defaultChecked={initial?.telegramEnabled ?? false}
+              />
+              <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="telegramBotToken">{t("telegramBotToken")}</Label>
                 <Input
                   id="telegramBotToken"
                   name="telegramBotToken"
+                  type="password"
                   defaultValue={initial?.telegramBotToken ?? ""}
                   autoComplete="off"
                 />
@@ -191,12 +204,14 @@ export function NotificationSettings({ initial }: Props) {
                 <Input
                   id="telegramChatId"
                   name="telegramChatId"
+                  type="password"
                   defaultValue={initial?.telegramChatId ?? ""}
                   autoComplete="off"
                 />
               </div>
+              </div>
             </div>
-          </div>
+          </details>
         </SectionCard>
 
         <SectionCard title={t("eventsTitle")} description={t("eventsDescription")}>

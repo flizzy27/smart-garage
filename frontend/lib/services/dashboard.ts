@@ -16,6 +16,7 @@ import {
   findPreferencesForUser,
   getMaintenanceThresholds,
 } from "@/lib/repositories/preferences";
+import { prisma } from "@/lib/prisma";
 
 export const getDashboardStats = cache(async () => {
   const ownerUserId = await getCurrentUserId();
@@ -28,6 +29,7 @@ export const getDashboardStats = cache(async () => {
     upcomingMaintenance,
     thresholds,
     preferences,
+    recentFuel,
   ] =
     await Promise.all([
       getPrimaryVehicleForOwner(ownerUserId),
@@ -36,7 +38,30 @@ export const getDashboardStats = cache(async () => {
       getUpcomingSchedulesForOwner(ownerUserId, locale, 8),
       getMaintenanceThresholds(ownerUserId),
       findPreferencesForUser(ownerUserId),
+      prisma.fuelEntry.findMany({
+        where: { vehicle: { ownerUserId, deletedAt: null } },
+        include: {
+          vehicle: {
+            select: { make: true, model: true, licensePlate: true },
+          },
+        },
+        orderBy: [{ filledAt: "desc" }],
+        take: 3,
+      }),
     ]);
+
+  const [nextInspection, currentInsurance] = primaryVehicle
+    ? await Promise.all([
+        prisma.vehicleInspection.findFirst({
+          where: { vehicleId: primaryVehicle.id },
+          orderBy: { nextDueAt: "asc" },
+        }),
+        prisma.insurancePolicy.findFirst({
+          where: { vehicleId: primaryVehicle.id },
+          orderBy: { endDate: "desc" },
+        }),
+      ])
+    : [null, null];
 
   const vehicleAlerts =
     primaryVehicle?.maintenanceSchedules.map((schedule) => {
@@ -69,6 +94,19 @@ export const getDashboardStats = cache(async () => {
     expenses: { ...rawExpenses, currency: preferences.currency },
     dueSoonCount,
     upcomingMaintenance,
+    nextInspection,
+    currentInsurance,
+    recentFuel: recentFuel.map((entry) => ({
+      id: entry.id,
+      vehicleName:
+        [entry.vehicle.make, entry.vehicle.model].filter(Boolean).join(" ") ||
+        entry.vehicle.licensePlate ||
+        "Vehicle",
+      filledAt: entry.filledAt.toISOString(),
+      liters: entry.liters,
+      totalCostCents: Number(entry.totalCostCents),
+      currency: entry.currency,
+    })),
     preferences,
   };
 });

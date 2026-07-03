@@ -9,6 +9,31 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.9.5] - 2026-07-04
+
+### Fixed
+
+- Creating a new maintenance schedule no longer asks for or writes last-service date/odometer values. History entries are now created only when a service is explicitly logged.
+- Editing a maintenance interval no longer exposes "last performed" or odometer fields, so interval changes cannot overwrite service history.
+- Maintenance history is ordered by real service date and odometer instead of insertion order, and template-backed service names are localized in the selected language.
+- Empty synthetic maintenance-history rows created from schedule baseline fields are removed by a new migration while the schedule fallback data remains available for due calculations.
+- Editing an old maintenance record now advances the vehicle odometer when the edited service odometer is higher than the current vehicle reading.
+- Shared dialogs and modals now stay within the viewport and scroll correctly on mobile and desktop.
+
+### Changed
+
+- The maintenance schedule page now has a compact status summary and a dedicated history-only view when opening "View history" from the maintenance list.
+- The global History page now includes maintenance, fuel fill-ups, and manual odometer updates in one timeline.
+- Vehicle detail HU/AU and insurance panels are compact by default and expand only when adding or editing details. Insurance policies can now be edited instead of duplicated.
+- Vehicle detail notes now appear above the vehicle modules.
+- Notification settings no longer show the long background-delivery explainer, provider credentials are masked, and Pushover/Telegram settings are collapsible.
+- The dashboard now shows a compact vehicle status card with next inspection, current insurance, and recent fill-ups.
+
+### Migrations
+
+- `20260704100000_remove_synthetic_maintenance_history` removes empty auto-derived maintenance records created from schedule baseline fields.
+- `20260704101000_odometer_log` adds `OdometerLog` for durable manual odometer-update history.
+
 ## [0.9.4] - 2026-07-03
 
 ### Fixed

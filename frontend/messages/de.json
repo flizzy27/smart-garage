@@ -86,6 +86,20 @@
       "title": "Fällig in 30 Tagen",
       "description": "Anstehende Wartungsaufgaben"
     },
+    "vehicleStatus": {
+      "title": "Fahrzeugstatus",
+      "description": "TÜV, Versicherung und letzte Tankvorgänge",
+      "inspection": "Nächster TÜV / HU & AU",
+      "insurance": "Aktuelle Versicherung",
+      "recentFuel": "Zuletzt getankt",
+      "emptyInspection": "Kein Termin hinterlegt",
+      "emptyInsurance": "Keine Versicherung hinterlegt",
+      "emptyFuel": "Noch kein Tankvorgang erfasst",
+      "inspectionTypes": {
+        "HU": "HU/TÜV",
+        "AU": "AU"
+      }
+    },
     "maintenanceTypes": {
       "oilChange": "Ölwechsel",
       "inspection": "HU (Hauptuntersuchung)",
@@ -528,12 +542,18 @@
   },
   "history": {
     "title": "Verlauf",
-    "subtitle": "Alle erfassten Services über alle Fahrzeuge",
-    "empty": "Noch keine Service-Einträge. Erfassen Sie einen Service über das Dashboard oder die Wartungsseite.",
+    "subtitle": "Wartung, Tankvorgänge und Kilometerstände über alle Fahrzeuge",
+    "empty": "Noch keine Verlaufseinträge. Erfassen Sie einen Service, Tankvorgang oder Kilometerstand.",
     "latest": "Aktuell",
     "odometer": "Kilometerstand",
     "cost": "Kosten",
     "vendor": "Werkstatt",
+    "liters": "Liter",
+    "eventTypes": {
+      "maintenance": "Wartung",
+      "fuel": "Getankt",
+      "odometer": "Kilometerstand aktualisiert"
+    },
     "filters": {
       "search": "Suche",
       "searchPlaceholder": "Teile, Öl, Filter, Notizen suchen…",
@@ -908,6 +928,9 @@
       "save": "Speichern",
       "saving": "Speichern…",
       "saved": "Prüfung gespeichert",
+      "add": "Hinzufügen",
+      "edit": "Bearbeiten",
+      "cancel": "Abbrechen",
       "remove": "Entfernen",
       "types": { "HU": "Hauptuntersuchung (HU/TÜV)", "AU": "Abgasuntersuchung (AU)" },
       "errors": {
@@ -932,6 +955,9 @@
       "year": "Jahr",
       "until": "bis",
       "add": "Police hinzufügen",
+      "edit": "Bearbeiten",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
       "saving": "Speichern…",
       "remove": "Entfernen",
       "coverage": {

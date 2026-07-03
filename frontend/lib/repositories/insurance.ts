@@ -65,6 +65,39 @@ export async function createInsurancePolicy(
   });
 }
 
+export async function updateInsurancePolicy(
+  id: string,
+  userId: string,
+  data: InsurancePolicyInput,
+) {
+  const row = await prisma.insurancePolicy.findUnique({
+    where: { id },
+    select: { vehicleId: true },
+  });
+  if (!row) return null;
+
+  const access = await import("@/lib/vehicles/access").then((m) =>
+    m.resolveVehicleAccess(userId, row.vehicleId),
+  );
+  if (!access?.canEdit) return null;
+
+  return prisma.insurancePolicy.update({
+    where: { id },
+    data: {
+      provider: data.provider.trim(),
+      policyNumber: data.policyNumber?.trim() || null,
+      premiumCents: data.premiumCents,
+      currency: data.currency ?? "EUR",
+      sfClass: data.sfClass?.trim() || null,
+      coverageType: data.coverageType,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      autoRenew: data.autoRenew ?? true,
+      notes: data.notes?.trim() || null,
+    },
+  });
+}
+
 export async function deleteInsurancePolicy(id: string, userId: string) {
   const row = await prisma.insurancePolicy.findUnique({
     where: { id },
