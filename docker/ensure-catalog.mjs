@@ -21,6 +21,55 @@ const catalogPath = existsSync(containerCatalogPath)
     ? repoCatalogPath
     : cwdCatalogPath;
 
+/**
+ * A top-up import now runs *alongside* the app, so both processes write to the
+ * same SQLite file. Without a busy timeout the second writer fails immediately
+ * with "database is locked" instead of waiting its turn, which would abort the
+ * import and leave the catalog half-updated until the next restart.
+ */
+function databaseUrlWithBusyTimeout() {
+  const raw = process.env.DATABASE_URL;
+  if (!raw || !raw.startsWith("file:")) return raw;
+
+  const [base, query = ""] = raw.split("?");
+  const params = new URLSearchParams(query);
+  if (!params.has("busy_timeout")) params.set("busy_timeout", "15000");
+  if (!params.has("connection_limit")) params.set("connection_limit", "1");
+  return `${base}?${params.toString()}`;
+}
+
+function createPrismaClient() {
+  const url = databaseUrlWithBusyTimeout();
+  return url
+    ? new PrismaClient({ datasources: { db: { url } } })
+    : new PrismaClient();
+}
+
+const LOCK_RETRY_DELAYS_MS = [250, 750, 2000, 5000];
+
+function isLockError(error) {
+  const message = String(error?.message ?? "").toLowerCase();
+  return (
+    message.includes("database is locked") ||
+    message.includes("sqlite_busy") ||
+    message.includes("timed out")
+  );
+}
+
+/** Retries a write that lost a race with the running app. */
+async function withLockRetry(run) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await run();
+    } catch (error) {
+      if (!isLockError(error) || attempt >= LOCK_RETRY_DELAYS_MS.length) throw error;
+      const delay = LOCK_RETRY_DELAYS_MS[attempt];
+      console.warn(`[catalog] database busy, retrying in ${delay}ms…`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
+
 function slugify(text) {
   return text
     .normalize("NFD")
@@ -114,19 +163,21 @@ async function flushModelYearBatch(prisma, batch) {
   const chunkSize = 100;
   for (let i = 0; i < batch.length; i += chunkSize) {
     const chunk = batch.slice(i, i + chunkSize);
-    await prisma.$transaction(
-      chunk.map((row) =>
-        prisma.catalogModelYear.upsert({
-          where: {
-            variantId_engineId_year: {
-              variantId: row.variantId,
-              engineId: row.engineId,
-              year: row.year,
+    await withLockRetry(() =>
+      prisma.$transaction(
+        chunk.map((row) =>
+          prisma.catalogModelYear.upsert({
+            where: {
+              variantId_engineId_year: {
+                variantId: row.variantId,
+                engineId: row.engineId,
+                year: row.year,
+              },
             },
-          },
-          create: row,
-          update: {},
-        }),
+            create: row,
+            update: {},
+          }),
+        ),
       ),
     );
   }
@@ -390,7 +441,7 @@ async function resolvePlan(prisma) {
 
 async function main() {
   const planOnly = process.argv.includes("--plan");
-  const prisma = new PrismaClient();
+  const prisma = createPrismaClient();
   try {
     const plan = await resolvePlan(prisma);
 
