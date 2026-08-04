@@ -1150,7 +1150,7 @@
       "distanceTracked": "{km} erfasst",
       "basedOnSegments": "aus {count} Tankstrecken",
       "needsOdometer": "Kilometerstand bei Tankvorgängen nötig",
-      "needsMoreData": "Mehr Einträge mit Literangabe nötig",
+      "needsMoreData": "Mehr Einträge mit Menge nötig",
       "priceChart": "Preis pro {unit}",
       "consumptionChart": "Verbrauch ({unit})",
       "costChart": "Tankkosten pro Monat",

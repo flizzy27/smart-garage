@@ -1150,7 +1150,7 @@
       "distanceTracked": "{km} tracked",
       "basedOnSegments": "from {count} fill segments",
       "needsOdometer": "Odometer readings needed on fill-ups",
-      "needsMoreData": "More entries with liters needed",
+      "needsMoreData": "More entries with a volume needed",
       "priceChart": "Price per {unit}",
       "consumptionChart": "Consumption ({unit})",
       "costChart": "Monthly fuel cost",
