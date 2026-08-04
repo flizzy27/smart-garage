@@ -42,9 +42,15 @@ assuming metric units, German paperwork, or a local-only login.
   Authentik, Keycloak, Authelia and anything else that speaks OIDC. Configure it
   with environment variables in the Unraid template (`OIDC_ISSUER`,
   `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`); leave them empty and nothing changes.
-  Uses the authorization code flow with PKCE, links to an existing account by
-  e-mail on first login, and keeps the normal username/password form alongside.
-  See [docs/OIDC.md](docs/OIDC.md).
+  Uses the authorization code flow with PKCE, verifies the ID token signature
+  against the provider's JWKS, links to an existing account by e-mail on first
+  login, and keeps the normal username/password form alongside. Verified end to
+  end against a real Keycloak instance. See [docs/OIDC.md](docs/OIDC.md).
+- **Imperial units for maintenance items** — quarts, gallons, fluid ounces,
+  pounds and ounces sit next to the metric units, so "5 quarts of oil" no longer
+  needs the free-text `CUSTOM` unit. Fluid quantities default to quarts when
+  your volume preference is gallons. Existing entries keep their unit and are
+  never converted.
 
 ### Fixed
 
@@ -79,6 +85,10 @@ assuming metric units, German paperwork, or a local-only login.
   waits, because an empty catalog would leave the "add vehicle" form with nothing
   to choose from. The import only ever adds rows.
 
+- **Renamed `middleware.ts` to the `proxy` convention** — Next.js 16 deprecated
+  the old name and warned about it on every build. Behaviour is unchanged; the
+  auth gate and locale routing were re-verified after the rename.
+
 ### Migrations
 
 - `20260804090000_v0100_units_custom_fields_oidc` — purely additive: new
@@ -86,6 +96,9 @@ assuming metric units, German paperwork, or a local-only login.
   columns on `User`, an optional note on `OdometerLog`, and the two new
   `VehicleCustomField` / `VehicleCustomFieldValue` tables. Nothing is dropped,
   renamed or rewritten, so updating an existing Unraid install cannot lose data.
+- `20260804210000_imperial_maintenance_units` — widens the maintenance item unit
+  list. SQLite stores enum values as text, so this changes no data at all;
+  existing quantities keep exactly the unit they were recorded with.
 
 ### Notes
 

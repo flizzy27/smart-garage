@@ -149,10 +149,18 @@ enum MaintenanceItemCategory {
 enum MaintenanceItemUnit {
   LITERS
   MILLILITERS
+  // Imperial equivalents, so a US owner can record "5 quarts of oil" without
+  // falling back to CUSTOM. Values are not converted between systems — the
+  // unit is whatever the user picked off the shelf.
+  QUARTS
+  GALLONS
+  FLUID_OUNCES
   PIECES
   SETS
   KG
   GRAMS
+  POUNDS
+  OUNCES
   CUSTOM
 }
 

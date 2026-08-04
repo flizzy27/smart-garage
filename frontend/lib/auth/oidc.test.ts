@@ -69,6 +69,20 @@ describe("getOidcConfig", () => {
     );
     expect(config?.allowSignup).toBe(false);
   });
+
+  it("verifies the id_token signature unless explicitly switched off", () => {
+    expect(
+      withEnv({ ...FULL_CONFIG, OIDC_VERIFY_ID_TOKEN: undefined }, () =>
+        getOidcConfig(),
+      )?.verifyIdToken,
+    ).toBe(true);
+
+    expect(
+      withEnv({ ...FULL_CONFIG, OIDC_VERIFY_ID_TOKEN: "false" }, () =>
+        getOidcConfig(),
+      )?.verifyIdToken,
+    ).toBe(false);
+  });
 });
 
 describe("PKCE and state", () => {
@@ -101,6 +115,7 @@ describe("resolveRedirectUri", () => {
     scopes: "openid",
     allowSignup: true,
     buttonLabel: "SSO",
+    verifyIdToken: true,
   };
 
   it("prefers an explicitly configured redirect uri", () => {

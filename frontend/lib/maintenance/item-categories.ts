@@ -28,12 +28,25 @@ export const MAINTENANCE_ITEM_CATEGORIES: MaintenanceItemCategory[] = [
 export const MAINTENANCE_ITEM_UNITS: MaintenanceItemUnit[] = [
   "LITERS",
   "MILLILITERS",
+  "QUARTS",
+  "GALLONS",
+  "FLUID_OUNCES",
   "PIECES",
   "SETS",
   "KG",
   "GRAMS",
+  "POUNDS",
+  "OUNCES",
   "CUSTOM",
 ];
+
+/**
+ * Units that only make sense to someone working in imperial, and vice versa.
+ * Both sets stay selectable — a German owner may still have a US-spec part —
+ * but the default follows the user's volume preference so the common case is
+ * one click.
+ */
+const IMPERIAL_FLUID_UNITS: MaintenanceItemUnit[] = ["QUARTS", "GALLONS", "FLUID_OUNCES"];
 
 /** Categories that are typically measured as fluids (liters/milliliters). */
 const FLUID_CATEGORIES: MaintenanceItemCategory[] = [
@@ -47,13 +60,23 @@ const FLUID_CATEGORIES: MaintenanceItemCategory[] = [
 
 export function defaultUnitForCategory(
   category: MaintenanceItemCategory,
+  /** User's volume preference; `gal` switches fluid defaults to quarts. */
+  volumeUnit: "l" | "gal" = "l",
 ): MaintenanceItemUnit {
-  if (FLUID_CATEGORIES.includes(category)) return "LITERS";
+  if (FLUID_CATEGORIES.includes(category)) {
+    // Quarts, not gallons: engine oil and brake fluid are sold and specified
+    // in quarts in the US, gallons would make every quantity a fraction.
+    return volumeUnit === "gal" ? "QUARTS" : "LITERS";
+  }
   if (category === "SPARK_PLUGS" || category === "GLOW_PLUGS" || category === "WIPERS") {
     return "PIECES";
   }
   if (category === "TIRES") return "SETS";
   return "PIECES";
+}
+
+export function isImperialFluidUnit(unit: MaintenanceItemUnit): boolean {
+  return IMPERIAL_FLUID_UNITS.includes(unit);
 }
 
 /**

@@ -15,6 +15,8 @@ import {
   getItemSuggestions,
 } from "@/lib/maintenance/item-categories";
 import type { SerializedMaintenanceItem } from "@/lib/repositories/maintenance-items";
+import type { VolumeUnit } from "@/lib/settings/types";
+import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 export type EditableMaintenanceItem = {
   key: string;
@@ -38,7 +40,10 @@ function nextKey() {
   return `item-${Date.now()}-${keySeq}`;
 }
 
-export function emptyItem(category: MaintenanceItemCategory = "OTHER"): EditableMaintenanceItem {
+export function emptyItem(
+  category: MaintenanceItemCategory = "OTHER",
+  volumeUnit: VolumeUnit = "l",
+): EditableMaintenanceItem {
   return {
     key: nextKey(),
     category,
@@ -48,7 +53,7 @@ export function emptyItem(category: MaintenanceItemCategory = "OTHER"): Editable
     partNumber: "",
     specification: "",
     quantity: "",
-    unit: defaultUnitForCategory(category),
+    unit: defaultUnitForCategory(category, volumeUnit),
     customUnit: "",
     costEuros: "",
     supplierName: "",
@@ -112,6 +117,10 @@ export function MaintenanceItemsEditor({
 }: MaintenanceItemsEditorProps) {
   const t = useTranslations("maintenance.items");
   const reactId = useId();
+  // Fluid quantities default to quarts for someone working in gallons, so
+  // "5 quarts of oil" is one pick instead of a CUSTOM unit.
+  const { settings } = useUserSettings();
+  const volumeUnit = settings.volumeUnit;
   const [pickerCategory, setPickerCategory] = useState<MaintenanceItemCategory>(
     suggestedCategories[0] ?? "OTHER",
   );
@@ -127,7 +136,7 @@ export function MaintenanceItemsEditor({
   }
 
   function addItem(category: MaintenanceItemCategory) {
-    onChange([...items, emptyItem(category)]);
+    onChange([...items, emptyItem(category, volumeUnit)]);
   }
 
   return (
@@ -161,7 +170,7 @@ export function MaintenanceItemsEditor({
                       const category = e.target.value as MaintenanceItemCategory;
                       updateItem(item.key, {
                         category,
-                        unit: item.unit || defaultUnitForCategory(category),
+                        unit: item.unit || defaultUnitForCategory(category, volumeUnit),
                       });
                     }}
                   >

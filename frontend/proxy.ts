@@ -23,7 +23,15 @@ function isApiRoute(pathname: string) {
   return pathname.startsWith("/api/");
 }
 
-export default function middleware(request: NextRequest) {
+/**
+ * Runs before every page render: locale detection plus the auth gate.
+ *
+ * Next 16 renamed the `middleware` file convention to `proxy`; the behaviour is
+ * unchanged. Keep the matcher below in step with the locale segments in
+ * `lib/i18n/routing.ts` — dropping a path from it silently removes its auth
+ * gate.
+ */
+export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (isApiRoute(pathname)) {

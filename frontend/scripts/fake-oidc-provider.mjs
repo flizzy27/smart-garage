@@ -10,18 +10,34 @@
  *   node scripts/fake-oidc-provider.mjs [port]
  */
 import { createServer } from "node:http";
+import { createSign, generateKeyPairSync } from "node:crypto";
 
 const port = Number(process.argv[2] ?? 9099);
 const issuer = `http://localhost:${port}`;
 
 const codes = new Map();
 
+// A real RSA key pair, published at /jwks — the app verifies the id_token
+// signature, so an unsigned token would (correctly) be rejected.
+const { publicKey, privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+const KEY_ID = "fake-oidc-key-1";
+const jwk = { ...publicKey.export({ format: "jwk" }), kid: KEY_ID, use: "sig", alg: "RS256" };
+
+// FAKE_OIDC_FORGE=1 signs with a key that is *not* in the published JWKS, so a
+// login attempt must fail. Used to prove signature verification is actually on.
+const forge = process.env.FAKE_OIDC_FORGE === "1";
+const signingKey = forge
+  ? generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey
+  : privateKey;
+
 function base64url(value) {
-  return Buffer.from(JSON.stringify(value)).toString("base64url");
+  const buffer = Buffer.isBuffer(value) ? value : Buffer.from(JSON.stringify(value));
+  return buffer.toString("base64url");
 }
 
 function idTokenFor(sub) {
-  const header = base64url({ alg: "none", typ: "JWT" });
+  const now = Math.floor(Date.now() / 1000);
+  const header = base64url({ alg: "RS256", kid: KEY_ID, typ: "JWT" });
   const payload = base64url({
     iss: issuer,
     aud: "smart-garage",
@@ -29,9 +45,14 @@ function idTokenFor(sub) {
     email: `${sub}@example.com`,
     preferred_username: sub,
     name: "SSO Test User",
-    exp: Math.floor(Date.now() / 1000) + 300,
+    iat: now,
+    exp: now + 300,
   });
-  return `${header}.${payload}.`;
+
+  const signer = createSign("sha256");
+  signer.update(`${header}.${payload}`);
+  signer.end();
+  return `${header}.${payload}.${base64url(signer.sign(signingKey))}`;
 }
 
 const server = createServer((req, res) => {
@@ -45,8 +66,16 @@ const server = createServer((req, res) => {
         authorization_endpoint: `${issuer}/authorize`,
         token_endpoint: `${issuer}/token`,
         userinfo_endpoint: `${issuer}/userinfo`,
+        jwks_uri: `${issuer}/jwks`,
+        id_token_signing_alg_values_supported: ["RS256"],
       }),
     );
+    return;
+  }
+
+  if (url.pathname === "/jwks") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ keys: [jwk] }));
     return;
   }
 

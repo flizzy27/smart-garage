@@ -40,6 +40,7 @@ Add each of these as a *Variable*.
 | `OIDC_REDIRECT_URI` | no | Override the callback URL. Only needed if the URL the browser uses differs from what the container sees and your proxy does not send `X-Forwarded-Proto` / `X-Forwarded-Host`. |
 | `OIDC_SCOPES` | no | Default `openid profile email` |
 | `OIDC_ALLOW_SIGNUP` | no | `true` (default) creates an account on first login. Set to `false` to only allow people who already have one. |
+| `OIDC_VERIFY_ID_TOKEN` | no | `true` (default) verifies the ID token signature against your provider's JWKS. Only set to `false` if your provider publishes no usable key set. |
 
 Restart the container. A **Sign in with …** button appears above the login form.
 
@@ -75,12 +76,23 @@ Deactivated accounts stay locked out no matter what the provider says.
 
 - Authorization code flow with **PKCE (S256)** — no tokens ever touch the
   browser, only Smart Garage's own opaque session cookie.
+- The **ID token signature is verified** against your provider's published JWKS
+  (`RS*`, `PS*` and `ES*`). `alg: none` and the HMAC family are rejected
+  outright — the latter is a well-known key-confusion attack. Issuer, audience,
+  `azp`, `exp` and `iat` are all checked, with two minutes of clock tolerance.
+  Keys are cached for ten minutes and refetched once on an unknown key id, so
+  provider key rotation does not lock anybody out.
 - The `state` value is compared in constant time and stored in a short-lived
   `HttpOnly` cookie that is discarded after every attempt, successful or not.
 - The client secret stays in the container's environment and is never sent to the
   browser or rendered into a page.
 - SSO accounts get a random, unusable password hash — they cannot be signed into
   through the password form.
+- `userinfo` can fill in missing claims but can never change **who** signed in:
+  a subject from a verified ID token always wins.
+
+Verified end to end against a real Keycloak instance, including account linking
+by e-mail and rejection of a token signed with a key outside the published JWKS.
 
 ## Troubleshooting
 

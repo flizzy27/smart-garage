@@ -1,0 +1,13 @@
+-- v0.10.0 — imperial units for maintenance items
+--
+-- Adds QUARTS, GALLONS, FLUID_OUNCES, POUNDS and OUNCES to MaintenanceItemUnit
+-- so a US owner can record "5 quarts of oil" without falling back to CUSTOM.
+--
+-- SQLite has no native enum type: Prisma stores enum values as TEXT and
+-- enforces the allowed set in the client, so widening the enum needs no schema
+-- change at all. This file exists to keep the migration history in step with
+-- schema.prisma; it deliberately does nothing to the data.
+--
+-- Existing rows keep their unit untouched, and no conversion happens: a value
+-- recorded as 5 LITERS stays 5 LITERS.
+SELECT 1;

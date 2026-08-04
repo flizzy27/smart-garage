@@ -1,4 +1,5 @@
 import { createHash, randomBytes, timingSafeEqual } from "crypto";
+import { decodeJwtSegment, verifyIdToken } from "@/lib/auth/oidc-jwt";
 
 /**
  * Optional OpenID Connect login (issue #5).
@@ -24,12 +25,15 @@ export type OidcConfig = {
   allowSignup: boolean;
   /** Label on the login button. */
   buttonLabel: string;
+  /** Verify the id_token signature against the provider's JWKS (default on). */
+  verifyIdToken: boolean;
 };
 
 export type OidcDiscovery = {
   authorization_endpoint: string;
   token_endpoint: string;
   userinfo_endpoint?: string;
+  jwks_uri?: string;
   issuer: string;
 };
 
@@ -70,6 +74,7 @@ export function getOidcConfig(): OidcConfig | null {
     // require that an account already exists.
     allowSignup: envBool("OIDC_ALLOW_SIGNUP", true),
     buttonLabel: env("OIDC_BUTTON_LABEL") ?? "Single Sign-On",
+    verifyIdToken: envBool("OIDC_VERIFY_ID_TOKEN", true),
   };
 }
 
@@ -181,35 +186,59 @@ export async function exchangeCodeForClaims(input: {
     access_token?: string;
   };
 
-  const claims = tokens.id_token ? decodeIdTokenClaims(tokens.id_token) : null;
+  const claims = tokens.id_token
+    ? await readIdTokenClaims(tokens.id_token, input.config, input.discovery)
+    : null;
 
-  // The id_token is only read for its claims after the provider already
-  // authenticated us over TLS on the back channel, so its signature is not
-  // re-verified here. When it is missing or unhelpful, ask userinfo instead.
   if (claims?.sub && claims.email) return claims;
 
+  // Some providers keep the id_token minimal; userinfo fills in the rest.
   if (input.discovery.userinfo_endpoint && tokens.access_token) {
     const userinfo = await fetchUserinfo(
       input.discovery.userinfo_endpoint,
       tokens.access_token,
     );
-    if (userinfo?.sub) return { ...claims, ...userinfo };
+    // The subject from a verified id_token wins: userinfo is only fetched with
+    // a bearer token and must not be able to rename who just signed in.
+    if (userinfo?.sub && (claims == null || userinfo.sub === claims.sub)) {
+      return { ...userinfo, ...claims };
+    }
   }
 
   if (claims?.sub) return claims;
   throw new Error("OIDC_NO_SUBJECT");
 }
 
-function decodeIdTokenClaims(idToken: string): OidcClaims | null {
-  const parts = idToken.split(".");
-  if (parts.length < 2) return null;
-  try {
-    const payload = Buffer.from(parts[1], "base64url").toString("utf-8");
-    const parsed = JSON.parse(payload) as OidcClaims;
-    return typeof parsed.sub === "string" ? parsed : null;
-  } catch {
-    return null;
+/**
+ * Verifies the id_token against the provider's JWKS and returns its claims.
+ *
+ * The token already arrived over an authenticated TLS back channel, which the
+ * spec accepts on its own — but verifying costs one cached fetch and removes
+ * the last place where a forged token would be believed. Set
+ * `OIDC_VERIFY_ID_TOKEN=false` only if your provider publishes no usable JWKS;
+ * the claims are then taken from the token as before.
+ */
+async function readIdTokenClaims(
+  idToken: string,
+  config: OidcConfig,
+  discovery: OidcDiscovery,
+): Promise<OidcClaims | null> {
+  if (config.verifyIdToken && discovery.jwks_uri) {
+    const { claims } = await verifyIdToken<OidcClaims & Record<string, unknown>>(
+      idToken,
+      {
+        jwksUri: discovery.jwks_uri,
+        issuer: discovery.issuer || config.issuer,
+        audience: config.clientId,
+      },
+    );
+    return claims;
   }
+
+  const payload = idToken.split(".")[1];
+  if (!payload) return null;
+  const parsed = decodeJwtSegment<OidcClaims>(payload);
+  return parsed && typeof parsed.sub === "string" ? parsed : null;
 }
 
 async function fetchUserinfo(

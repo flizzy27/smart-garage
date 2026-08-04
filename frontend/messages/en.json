@@ -509,7 +509,12 @@
         "SETS": "Sets",
         "KG": "Kilograms",
         "GRAMS": "Grams",
-        "CUSTOM": "Custom"
+        "CUSTOM": "Custom",
+        "QUARTS": "Quarts",
+        "GALLONS": "Gallons",
+        "FLUID_OUNCES": "Fluid ounces",
+        "POUNDS": "Pounds",
+        "OUNCES": "Ounces"
       },
       "unitsShort": {
         "LITERS": "L",
@@ -518,7 +523,12 @@
         "SETS": "sets",
         "KG": "kg",
         "GRAMS": "g",
-        "CUSTOM": ""
+        "CUSTOM": "",
+        "QUARTS": "qt",
+        "GALLONS": "gal",
+        "FLUID_OUNCES": "fl oz",
+        "POUNDS": "lb",
+        "OUNCES": "oz"
       }
     },
     "defaults": {
