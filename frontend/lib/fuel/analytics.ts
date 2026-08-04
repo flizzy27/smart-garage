@@ -116,9 +116,13 @@ export function computeFuelAnalytics(
         liters: curr.liters,
         consumptionLPer100Km,
         costCents: curr.totalCostCents,
+        // litres per 100 km × price per litre = currency per 100 km; ×100 for
+        // cents. The old formula also divided the consumption by 100, which
+        // reported the cost of driving 1 km as if it were 100 — a $15/100 mi
+        // car showed up as $0.14.
         costPer100KmCents:
           segmentPrice != null
-            ? Math.round((consumptionLPer100Km / 100) * segmentPrice * 100)
+            ? Math.round(consumptionLPer100Km * segmentPrice * 100)
             : null,
       });
     }

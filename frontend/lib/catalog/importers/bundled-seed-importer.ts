@@ -8,8 +8,8 @@ import type {
 import type {
   BundledEngineConfig,
   BundledManufacturer,
-  BundledModel,
 } from "@/lib/catalog/bundled-types";
+import { expandModelYears } from "@/lib/catalog/model-years";
 import { slugify } from "@/lib/catalog/slug";
 import {
   formatGenerationName,
@@ -18,7 +18,12 @@ import {
 
 const SOURCE: CatalogDataSource = "OPEN_VEHICLE_DB";
 const MODEL_YEAR_BATCH_SIZE = 1000;
-export const BUNDLED_CATALOG_DATASET_VERSION = "bundled-catalog.merged-2026-07";
+/**
+ * Bump whenever the bundled JSON *or* the way it is expanded into model years
+ * changes — that is what triggers a top-up import on an existing install.
+ * The import is upsert-only, so a bump never removes anything a user selected.
+ */
+export const BUNDLED_CATALOG_DATASET_VERSION = "bundled-catalog.merged-2026-08";
 
 function catalogJsonPath(): string {
   return path.join(process.cwd(), "prisma", "seed", "catalog.generated.json");
@@ -39,58 +44,12 @@ export function estimateBundledModelYears(catalog: BundledManufacturer[]): numbe
   let total = 0;
   for (const entry of catalog) {
     for (const model of entry.models) {
-      const configs = model.configs ?? [];
-      if (configs.length > 0) {
-        for (const config of configs) {
-          total += configProductionYears(config, model, currentYear).length;
-        }
-        continue;
+      for (const pass of expandModelYears(model, currentYear)) {
+        total += pass.years.length;
       }
-      total += modelProductionYears(model, currentYear).length;
     }
   }
   return total;
-}
-
-function modelProductionYears(model: BundledModel, currentYear: number): number[] {
-  if (model.years?.length) {
-    return cleanYears(model.years);
-  }
-  const yearFrom = model.yearFrom ?? 1990;
-  const yearTo = model.yearTo ?? currentYear;
-  return yearsFromRange(yearFrom, yearTo);
-}
-
-function configProductionYears(
-  config: BundledEngineConfig,
-  model: BundledModel,
-  currentYear: number,
-): number[] {
-  if (config.years?.length) return cleanYears(config.years);
-  if (config.yearFrom != null || config.yearTo != null) {
-    return yearsFromRange(
-      config.yearFrom ?? model.yearFrom ?? 1990,
-      config.yearTo ?? config.yearFrom ?? model.yearTo ?? currentYear,
-    );
-  }
-  return modelProductionYears(model, currentYear);
-}
-
-function yearsFromRange(from: number, to: number): number[] {
-  const start = Math.max(1886, Math.min(from, to));
-  const end = Math.min(new Date().getFullYear() + 1, Math.max(from, to));
-  const years: number[] = [];
-  for (let year = start; year <= end; year++) {
-    years.push(year);
-  }
-  return years;
-}
-
-function cleanYears(years: number[]): number[] {
-  const maxYear = new Date().getFullYear() + 1;
-  return [...new Set(years)]
-    .filter((year) => Number.isInteger(year) && year >= 1886 && year <= maxYear)
-    .sort((a, b) => a - b);
 }
 
 async function flushModelYearBatch(
@@ -316,28 +275,10 @@ export async function importBundledCatalog(
         update: { name: model.name },
       });
 
-      const configs = model.configs ?? [];
-      const baseYears = modelProductionYears(model, currentYear);
-      if (configs.length === 0) {
-        for (const range of groupYearsIntoGenerations(baseYears)) {
-          const generationId = await upsertGeneration(prisma, series.id, range.from, range.to);
-          const variantId = await upsertVariant(prisma, generationId, { variantName: "Standard" });
-          const engineId = await upsertEngine(prisma, variantId, { engineName: "Base" });
-
-          for (const year of baseYears) {
-            if (year < range.from || year > range.to) continue;
-            modelYearBatch.push({ variantId, engineId, year, source: SOURCE });
-            modelYears++;
-            if (modelYearBatch.length >= MODEL_YEAR_BATCH_SIZE) {
-              await flushModelYearBatch(prisma, modelYearBatch);
-            }
-          }
-        }
-        continue;
-      }
-
-      for (const config of configs) {
-        const years = configProductionYears(config, model, currentYear);
+      // `expandModelYears` owns the rule that keeps a model's production range
+      // alive alongside its trim-level configs (issue #9) — see the unit tests
+      // in lib/catalog/model-years.test.ts.
+      for (const { config, years } of expandModelYears(model, currentYear)) {
         for (const range of groupYearsIntoGenerations(years)) {
           const generationId = await upsertGeneration(prisma, series.id, range.from, range.to);
           const variantId = await upsertVariant(prisma, generationId, config);

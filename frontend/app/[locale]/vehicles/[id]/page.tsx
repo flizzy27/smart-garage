@@ -16,6 +16,10 @@ import { listInspectionsForVehicle } from "@/lib/repositories/inspections";
 import { listInsurancePoliciesForVehicle } from "@/lib/repositories/insurance";
 import { listSharesForVehicle } from "@/lib/repositories/vehicle-shares";
 import { findPreferencesForUser } from "@/lib/repositories/preferences";
+import {
+  findCustomFieldValuesForVehicle,
+  listCustomFieldsForUser,
+} from "@/lib/repositories/custom-fields";
 import { getRelatedNotesForVehicle } from "@/lib/services/notes";
 import {
   getVehicleDisplayName,
@@ -45,13 +49,29 @@ export default async function VehicleDetailPage({ params }: Props) {
   const isOwner = access?.role === "OWNER";
   const canEdit = access?.canEdit ?? false;
 
-  const [inspections, insurancePolicies, shares, relatedNotes, settings] = await Promise.all([
+  const [
+    inspections,
+    insurancePolicies,
+    shares,
+    relatedNotes,
+    settings,
+    customFieldDefinitions,
+    customFieldValues,
+  ] = await Promise.all([
     listInspectionsForVehicle(id, userId),
     listInsurancePoliciesForVehicle(id, userId),
     isOwner ? listSharesForVehicle(id, userId) : Promise.resolve([]),
     getRelatedNotesForVehicle(id, locale as "en" | "de"),
     findPreferencesForUser(userId),
+    // Definitions belong to the owner so a shared viewer sees the same fields.
+    listCustomFieldsForUser(record.ownerUserId),
+    findCustomFieldValuesForVehicle(id),
   ]);
+
+  const customFields = customFieldDefinitions.flatMap((field) => {
+    const value = customFieldValues[field.id];
+    return value ? [{ field, value }] : [];
+  });
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8">
@@ -79,6 +99,8 @@ export default async function VehicleDetailPage({ params }: Props) {
             vehicle={vehicle}
             locale={locale}
             distanceUnit={settings.distanceUnit}
+            hiddenFields={settings.hiddenVehicleFields}
+            customFields={customFields}
           />
           {canEdit ? (
             <div className="space-y-4">

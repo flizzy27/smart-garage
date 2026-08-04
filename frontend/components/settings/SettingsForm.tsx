@@ -5,7 +5,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/lib/i18n/navigation";
 import type { Locale } from "@/lib/i18n/routing";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
-import type { CurrencyCode, DistanceUnit, ThemeMode } from "@/lib/settings/types";
+import type {
+  CurrencyCode,
+  DistanceUnit,
+  HideableVehicleField,
+  ThemeMode,
+  VolumeUnit,
+} from "@/lib/settings/types";
 import {
   distanceUnitLabel,
   formDistanceValue,
@@ -14,9 +20,11 @@ import {
 import {
   CURRENCY_OPTIONS,
   DISTANCE_UNIT_OPTIONS,
+  HIDEABLE_VEHICLE_FIELDS,
   MAINTENANCE_DUE_SOON_DAYS_OPTIONS,
   MAINTENANCE_DUE_SOON_KM_OPTIONS,
   TIMEZONE_OPTIONS,
+  VOLUME_UNIT_OPTIONS,
   clampMaintenanceDueSoonDays,
   clampMaintenanceDueSoonKm,
 } from "@/lib/settings/types";
@@ -133,7 +141,8 @@ export function LanguageSettings() {
 
 export function RegionalSettings() {
   const t = useTranslations("pages.settings.regional");
-  const { settings, setTimezone, setCurrency, setDistanceUnit } = useUserSettings();
+  const { settings, setTimezone, setCurrency, setDistanceUnit, setVolumeUnit } =
+    useUserSettings();
 
   return (
     <div className="space-y-4">
@@ -161,6 +170,61 @@ export function RegionalSettings() {
           label: t(`distanceUnits.${unit}`),
         }))}
       />
+      <SelectField
+        id="volumeUnit"
+        label={t("volumeUnit")}
+        value={settings.volumeUnit}
+        onChange={(value) => setVolumeUnit(value as VolumeUnit)}
+        options={VOLUME_UNIT_OPTIONS.map((unit) => ({
+          value: unit,
+          label: t(`volumeUnits.${unit}`),
+        }))}
+      />
+      <p className="text-xs text-muted-foreground">{t("unitsHint")}</p>
+    </div>
+  );
+}
+
+/**
+ * Issue #8 — let users switch off fields that don't apply to them (HSN/TSN are
+ * German type-approval numbers, for example). Hiding never deletes data.
+ */
+export function VehicleFieldSettings() {
+  const t = useTranslations("pages.settings.vehicleFields");
+  const tFields = useTranslations("vehicles.form");
+  const { settings, setHiddenVehicleFields } = useUserSettings();
+  const hidden = settings.hiddenVehicleFields;
+
+  const toggle = (field: HideableVehicleField) => {
+    setHiddenVehicleFields(
+      hidden.includes(field)
+        ? hidden.filter((entry) => entry !== field)
+        : [...hidden, field],
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs text-muted-foreground">{t("hint")}</p>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {HIDEABLE_VEHICLE_FIELDS.map((field) => {
+          const visible = !hidden.includes(field);
+          return (
+            <li key={field}>
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2 text-sm">
+                <span className="text-foreground">{tFields(field)}</span>
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-[var(--accent)]"
+                  checked={visible}
+                  onChange={() => toggle(field)}
+                  aria-label={t("toggleLabel", { field: tFields(field) })}
+                />
+              </label>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

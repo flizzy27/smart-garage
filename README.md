@@ -28,20 +28,24 @@ Built for people who want a clean garage dashboard without handing their data to
 
 | | |
 |---|---|
-| 🚗 **Vehicles** | Profiles, photos, specs, manual entry, odometer quick-update, QR codes |
-| 🔧 **Maintenance** | Schedules, service log, overdue/due-soon dashboard |
+| 🚗 **Vehicles** | Profiles, photos, specs from the built-in catalog or manual entry, modifications, odometer quick-update |
+| 🔧 **Maintenance** | Schedules, service log with parts & fluids, overdue/due-soon dashboard |
 | 🛡️ **TÜV / HU & AU** | Inspection due dates with reminders |
-| ⛽ **Fuel** | Quick fill-up, consumption analytics, projected annual usage, charts |
+| ⛽ **Fuel** | Quick fill-up, consumption analytics (L/100 km **or MPG**), projected annual usage, charts |
+| 🧭 **Odometer** | Log readings over time, distance per month, yearly projection, charts |
 | 💶 **Expenses & costs** | Track costs, monthly overview dashboard, category breakdown |
 | 📋 **Insurance** | Policies, SF class, premiums, renewal tracking |
 | 📄 **Documents** | Store invoices and PDFs per vehicle |
-| 🔔 **Reminders** | Maintenance, TÜV, and overdue items at a glance |
+| 🕓 **History** | One timeline for services, fill-ups and odometer updates |
+| 🔔 **Notifications** | Push alerts via **Pushover** or **Telegram** — delivered by a background worker, no open browser tab needed |
+| 📝 **Notes & wishlist** | Markdown notes linked to vehicles or services, plus planned purchases |
 | 👨‍👩‍👧 **Family garage** | Share vehicles with other users (view or edit) |
-| 📝 **Wishlist** | Planned purchases and dream cars |
-| 💾 **Export** | JSON backup and CSV export from the UI |
-| 🎨 **Personal** | Dark/light mode, 6 design presets, custom background with adjustable blur |
-| 🌍 **Languages** | English & German |
-| 👤 **Multi-user** | Open local registration, per-user data + sharing |
+| 💾 **Backup** | JSON backup with restore, CSV export from the UI |
+| 📱 **Installable (PWA)** | Add to home screen on iOS, Android, desktop Chrome/Edge |
+| 🎨 **Personal** | Dark/light mode, 9 design presets, custom background with adjustable blur |
+| 🌍 **Languages & units** | English & German · kilometres or **miles** · litres or **US gallons** · your currency |
+| 🧩 **Your fields** | Hide fields you don't need (HSN/TSN, VIN…) and add custom ones like tire size |
+| 👤 **Multi-user** | Open local registration, per-user data + sharing, optional **OIDC single sign-on** |
 | 📦 **Simple ops** | Single Docker image, SQLite on `/data`, no extra database container |
 
 ## 🖥️ Install
@@ -100,7 +104,7 @@ Full ops guide: **[docs/INSTALL.md](docs/INSTALL.md)**
 
 | Channel | Image tag | When updated |
 |---------|-----------|--------------|
-| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.4.0`, …) — CI must pass first |
+| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.10.0`, …) — CI must pass first |
 | **Development** | `ghcr.io/flizzy27/smart-garage:development` | Every push to `main` after CI passes |
 
 | Platform | Stable update | Dev preview |
@@ -108,13 +112,13 @@ Full ops guide: **[docs/INSTALL.md](docs/INSTALL.md)**
 | **Unraid** | Docker → **Force Update** (uses `:latest`) | Change repository tag to `:development` in container settings |
 | **Docker** | `docker pull ghcr.io/flizzy27/smart-garage:latest` | `docker pull ghcr.io/flizzy27/smart-garage:development` |
 
-**Promote to stable:** when a dev build is approved, tag a release (`git tag v0.4.2 && git push origin v0.4.2`). That publishes `:latest`.
+**Promote to stable:** when a dev build is approved, tag a release (`git tag v0.10.1 && git push origin v0.10.1`). That publishes `:latest`.
 
-Pin a version: `ghcr.io/flizzy27/smart-garage:v0.4.0`
+Pin a version: `ghcr.io/flizzy27/smart-garage:v0.10.0`
 
 ## 💾 Backup
 
-**In-app export:** Settings → **Data & export** — download JSON (full backup) or CSV (expenses).
+**In-app backup:** Settings → **Data & export** — download a full JSON backup (restorable) or a CSV export of expenses.
 
 **Manual backup** — archive your AppData / volume:
 
@@ -132,6 +136,7 @@ On Unraid: `/mnt/user/appdata/smart-garage`
 |-----|-------------|
 | [docs/UNRAID.md](docs/UNRAID.md) | Unraid install & troubleshooting |
 | [docs/INSTALL.md](docs/INSTALL.md) | Backup, restore, updates |
+| [docs/OIDC.md](docs/OIDC.md) | Optional single sign-on (Pocket ID, Authentik, Keycloak…) |
 | [docs/CA-SUBMISSION.md](docs/CA-SUBMISSION.md) | Community Applications submission packet |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [SECURITY.md](SECURITY.md) | Security policy |

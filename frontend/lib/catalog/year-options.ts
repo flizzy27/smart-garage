@@ -64,65 +64,40 @@ export function preferDetailedCatalogRows<T extends CatalogYearConfigRow>(rows: 
   return filtered;
 }
 
-function configSignature(row: CatalogYearConfigRow): string {
-  return [
-    row.variant.name,
-    row.variant.bodyType ?? "",
-    row.variant.driveType ?? "",
-    row.engine.name,
-    row.engine.code ?? "",
-    row.engine.displacementCc ?? "",
-    row.engine.fuelType ?? "",
-    row.engine.powerKw ?? "",
-    row.engine.powerPs ?? "",
-    row.engine.torqueNm ?? "",
-    row.engine.cylinders ?? "",
-  ].join("|");
-}
-
-export function groupCatalogYearsByConfiguration(
+/**
+ * One selectable option per production year, newest first.
+ *
+ * The year the user picks becomes the vehicle's `productionYear`, so the list
+ * must offer their actual year. Collapsing runs of years into a range like
+ * "2022-2025" made that impossible: whichever range you picked, the vehicle was
+ * recorded with the range's *first* year — a 2024 Maverick came out as a 2022
+ * (issue #9). Ranges are therefore gone; the combobox is searchable, so a long
+ * list is not a problem.
+ *
+ * Placeholder rows are still dropped for years that also have a real,
+ * detailed configuration, and one representative row is kept per year.
+ */
+export function listCatalogYearOptions(
   rows: CatalogYearConfigRow[],
 ): CatalogYearOption[] {
   const filtered = preferDetailedCatalogRows(rows);
-  const configsByYear = new Map<number, { signatures: Set<string>; firstId: string }>();
+  const byYear = new Map<number, string>();
 
   for (const row of filtered) {
-    const bucket = configsByYear.get(row.year) ?? {
-      signatures: new Set<string>(),
-      firstId: row.id,
-    };
-    bucket.signatures.add(configSignature(row));
-    if (row.id < bucket.firstId) bucket.firstId = row.id;
-    configsByYear.set(row.year, bucket);
+    const existing = byYear.get(row.year);
+    // Stable representative: the lowest id wins, so the same year always
+    // resolves to the same catalog row across requests.
+    if (existing == null || row.id < existing) byYear.set(row.year, row.id);
   }
 
-  const years = [...configsByYear.keys()].sort((a, b) => a - b);
-  const options: CatalogYearOption[] = [];
-  let current: CatalogYearOption | null = null;
-  let previousSignatureSet = "";
-
-  for (const year of years) {
-    const bucket = configsByYear.get(year)!;
-    const signatureSet = [...bucket.signatures].sort().join("::");
-    if (current && year === current.yearTo + 1 && signatureSet === previousSignatureSet) {
-      current.yearTo = year;
-      current.label = formatYearLabel(current.yearFrom, current.yearTo);
-    } else {
-      current = {
-        id: bucket.firstId,
-        year,
-        yearFrom: year,
-        yearTo: year,
-        label: formatYearLabel(year, year),
-      };
-      options.push(current);
-    }
-    previousSignatureSet = signatureSet;
-  }
-
-  return options.sort((a, b) => b.yearFrom - a.yearFrom);
+  return [...byYear.entries()]
+    .sort(([a], [b]) => b - a)
+    .map(([year, id]) => ({
+      id,
+      year,
+      yearFrom: year,
+      yearTo: year,
+      label: String(year),
+    }));
 }
 
-function formatYearLabel(from: number, to: number): string {
-  return from === to ? String(from) : `${from}-${to}`;
-}

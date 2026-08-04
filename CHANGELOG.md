@@ -9,6 +9,98 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.10.0] - 2026-08-04
+
+This release closes every open issue reported on GitHub. Most of them came from
+users outside Germany, and together they make Smart Garage usable without
+assuming metric units, German paperwork, or a local-only login.
+
+### Added
+
+- **Gallons and miles per gallon** ([#4]) — Settings → Regional now has a volume
+  unit next to the distance unit. Pick **US gallons** and every fill-up form,
+  price, total and chart switches over; with miles selected as well, fuel economy
+  is shown as **MPG** instead of L/100 km. Volumes stay stored in litres and are
+  only converted for display, so switching back and forth never changes your
+  data.
+- **Odometer page with charts** ([#6]) — a dedicated **Odometer** entry in the
+  sidebar. Log a reading (optionally back-dated, with a note), and see your
+  latest reading, distance tracked, average per day and month, a projection for
+  the year, plus an odometer-over-time chart and distance-per-month bars.
+  Back-dated readings are kept in the history and never lower the current
+  reading.
+- **Hide fields you don't use** ([#8]) — Settings → **Vehicle fields** lets you
+  switch off any optional field. HSN and TSN are German type-approval numbers and
+  are pointless elsewhere, so they can now simply be turned off; the same goes
+  for VIN, colour, torque, drive type and the rest. Hiding never deletes stored
+  data — switch a field back on and its value is still there.
+- **Custom fields** ([#7]) — define your own vehicle fields (text, number, date
+  or yes/no, with an optional unit) under Settings → Vehicle fields. They appear
+  on every vehicle's form and detail page. Renaming a field keeps its values;
+  deleting one removes its values too, after a confirmation.
+- **OpenID Connect / SSO login** ([#5]) — optional single sign-on for Pocket ID,
+  Authentik, Keycloak, Authelia and anything else that speaks OIDC. Configure it
+  with environment variables in the Unraid template (`OIDC_ISSUER`,
+  `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`); leave them empty and nothing changes.
+  Uses the authorization code flow with PKCE, links to an existing account by
+  e-mail on first login, and keeps the normal username/password form alongside.
+  See [docs/OIDC.md](docs/OIDC.md).
+
+### Fixed
+
+- **The vehicle catalog offered only a single production year for many models**
+  ([#9]) — the cause was in the catalog importer: as soon as a model had any
+  trim-level entry, the model's own production range was thrown away. A Ford
+  Maverick built 2022–2026 therefore offered nothing but 2026. Model years no
+  longer disappear: **302 models regain 4,679 production years**, and no model
+  loses one. The catalog updates itself on the next container start.
+- **Production years were grouped into ranges you could not pick from** ([#9]) —
+  the year list collapsed runs like "2022-2025" into one entry, and choosing it
+  always recorded the *first* year, so a 2024 car was saved as a 2022. Every year
+  is now selectable on its own.
+- **Switching to manual entry lost what you had already selected** ([#9]) —
+  picking a make and model in the catalog and then switching to "Enter manually"
+  started from a blank form. Make, model and the selected year now carry over,
+  and a hint next to the year picker points to manual entry when your year is
+  missing.
+- **Fuel cost per 100 km was 100× too low** — a car actually costing €15 per
+  100 km was displayed as €0.15. The tile now shows the real figure, and follows
+  your distance unit (cost per 100 mi when you use miles).
+- **Backups did not contain odometer history** — restoring a backup deletes and
+  rebuilds your data, so every manually logged odometer reading was silently
+  lost. Odometer readings and custom fields are now part of the backup. Backups
+  written by older versions still restore.
+
+### Changed
+
+- **Catalog updates no longer block startup** — an existing install now tops the
+  catalog up in the background while the app is already serving, instead of
+  holding the container for minutes after a Force Update. A fresh install still
+  waits, because an empty catalog would leave the "add vehicle" form with nothing
+  to choose from. The import only ever adds rows.
+
+### Migrations
+
+- `20260804090000_v0100_units_custom_fields_oidc` — purely additive: new
+  preference columns (`volumeUnit`, `hiddenVehicleFields`), optional OIDC link
+  columns on `User`, an optional note on `OdometerLog`, and the two new
+  `VehicleCustomField` / `VehicleCustomFieldValue` tables. Nothing is dropped,
+  renamed or rewritten, so updating an existing Unraid install cannot lose data.
+
+### Notes
+
+- Existing installs update via the normal **Force Update** — migrations and the
+  catalog top-up run automatically, no manual database steps.
+- Defaults are unchanged: litres, kilometres, all fields visible, no SSO. The new
+  features only appear once you turn them on.
+
+[#4]: https://github.com/flizzy27/smart-garage/issues/4
+[#5]: https://github.com/flizzy27/smart-garage/issues/5
+[#6]: https://github.com/flizzy27/smart-garage/issues/6
+[#7]: https://github.com/flizzy27/smart-garage/issues/7
+[#8]: https://github.com/flizzy27/smart-garage/issues/8
+[#9]: https://github.com/flizzy27/smart-garage/issues/9
+
 ## [0.9.6] - 2026-07-04
 
 ### Fixed

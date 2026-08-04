@@ -35,7 +35,7 @@ Everything needed to submit **Smart Garage** to the Unraid Community Application
 |-------|-------|
 | **Registry** | GitHub Container Registry |
 | **Image** | `ghcr.io/flizzy27/smart-garage:latest` |
-| **Also tagged** | `ghcr.io/flizzy27/smart-garage:v0.3.0` (and release tags) |
+| **Also tagged** | `ghcr.io/flizzy27/smart-garage:v0.10.0` (and all release tags) |
 | **Published by** | GitHub Actions [docker-publish.yml](../.github/workflows/docker-publish.yml) |
 | **Visibility** | Must be **Public** (GitHub → Packages → smart-garage → Package settings) |
 
@@ -74,7 +74,7 @@ Hidden (auto-set): `DATABASE_URL`, `UPLOAD_DIR`, `NODE_ENV`
 
 Unraid template uses **`:latest`** (stable). To test dev builds, change the repository tag to `:development` in container settings.
 
-Promote development → stable: tag a release (e.g. `v0.3.2`).
+Promote development → stable: tag a release (e.g. `v0.10.1`).
 
 ## Security notes for review
 

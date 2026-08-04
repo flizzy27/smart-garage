@@ -9,7 +9,8 @@ import { PrismaClient } from "@prisma/client";
 
 const SOURCE = "OPEN_VEHICLE_DB";
 const MODEL_YEAR_BATCH_SIZE = 1000;
-const BUNDLED_CATALOG_DATASET_VERSION = "bundled-catalog.merged-2026-07";
+// Keep in sync with frontend/lib/catalog/importers/bundled-seed-importer.ts.
+const BUNDLED_CATALOG_DATASET_VERSION = "bundled-catalog.merged-2026-08";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const containerCatalogPath = path.join(__dirname, "..", "prisma", "seed", "catalog.generated.json");
 const repoCatalogPath = path.join(__dirname, "..", "frontend", "prisma", "seed", "catalog.generated.json");
@@ -90,7 +91,15 @@ function estimateModelYears(catalog) {
   for (const entry of catalog) {
     for (const model of entry.models) {
       if (model.configs?.length) {
-        for (const config of model.configs) total += configProductionYears(config, model).length;
+        const covered = new Set();
+        for (const config of model.configs) {
+          const years = configProductionYears(config, model);
+          total += years.length;
+          for (const year of years) covered.add(year);
+        }
+        if (model.years?.length || model.yearFrom != null || model.yearTo != null) {
+          total += modelProductionYears(model).filter((year) => !covered.has(year)).length;
+        }
       } else {
         total += modelProductionYears(model).length;
       }
@@ -283,9 +292,39 @@ async function importCatalog(prisma, catalog) {
         update: { name: model.name },
       });
 
-      const configs = model.configs?.length ? model.configs : [{ variantName: "Standard", engineName: "Base" }];
-      for (const config of configs) {
-        const years = model.configs?.length ? configProductionYears(config, model) : modelProductionYears(model);
+      // A model can carry both a broad production-year range and a few
+      // trim-level configs that only know the newest model year. Expanding just
+      // the configs used to discard the broad range, so e.g. a Ford Maverick
+      // built 2022-2026 offered nothing but 2026 (issue #9). Any base year that
+      // no config claims is emitted as a plain "Standard / Base" configuration.
+      //
+      // Only *explicit* year data counts: `modelProductionYears` guesses
+      // 1990..today when a model has no years at all, which is exactly the shape
+      // of a trim-level entry like "Sierra 1500 AT4" — topping that up would
+      // invent decades of model years that never existed.
+      const declaredConfigs = model.configs?.length ? model.configs : [];
+      const hasExplicitBaseYears = Boolean(
+        model.years?.length || model.yearFrom != null || model.yearTo != null,
+      );
+      const coveredYears = new Set();
+      for (const config of declaredConfigs) {
+        for (const year of configProductionYears(config, model)) coveredYears.add(year);
+      }
+      const uncoveredYears = hasExplicitBaseYears
+        ? modelProductionYears(model).filter((year) => !coveredYears.has(year))
+        : [];
+
+      const passes = [
+        ...declaredConfigs.map((config) => ({
+          config,
+          years: configProductionYears(config, model),
+        })),
+        ...(uncoveredYears.length > 0
+          ? [{ config: { variantName: "Standard", engineName: "Base" }, years: uncoveredYears }]
+          : []),
+      ];
+
+      for (const { config, years } of passes) {
         for (const range of groupYearsIntoGenerations(years)) {
           const generationId = await upsertGeneration(prisma, series.id, range);
           const variantId = await upsertVariant(prisma, generationId, config);
@@ -329,14 +368,38 @@ async function importCatalog(prisma, catalog) {
   );
 }
 
+/**
+ * Decide what the entrypoint should do, without importing anything:
+ *
+ * - `skip`       already on the current dataset version
+ * - `blocking`   empty catalog (fresh install) \u2014 the app is unusable without it
+ * - `background` catalog present but outdated \u2014 top up while the app is already
+ *                serving, so a Force Update never looks like a long outage.
+ *                The import is upsert-only, so the catalog just gets better
+ *                while it runs; nothing is missing that was there before.
+ */
+async function resolvePlan(prisma) {
+  const state = await prisma.catalogSyncState.findUnique({
+    where: { source: SOURCE },
+    select: { datasetVersion: true },
+  });
+  if (state?.datasetVersion === BUNDLED_CATALOG_DATASET_VERSION) return "skip";
+  const existing = await prisma.catalogModelYear.count();
+  return existing > 0 ? "background" : "blocking";
+}
+
 async function main() {
+  const planOnly = process.argv.includes("--plan");
   const prisma = new PrismaClient();
   try {
-    const state = await prisma.catalogSyncState.findUnique({
-      where: { source: SOURCE },
-      select: { datasetVersion: true },
-    });
-    if (state?.datasetVersion === BUNDLED_CATALOG_DATASET_VERSION) {
+    const plan = await resolvePlan(prisma);
+
+    if (planOnly) {
+      process.stdout.write(`${plan}\n`);
+      return;
+    }
+
+    if (plan === "skip") {
       const existing = await prisma.catalogModelYear.count();
       console.log(`[catalog] Already seeded (${existing.toLocaleString()} model years) - skipping`);
       return;

@@ -1,6 +1,6 @@
 {
   "name": "smart-garage-frontend",
-  "version": "0.9.6",
+  "version": "0.10.0",
   "private": true,
   "description": "Smart Garage — self-hosted vehicle management (Next.js)",
   "scripts": {
@@ -10,7 +10,10 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest",
+    "test:watch": "node scripts/test-watch-safe.mjs",
+    "verify:catalog": "node scripts/verify-catalog-years.mjs",
+    "verify:catalog:db": "node scripts/smoke-catalog-import.mjs",
+    "dev:oidc-provider": "node scripts/fake-oidc-provider.mjs",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

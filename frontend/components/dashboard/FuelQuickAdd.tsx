@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { IconExpenses } from "@/components/layout/NavIcons";
+import { volumeUnitLabel } from "@/lib/regional/volume";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
 
 type VehicleOption = { id: string; label: string };
@@ -28,8 +29,12 @@ const OPEN_STATE_KEY = "smart-garage-quickfuel-open";
 export function FuelQuickAdd({ vehicles, defaultVehicleId }: Props) {
   const t = useTranslations("dashboard.fuelQuickAdd");
   const { settings } = useUserSettings();
+  const volumeLabel = volumeUnitLabel(settings.volumeUnit);
   const [amount, setAmount] = useState("100");
-  const [pricePerLiter, setPricePerLiter] = useState("1.8");
+  // Price is per the user's volume unit; the default only seeds the field.
+  const [pricePerLiter, setPricePerLiter] = useState(
+    settings.volumeUnit === "gal" ? "3.50" : "1.8",
+  );
   // Collapsed by default; the user's per-device choice is remembered so it never
   // becomes annoying to keep re-opening or re-closing.
   const [open, setOpen] = useState(false);
@@ -111,6 +116,7 @@ export function FuelQuickAdd({ vehicles, defaultVehicleId }: Props) {
         <input type="hidden" name="liters" value={liters} />
         <input type="hidden" name="currency" value={settings.currency} />
         <input type="hidden" name="distanceUnit" value={settings.distanceUnit} />
+        <input type="hidden" name="volumeUnit" value={settings.volumeUnit} />
 
         <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
           <Label htmlFor="quick-fuel-vehicle" required>
@@ -148,7 +154,7 @@ export function FuelQuickAdd({ vehicles, defaultVehicleId }: Props) {
 
         <div className="space-y-1.5">
           <Label htmlFor="quick-fuel-price" required>
-            {t("pricePerLiter")}
+            {t("pricePerVolume", { unit: volumeLabel })}
           </Label>
           <Input
             id="quick-fuel-price"
@@ -162,12 +168,12 @@ export function FuelQuickAdd({ vehicles, defaultVehicleId }: Props) {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="quick-fuel-liters">{t("liters")}</Label>
+          <Label htmlFor="quick-fuel-liters">{t("volume", { unit: volumeLabel })}</Label>
           <Input
             id="quick-fuel-liters"
             type="text"
             readOnly
-            value={liters ? `${liters} L` : "—"}
+            value={liters ? `${liters} ${volumeLabel}` : "—"}
             className="bg-muted/50 text-muted-foreground"
           />
         </div>

@@ -10,12 +10,24 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 
-export function LoginForm({ sessionExpired = false }: { sessionExpired?: boolean }) {
+export function LoginForm({
+  sessionExpired = false,
+  oidc = null,
+  errorCode = null,
+}: {
+  sessionExpired?: boolean;
+  /** Present only when OIDC is configured via environment variables. */
+  oidc?: { label: string; startUrl: string } | null;
+  /** Error handed back by the OIDC callback redirect. */
+  errorCode?: string | null;
+}) {
   const t = useTranslations("auth");
   const [state, formAction, pending] = useActionState<
     AuthActionResult | null,
     FormData
   >(loginAction, null);
+
+  const shownError = state?.error ?? errorCode;
 
   return (
     <div className="space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm">
@@ -27,12 +39,32 @@ export function LoginForm({ sessionExpired = false }: { sessionExpired?: boolean
         </div>
       </div>
 
-      {!state?.error && sessionExpired ? (
+      {!shownError && sessionExpired ? (
         <Alert variant="info">{t("sessionExpiredNotice")}</Alert>
       ) : null}
 
-      {state?.error ? (
-        <Alert variant="error">{t(`errors.${state.error}`)}</Alert>
+      {shownError ? (
+        <Alert variant="error">
+          {t.has(`errors.${shownError}` as never)
+            ? t(`errors.${shownError}` as never)
+            : t("errors.failed")}
+        </Alert>
+      ) : null}
+
+      {oidc ? (
+        <div className="space-y-4">
+          <a
+            href={oidc.startUrl}
+            className="flex w-full items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:opacity-90"
+          >
+            {t("signInWith", { provider: oidc.label })}
+          </a>
+          <div className="flex items-center gap-3">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">{t("or")}</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </div>
       ) : null}
 
       <form action={formAction} className="space-y-4">

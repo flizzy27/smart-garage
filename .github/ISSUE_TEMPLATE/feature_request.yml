@@ -1,0 +1,45 @@
+name: Feature request
+description: Suggest an improvement or a new feature
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do?
+      description: Describe what you are trying to achieve, not just the solution you have in mind.
+      placeholder: I track my car in miles and gallons, and …
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: How do you imagine it working?
+      description: Optional. Screenshots or how another app solves it are very welcome.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app?
+      options:
+        - Vehicles / catalog
+        - Maintenance
+        - Fuel / costs
+        - Odometer
+        - Documents / notes
+        - Notifications
+        - Settings / units
+        - Login / users
+        - Something else
+    validations:
+      required: false
+
+  - type: input
+    id: region
+    attributes:
+      label: Where are you using it?
+      description: Optional — helps with units, paperwork and date formats (e.g. "US", "Germany").
+    validations:
+      required: false

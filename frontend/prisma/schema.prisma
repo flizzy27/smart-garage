@@ -199,6 +199,11 @@ model User {
   updatedAt       DateTime  @updatedAt
   lastLoginAt     DateTime?
 
+  /// Subject claim of the OIDC identity linked to this account (null = local login only).
+  oidcSubject String? @unique
+  /// Issuer the `oidcSubject` belongs to, so a provider change invalidates the link.
+  oidcIssuer  String?
+
   vehicles             Vehicle[]
   vehicleShares        VehicleShare[]
   wishlistItems        WishlistItem[]
@@ -212,6 +217,7 @@ model User {
   notificationSettings UserNotificationSettings?
   notes                Note[]
   noteTags             NoteTag[]
+  customFields         VehicleCustomField[]
 }
 
 model Session {
@@ -234,6 +240,8 @@ model UserPreferences {
   timezone               String   @default("Europe/Berlin")
   currency               String   @default("EUR")
   distanceUnit           String   @default("km")
+  volumeUnit             String   @default("l")
+  hiddenVehicleFields    String   @default("")
   designPreset           String   @default("default")
   backgroundBlurPx       Float    @default(8)
   backgroundImageKey     String?
@@ -460,6 +468,7 @@ model Vehicle {
   inspections          VehicleInspection[]
   insurancePolicies    InsurancePolicy[]
   linkedNotes          Note[]
+  customFieldValues    VehicleCustomFieldValue[]
 
   @@index([ownerUserId])
   @@index([catalogModelYearId])
@@ -736,6 +745,7 @@ model OdometerLog {
   odometerKm      Int
   recordedAt      DateTime @default(now())
   source          String   @default("manual")
+  note            String?
   createdByUserId String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -882,4 +892,38 @@ model WishlistItem {
 
   @@index([userId])
   @@index([status])
+}
+
+/// User-defined extra field shown on every vehicle (e.g. "Tire size").
+/// The definition belongs to the user; the per-vehicle value lives in
+/// `VehicleCustomFieldValue`, so renaming a field keeps all values intact.
+model VehicleCustomField {
+  id        String   @id @default(cuid())
+  userId    String
+  label     String
+  fieldType String   @default("TEXT")
+  unit      String?
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  values VehicleCustomFieldValue[]
+
+  @@index([userId])
+}
+
+model VehicleCustomFieldValue {
+  id        String   @id @default(cuid())
+  fieldId   String
+  vehicleId String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  field   VehicleCustomField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  vehicle Vehicle            @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@unique([fieldId, vehicleId])
+  @@index([vehicleId])
 }

@@ -15,6 +15,11 @@ import {
 } from "@/lib/actions/fuel";
 import { formatEuros } from "@/lib/money";
 import { distanceUnitLabel } from "@/lib/regional/distance";
+import {
+  formatVolumeValue,
+  pricePerVolumeUnit,
+  volumeUnitLabel,
+} from "@/lib/regional/volume";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
 import type { SerializedFuelEntry } from "@/lib/repositories/fuel";
 
@@ -31,6 +36,8 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
   const locale = useLocale();
   const { settings } = useUserSettings();
   const distanceUnit = settings.distanceUnit;
+  const volumeUnit = settings.volumeUnit;
+  const volumeLabel = volumeUnitLabel(volumeUnit);
   const [createState, createAction, creating] = useActionState<
     FuelActionResult | null,
     FormData
@@ -57,6 +64,7 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
         <div className="grid gap-4 sm:grid-cols-2">
           <input type="hidden" name="currency" value={settings.currency} />
           <input type="hidden" name="distanceUnit" value={distanceUnit} />
+          <input type="hidden" name="volumeUnit" value={volumeUnit} />
           <div className="space-y-2">
             <Label htmlFor="fuel-vehicle" required>
               {t("vehicle")}
@@ -87,7 +95,7 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fuel-liters">{t("liters")}</Label>
+            <Label htmlFor="fuel-liters">{t("volume", { unit: volumeLabel })}</Label>
             <Input id="fuel-liters" name="liters" type="number" min={0} step="0.01" />
           </div>
           <div className="space-y-2">
@@ -142,13 +150,18 @@ export function FuelLibrary({ entries, vehicles, defaultVehicleId }: Props) {
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {entry.vehicleName} · {new Date(entry.filledAt).toLocaleDateString()}
-                    {entry.liters != null ? ` · ${entry.liters} L` : ""}
+                    {entry.liters != null
+                      ? ` · ${formatVolumeValue(entry.liters, locale, volumeUnit)} ${volumeLabel}`
+                      : ""}
                     {entry.liters != null && entry.liters > 0
                       ? ` · ${formatEuros(
-                          entry.totalCostCents / entry.liters,
+                          pricePerVolumeUnit(
+                            entry.totalCostCents / entry.liters,
+                            volumeUnit,
+                          ),
                           locale,
                           entry.currency,
-                        )}/L`
+                        )}/${volumeLabel}`
                       : ""}
                   </p>
                 </div>

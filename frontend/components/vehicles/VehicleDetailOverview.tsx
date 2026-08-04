@@ -1,6 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { formatDistance } from "@/lib/regional/format";
+import {
+  formatCustomFieldValue,
+  type SerializedCustomField,
+} from "@/lib/domain/custom-fields";
 import type { DistanceUnit } from "@/lib/settings/types";
 import type { SerializedVehicle } from "@/lib/vehicles/serialize";
 import {
@@ -13,16 +17,24 @@ type VehicleDetailOverviewProps = {
   vehicle: SerializedVehicle;
   locale: string;
   distanceUnit: DistanceUnit;
+  /** Field ids the user switched off in settings (issue #8). */
+  hiddenFields?: readonly string[];
+  /** User-defined fields with their value for this vehicle (issue #7). */
+  customFields?: { field: SerializedCustomField; value: string }[];
 };
 
 function SpecRow({
   label,
   value,
+  hidden = false,
 }: {
   label: string;
   value: string | null | undefined;
+  hidden?: boolean;
 }) {
-  if (!value) return null;
+  // A hidden field is dropped even when it holds a value — the value stays in
+  // the database and reappears as soon as the field is switched back on.
+  if (hidden || !value) return null;
   return (
     <div className="flex flex-col gap-1 border-b border-border-subtle py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between">
       <dt className="text-sm text-muted-foreground">{label}</dt>
@@ -87,12 +99,16 @@ export async function VehicleDetailOverview({
   vehicle,
   locale,
   distanceUnit,
+  hiddenFields = [],
+  customFields = [],
 }: VehicleDetailOverviewProps) {
   const t = await getTranslations("vehicles");
   const tFuel = await getTranslations("vehicles.fuelTypes");
   const tBody = await getTranslations("vehicles.bodyTypes");
   const tDrive = await getTranslations("vehicles.driveTypes");
   const tMod = await getTranslations("vehicles.modifications");
+  const tCustom = await getTranslations("customFields");
+  const isHidden = (field: string) => hiddenFields.includes(field);
   const powerLabels = {
     factoryLabel: tMod("factory"),
     currentLabel: tMod("current"),
@@ -133,12 +149,12 @@ export async function VehicleDetailOverview({
               <p className="text-sm text-muted-foreground">{catalogLine}</p>
             ) : null}
             <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-              {vehicle.licensePlate ? (
+              {vehicle.licensePlate && !isHidden("licensePlate") ? (
                 <span className="rounded-md bg-muted px-2 py-0.5 font-medium text-foreground">
                   {vehicle.licensePlate}
                 </span>
               ) : null}
-              {vehicle.color ? <span>{vehicle.color}</span> : null}
+              {vehicle.color && !isHidden("color") ? <span>{vehicle.color}</span> : null}
             </div>
           </CardContent>
         </Card>
@@ -171,7 +187,11 @@ export async function VehicleDetailOverview({
                 label={t("mileage")}
                 value={formatDistance(vehicle.currentOdometerKm, locale, distanceUnit)}
               />
-              <SpecRow label={t("form.vin")} value={vehicle.vin} />
+              <SpecRow
+                label={t("form.vin")}
+                value={vehicle.vin}
+                hidden={isHidden("vin")}
+              />
               <SpecRow
                 label={t("form.hsnTsn")}
                 value={
@@ -179,14 +199,17 @@ export async function VehicleDetailOverview({
                     ? `${vehicle.hsn ?? "—"} / ${vehicle.tsn ?? "—"}`
                     : null
                 }
+                hidden={isHidden("hsn") && isHidden("tsn")}
               />
               <SpecRow
                 label={t("form.engineCode")}
                 value={current?.engineCode ?? factory?.engineCode}
+                hidden={isHidden("engineCode")}
               />
               <SpecRow
                 label={t("form.engineDescription")}
                 value={current?.engineDescription ?? factory?.engineDescription}
+                hidden={isHidden("engineDescription")}
               />
               <SpecRow
                 label={t("form.displacement")}
@@ -195,6 +218,7 @@ export async function VehicleDetailOverview({
                     ? `${((current?.displacementCc ?? factory?.displacementCc)! / 1000).toFixed(1)} L`
                     : null
                 }
+                hidden={isHidden("displacementCc")}
               />
               <SpecRow
                 label={t("form.fuelType")}
@@ -204,6 +228,7 @@ export async function VehicleDetailOverview({
                     return fuelType ? tFuel(fuelType) : null;
                   })()
                 }
+                hidden={isHidden("fuelType")}
               />
               <SpecRow
                 label={t("form.bodyType")}
@@ -213,6 +238,7 @@ export async function VehicleDetailOverview({
                     return bodyType ? tBody(bodyType) : null;
                   })()
                 }
+                hidden={isHidden("bodyType")}
               />
               <SpecRow
                 label={t("form.driveType")}
@@ -222,13 +248,24 @@ export async function VehicleDetailOverview({
                     return driveType ? tDrive(driveType) : null;
                   })()
                 }
+                hidden={isHidden("driveType")}
               />
+              {customFields.map(({ field, value }) => (
+                <SpecRow
+                  key={field.id}
+                  label={field.label}
+                  value={formatCustomFieldValue(field, value, locale, {
+                    yes: tCustom("yes"),
+                    no: tCustom("no"),
+                  })}
+                />
+              ))}
             </dl>
           </CardContent>
         </Card>
       </div>
 
-      {vehicle.notes ? (
+      {vehicle.notes && !isHidden("notes") ? (
         <Card>
           <CardHeader>
             <h2 className="text-sm font-semibold text-foreground">

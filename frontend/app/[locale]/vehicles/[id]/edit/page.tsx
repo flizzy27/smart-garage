@@ -13,6 +13,10 @@ import {
   findCatalogSeriesById,
   findCatalogVariantById,
 } from "@/lib/repositories/catalog";
+import {
+  findCustomFieldValuesForVehicle,
+  listCustomFieldsForUser,
+} from "@/lib/repositories/custom-fields";
 import { getVehicleForCurrentUser } from "@/lib/services/vehicles";
 import { serializeVehicle } from "@/lib/vehicles/serialize";
 
@@ -33,6 +37,13 @@ export default async function EditVehiclePage({ params }: Props) {
   }
 
   const vehicle = serializeVehicle(record);
+
+  // Custom fields belong to the vehicle's owner, so a shared editor sees and
+  // fills the owner's definitions instead of their own.
+  const [customFields, customFieldValues] = await Promise.all([
+    listCustomFieldsForUser(record.ownerUserId),
+    findCustomFieldValuesForVehicle(vehicle.id),
+  ]);
 
   const [manufacturer, series, generation, variant, engine, modelYear] =
     await Promise.all([
@@ -82,6 +93,8 @@ export default async function EditVehiclePage({ params }: Props) {
             action={boundUpdateAction}
             cancelHref={`/vehicles/${vehicle.id}`}
             submitLabel={t("edit.submit")}
+            customFields={customFields}
+            customFieldValues={customFieldValues}
           />
         </CardContent>
       </Card>

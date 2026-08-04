@@ -3,7 +3,14 @@
 import { useLocale, useTranslations } from "next-intl";
 import type { FuelAnalytics } from "@/lib/fuel/analytics";
 import { formatEuros } from "@/lib/money";
-import { formatDistance } from "@/lib/regional/distance";
+import { KM_PER_MILE, formatDistance } from "@/lib/regional/distance";
+import {
+  consumptionUnitLabel,
+  convertConsumption,
+  formatVolumeValue,
+  pricePerVolumeUnit,
+  volumeUnitLabel,
+} from "@/lib/regional/volume";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { FuelBarChart, FuelLineChart } from "./FuelCharts";
@@ -38,6 +45,13 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
   const t = useTranslations("fuel.analytics");
   const locale = useLocale();
   const { settings } = useUserSettings();
+  const { distanceUnit, volumeUnit } = settings;
+  const volumeLabel = volumeUnitLabel(volumeUnit);
+  const consumptionLabel = consumptionUnitLabel(distanceUnit, volumeUnit);
+  // Cost figures are computed per 100 km; scale them to 100 mi when the user
+  // reads distances in miles so the tile matches its own label.
+  const costPer100PreferredDistance = (cents: number) =>
+    distanceUnit === "mi" ? cents * KM_PER_MILE : cents;
 
   const {
     totalEntries,
@@ -58,6 +72,17 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
 
   if (totalEntries === 0) return null;
 
+  // Chart values are stored metric; convert once here so the axis label and the
+  // plotted numbers can never drift apart.
+  const priceChartData = priceHistory.map((point) => ({
+    ...point,
+    value: pricePerVolumeUnit(point.value, volumeUnit),
+  }));
+  const consumptionChartData = consumptionHistory.map((point) => ({
+    ...point,
+    value: convertConsumption(point.value, distanceUnit, volumeUnit).value,
+  }));
+
   return (
     <div className="space-y-4">
       <div>
@@ -70,7 +95,7 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           label={t("projectedAnnual")}
           value={
             projectedAnnualLiters != null
-              ? `${Math.round(projectedAnnualLiters).toLocaleString(locale)} L`
+              ? `${formatVolumeValue(projectedAnnualLiters, locale, volumeUnit, 0)} ${volumeLabel}`
               : "—"
           }
           detail={
@@ -94,10 +119,14 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           }
         />
         <StatTile
-          label={t("avgConsumption")}
+          label={t("avgConsumption", { unit: consumptionLabel })}
           value={
             avgConsumptionLPer100Km != null
-              ? `${avgConsumptionLPer100Km.toFixed(1)} L`
+              ? `${convertConsumption(
+                  avgConsumptionLPer100Km,
+                  distanceUnit,
+                  volumeUnit,
+                ).value.toFixed(1)} ${consumptionLabel}`
               : "—"
           }
           detail={
@@ -107,33 +136,40 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
           }
         />
         <StatTile
-          label={t("avgPrice")}
+          label={t("avgPrice", { unit: volumeLabel })}
           value={
             avgPricePerLiter != null
-              ? formatEuros(avgPricePerLiter * 100, locale, settings.currency)
+              ? formatEuros(
+                  pricePerVolumeUnit(avgPricePerLiter, volumeUnit) * 100,
+                  locale,
+                  settings.currency,
+                )
               : "—"
           }
         />
         <StatTile
           label={t("totalCost")}
           value={formatEuros(totalCostCents, locale, settings.currency)}
-          detail={t("totalLiters", { liters: totalLiters.toFixed(1) })}
+          detail={t("totalVolume", {
+            volume: formatVolumeValue(totalLiters, locale, volumeUnit, 1),
+            unit: volumeLabel,
+          })}
         />
         <StatTile
-          label={t("costPer100Km")}
+          label={t("costPerDistance", { unit: distanceUnit })}
           value={
             avgCostPer100KmCents != null
-              ? formatEuros(avgCostPer100KmCents, locale, settings.currency)
+              ? formatEuros(
+                  costPer100PreferredDistance(avgCostPer100KmCents),
+                  locale,
+                  settings.currency,
+                )
               : "—"
           }
           detail={
             totalDistanceKm > 0
               ? t("distanceTracked", {
-                  km: formatDistance(
-                    totalDistanceKm,
-                    locale,
-                    settings.distanceUnit,
-                  ),
+                  km: formatDistance(totalDistanceKm, locale, distanceUnit),
                 })
               : undefined
           }
@@ -143,11 +179,16 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card>
           <CardHeader bordered={false} className="pb-2">
-            <h3 className="text-sm font-medium text-foreground">{t("priceChart")}</h3>
+            <h3 className="text-sm font-medium text-foreground">
+              {t("priceChart", { unit: volumeLabel })}
+            </h3>
           </CardHeader>
           <CardContent className="pt-0">
-            {priceHistory.length >= 2 ? (
-              <FuelLineChart data={priceHistory} unit={` ${settings.currency}/L`} />
+            {priceChartData.length >= 2 ? (
+              <FuelLineChart
+                data={priceChartData}
+                unit={` ${settings.currency}/${volumeLabel}`}
+              />
             ) : (
               <p className="text-xs text-muted-foreground">{t("needsMoreData")}</p>
             )}
@@ -157,14 +198,14 @@ export function FuelAnalyticsPanel({ analytics }: Props) {
         <Card>
           <CardHeader bordered={false} className="pb-2">
             <h3 className="text-sm font-medium text-foreground">
-              {t("consumptionChart")}
+              {t("consumptionChart", { unit: consumptionLabel })}
             </h3>
           </CardHeader>
           <CardContent className="pt-0">
-            {consumptionHistory.length > 0 ? (
+            {consumptionChartData.length > 0 ? (
               <FuelBarChart
-                data={consumptionHistory}
-                unit=" L/100km"
+                data={consumptionChartData}
+                unit={` ${consumptionLabel}`}
                 color="var(--success)"
               />
             ) : (

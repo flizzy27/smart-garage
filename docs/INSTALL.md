@@ -42,6 +42,7 @@ Or from this repo: `docker compose up -d` (see [docker-compose.yml](../docker-co
 | `MAX_IMAGE_SIZE_MB` | `10` | Vehicle image limit |
 | `NODE_ENV` | `production` | Do not change |
 | `SESSION_COOKIE_SECURE` | unset | Session cookie `Secure` flag — see below |
+| `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` | unset | Optional single sign-on — see [OIDC.md](./OIDC.md) |
 
 Set in the Unraid template UI or in `docker-compose.yml`.
 
@@ -139,7 +140,7 @@ docker start smart-garage
 2. **Force Update** for stable, or set image to `:development` for preview
 3. Restart container — migrations run on start
 
-**Promote to stable:** tag a release on GitHub (`v0.3.2`).
+**Promote to stable:** tag a release on GitHub (e.g. `v0.10.1`).
 
 ## Troubleshooting
 

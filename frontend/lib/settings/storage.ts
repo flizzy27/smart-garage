@@ -22,6 +22,10 @@ export function readSettings(): UserSettings {
       timezone: parsed.timezone ?? DEFAULT_SETTINGS.timezone,
       currency: parsed.currency ?? DEFAULT_SETTINGS.currency,
       distanceUnit: parsed.distanceUnit ?? DEFAULT_SETTINGS.distanceUnit,
+      volumeUnit: parsed.volumeUnit ?? DEFAULT_SETTINGS.volumeUnit,
+      hiddenVehicleFields: Array.isArray(parsed.hiddenVehicleFields)
+        ? parsed.hiddenVehicleFields
+        : DEFAULT_SETTINGS.hiddenVehicleFields,
       designPreset: parsed.designPreset ?? DEFAULT_SETTINGS.designPreset,
       backgroundBlurPx: parsed.backgroundBlurPx ?? DEFAULT_SETTINGS.backgroundBlurPx,
       quickFuelEnabled: parsed.quickFuelEnabled ?? DEFAULT_SETTINGS.quickFuelEnabled,

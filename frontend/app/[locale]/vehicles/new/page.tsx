@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/Card";
 import { VehicleForm } from "@/components/vehicles/VehicleForm";
 import { createVehicleAction } from "@/lib/actions/vehicles";
+import { getCurrentUserId } from "@/lib/auth/current-user";
+import { listCustomFieldsForUser } from "@/lib/repositories/custom-fields";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +15,9 @@ export default async function NewVehiclePage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations("vehicles");
 
+  const userId = await getCurrentUserId();
+  const customFields = await listCustomFieldsForUser(userId);
+
   return (
     <div className="mx-auto w-full max-w-3xl">
       <PageHeader title={t("create.title")} subtitle={t("create.subtitle")} />
@@ -22,6 +27,7 @@ export default async function NewVehiclePage({ params }: Props) {
             action={createVehicleAction}
             cancelHref="/vehicles"
             submitLabel={t("create.submit")}
+            customFields={customFields}
           />
         </CardContent>
       </Card>

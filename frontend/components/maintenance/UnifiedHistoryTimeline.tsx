@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { formatCurrency, formatDate } from "@/lib/regional/format";
 import { formatDistance } from "@/lib/regional/distance";
+import { formatVolume, volumeUnitLabel } from "@/lib/regional/volume";
 import { renderMarkdownToSafeHtml } from "@/lib/notes/markdown";
 import { EditMaintenanceRecordDialog } from "@/components/maintenance/EditMaintenanceRecordDialog";
 import { Dialog } from "@/components/ui/Dialog";
@@ -140,8 +141,14 @@ export function UnifiedHistoryTimeline({ events }: Props) {
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-xs text-muted-foreground">{t("liters")}</dt>
-                        <dd className="font-medium tabular-nums text-foreground">{event.liters ?? "-"}</dd>
+                        <dt className="text-xs text-muted-foreground">
+                          {t("volume", { unit: volumeUnitLabel(settings.volumeUnit) })}
+                        </dt>
+                        <dd className="font-medium tabular-nums text-foreground">
+                          {event.liters != null
+                            ? formatVolume(event.liters, locale, settings.volumeUnit)
+                            : "-"}
+                        </dd>
                       </div>
                     </>
                   ) : null}

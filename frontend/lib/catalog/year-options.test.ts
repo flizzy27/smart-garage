@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupCatalogYearsByConfiguration } from "@/lib/catalog/year-options";
+import { listCatalogYearOptions } from "@/lib/catalog/year-options";
 import type { CatalogYearConfigRow } from "@/lib/catalog/year-options";
 
 function row(
@@ -33,20 +33,38 @@ function row(
 }
 
 describe("catalog year options", () => {
-  it("groups consecutive years with the same engine configuration set", () => {
-    const options = groupCatalogYearsByConfiguration([
-      row("a", 2014, { name: "EA888 Gen3", powerPs: 220 }),
-      row("b", 2015, { name: "EA888 Gen3", powerPs: 220 }),
-      row("c", 2016, { name: "EA888 Gen3", powerPs: 220 }),
-      row("d", 2017, { name: "EA888 Gen3", powerPs: 220 }),
-      row("e", 2018, { name: "EA888 Gen4", powerPs: 245 }),
+  it("offers every production year individually, newest first", () => {
+    // Ranges used to collapse these into "2022-2025", which forced any
+    // 2023/2024/2025 car to be saved as a 2022 (issue #9).
+    const options = listCatalogYearOptions([
+      row("a", 2022),
+      row("b", 2023),
+      row("c", 2024),
+      row("d", 2025),
+      row("e", 2026, { name: "2.0L EcoBoost", powerPs: 250 }),
     ]);
 
-    expect(options.map((option) => option.label)).toEqual(["2018", "2014-2017"]);
+    expect(options.map((option) => option.label)).toEqual([
+      "2026",
+      "2025",
+      "2024",
+      "2023",
+      "2022",
+    ]);
   });
 
-  it("removes placeholder configs only for years with detailed rows", () => {
-    const options = groupCatalogYearsByConfiguration([
+  it("keeps a single option per year even with several engines", () => {
+    const options = listCatalogYearOptions([
+      row("a", 2020, { id: "petrol", name: "2.0 TSI", powerPs: 245 }),
+      row("b", 2020, { id: "diesel", name: "2.0 TDI", powerPs: 190 }),
+      row("c", 2021, { id: "petrol", name: "2.0 TSI", powerPs: 245 }),
+    ]);
+
+    expect(options.map((option) => option.year)).toEqual([2021, 2020]);
+  });
+
+  it("removes placeholder configs only for years that have a detailed row", () => {
+    const options = listCatalogYearOptions([
       row("base-2013", 2013),
       row("base-2014", 2014),
       row("real-2014", 2014, { name: "2.0L Turbo I4", powerPs: 280 }),
@@ -54,17 +72,25 @@ describe("catalog year options", () => {
     ]);
 
     expect(options.map((option) => option.label)).toEqual(["2015", "2014", "2013"]);
+    // 2014 resolves to the detailed row, not the placeholder.
+    expect(options.find((option) => option.year === 2014)?.id).toBe("real-2014");
   });
 
-  it("keeps one range when multiple engines share the same years", () => {
-    const options = groupCatalogYearsByConfiguration([
-      row("a", 2020, { id: "petrol", name: "2.0 TSI", powerPs: 245 }),
-      row("b", 2020, { id: "diesel", name: "2.0 TDI", powerPs: 190 }),
-      row("c", 2021, { id: "petrol", name: "2.0 TSI", powerPs: 245 }),
-      row("d", 2021, { id: "diesel", name: "2.0 TDI", powerPs: 190 }),
-    ]);
+  it("picks a stable representative row for a year", () => {
+    const first = listCatalogYearOptions([row("zz", 2020), row("aa", 2020)]);
+    const second = listCatalogYearOptions([row("aa", 2020), row("zz", 2020)]);
 
-    expect(options).toHaveLength(1);
-    expect(options[0]?.label).toBe("2020-2021");
+    expect(first[0]?.id).toBe("aa");
+    expect(second[0]?.id).toBe("aa");
+  });
+
+  it("reports each option as a single-year span", () => {
+    const [option] = listCatalogYearOptions([row("a", 2019)]);
+    expect(option.yearFrom).toBe(2019);
+    expect(option.yearTo).toBe(2019);
+  });
+
+  it("returns nothing for an empty catalog", () => {
+    expect(listCatalogYearOptions([])).toEqual([]);
   });
 });

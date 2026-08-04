@@ -16,6 +16,8 @@ import {
   upsertVehicleCurrentSpec,
   type CreateVehicleData,
 } from "@/lib/repositories/vehicles";
+import { saveCustomFieldValuesForVehicle } from "@/lib/repositories/custom-fields";
+import { readCustomFieldValues } from "@/lib/domain/custom-fields";
 import { resolveVehicleAccess } from "@/lib/vehicles/access";
 import { saveVehicleImage } from "@/lib/storage/local";
 import {
@@ -222,6 +224,12 @@ export async function createVehicleForCurrentUser(
     );
     await seedDefaultSchedulesForVehicle(vehicle.id);
 
+    await saveCustomFieldValuesForVehicle(
+      ownerUserId,
+      vehicle.id,
+      readCustomFieldValues(formData),
+    );
+
     const image = formData.get("image");
     if (image instanceof File && image.size > 0) {
       const saved = await saveVehicleImage(vehicle.id, image);
@@ -270,6 +278,14 @@ export async function updateVehicleForCurrentUser(
       "@/lib/repositories/modifications"
     );
     await recalculateVehicleCurrentSpec(vehicleId);
+
+    // Custom fields belong to the vehicle owner, so a shared editor fills in the
+    // owner's field definitions rather than accidentally creating their own.
+    await saveCustomFieldValuesForVehicle(
+      existing.ownerUserId,
+      vehicleId,
+      readCustomFieldValues(formData),
+    );
 
     const image = formData.get("image");
     if (image instanceof File && image.size > 0) {

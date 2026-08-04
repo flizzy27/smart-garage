@@ -23,6 +23,7 @@ export type NavItem = {
     | "expenses"
     | "costs"
     | "fuel"
+    | "odometer"
     | "wishlist"
     | "reminders"
     | "settings";
@@ -44,6 +45,7 @@ export const navGroups: NavGroup[] = [
     items: [
       { href: "/vehicles", labelKey: "vehicles", icon: IconVehicles },
       { href: "/maintenance", labelKey: "maintenance", icon: IconMaintenance },
+      { href: "/odometer", labelKey: "odometer", icon: IconHistory },
       { href: "/history", labelKey: "history", icon: IconHistory },
       { href: "/documents", labelKey: "documents", icon: IconDocuments },
       { href: "/notes", labelKey: "notes", icon: IconNotes },

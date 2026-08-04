@@ -8,7 +8,15 @@ import {
 } from "@/lib/storage/local";
 
 const BACKUP_FORMAT = "smart-garage-user-backup";
-const BACKUP_SCHEMA_VERSION = 2;
+/**
+ * Version 3 adds odometer logs and user-defined custom fields.
+ *
+ * Older backups stay restorable: a restore wipes and rebuilds the user's data,
+ * so anything a v2 file does not carry simply comes back empty — which is
+ * exactly what it was when the file was written.
+ */
+const BACKUP_SCHEMA_VERSION = 3;
+const SUPPORTED_SCHEMA_VERSIONS = [2, 3];
 
 type JsonRecord = Record<string, unknown>;
 
@@ -87,6 +95,8 @@ export async function buildUserExport(userId: string) {
     noteTags,
     notes,
     wishlistItems,
+    odometerLogs,
+    customFields,
   ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
@@ -123,6 +133,13 @@ export async function buildUserExport(userId: string) {
       include: { tags: { select: { id: true } } },
     }),
     prisma.wishlistItem.findMany({ where: { userId } }),
+    // Restoring deletes the user's vehicles, which cascades to these two.
+    // They must be in the file or a restore would silently drop them.
+    prisma.odometerLog.findMany({ where: { vehicle: { ownerUserId: userId } } }),
+    prisma.vehicleCustomField.findMany({
+      where: { userId },
+      include: { values: true },
+    }),
   ]);
 
   const documentsWithFiles = await Promise.all(documents.map(documentWithFile));
@@ -147,6 +164,8 @@ export async function buildUserExport(userId: string) {
       tags: undefined,
     })),
     wishlistItems,
+    odometerLogs,
+    customFields,
   });
 }
 
@@ -156,7 +175,11 @@ export async function importUserBackup(userId: string, backup: unknown) {
   }
 
   const data = backup as JsonRecord;
-  if (data.format !== BACKUP_FORMAT || data.schemaVersion !== BACKUP_SCHEMA_VERSION) {
+  if (
+    data.format !== BACKUP_FORMAT ||
+    typeof data.schemaVersion !== "number" ||
+    !SUPPORTED_SCHEMA_VERSIONS.includes(data.schemaVersion)
+  ) {
     throw new Error("UNSUPPORTED_BACKUP");
   }
 
@@ -173,6 +196,13 @@ export async function importUserBackup(userId: string, backup: unknown) {
   const notes = Array.isArray(data.notes) ? (data.notes as JsonRecord[]) : [];
   const wishlistItems = Array.isArray(data.wishlistItems)
     ? (data.wishlistItems as JsonRecord[])
+    : [];
+  // Absent in v2 backups — an empty list is the correct restore result there.
+  const odometerLogs = Array.isArray(data.odometerLogs)
+    ? (data.odometerLogs as JsonRecord[])
+    : [];
+  const customFields = Array.isArray(data.customFields)
+    ? (data.customFields as JsonRecord[])
     : [];
 
   const oldDocuments = await prisma.document.findMany({
@@ -194,6 +224,8 @@ export async function importUserBackup(userId: string, backup: unknown) {
     await tx.expense.deleteMany({ where: { createdByUserId: userId } });
     await tx.fuelEntry.deleteMany({ where: { createdByUserId: userId } });
     await tx.maintenanceRecord.deleteMany({ where: { createdByUserId: userId } });
+    await tx.vehicleCustomField.deleteMany({ where: { userId } });
+    // Cascades to OdometerLog and VehicleCustomFieldValue.
     await tx.vehicle.deleteMany({ where: { ownerUserId: userId } });
 
     const preferences = data.preferences as JsonRecord | null | undefined;
@@ -207,6 +239,8 @@ export async function importUserBackup(userId: string, backup: unknown) {
           timezone: String(preferences.timezone ?? "Europe/Berlin"),
           currency: String(preferences.currency ?? "EUR"),
           distanceUnit: String(preferences.distanceUnit ?? "km"),
+          volumeUnit: String(preferences.volumeUnit ?? "l"),
+          hiddenVehicleFields: String(preferences.hiddenVehicleFields ?? ""),
           designPreset: String(preferences.designPreset ?? "default"),
           backgroundBlurPx: intOrNull(preferences.backgroundBlurPx) ?? 8,
           backgroundImageKey: textOrNull(preferences.backgroundImageKey),
@@ -222,6 +256,8 @@ export async function importUserBackup(userId: string, backup: unknown) {
           timezone: String(preferences.timezone ?? "Europe/Berlin"),
           currency: String(preferences.currency ?? "EUR"),
           distanceUnit: String(preferences.distanceUnit ?? "km"),
+          volumeUnit: String(preferences.volumeUnit ?? "l"),
+          hiddenVehicleFields: String(preferences.hiddenVehicleFields ?? ""),
           designPreset: String(preferences.designPreset ?? "default"),
           backgroundBlurPx: intOrNull(preferences.backgroundBlurPx) ?? 8,
           backgroundImageKey: textOrNull(preferences.backgroundImageKey),
@@ -630,6 +666,50 @@ export async function importUserBackup(userId: string, backup: unknown) {
       });
     }
 
+    for (const log of odometerLogs) {
+      await tx.odometerLog.create({
+        data: {
+          id: String(log.id),
+          vehicleId: String(log.vehicleId),
+          odometerKm: intOrNull(log.odometerKm) ?? 0,
+          recordedAt: dateOrNull(log.recordedAt) ?? new Date(),
+          source: textOrNull(log.source) ?? "manual",
+          note: textOrNull(log.note),
+          createdByUserId: userId,
+          createdAt: dateOrNull(log.createdAt) ?? new Date(),
+          updatedAt: dateOrNull(log.updatedAt) ?? new Date(),
+        },
+      });
+    }
+
+    for (const field of customFields) {
+      await tx.vehicleCustomField.create({
+        data: {
+          id: String(field.id),
+          userId,
+          label: String(field.label ?? "Field"),
+          fieldType: textOrNull(field.fieldType) ?? "TEXT",
+          unit: textOrNull(field.unit),
+          position: intOrNull(field.position) ?? 0,
+          createdAt: dateOrNull(field.createdAt) ?? new Date(),
+          updatedAt: dateOrNull(field.updatedAt) ?? new Date(),
+        },
+      });
+
+      for (const value of (field.values as JsonRecord[] | undefined) ?? []) {
+        await tx.vehicleCustomFieldValue.create({
+          data: {
+            id: String(value.id),
+            fieldId: String(field.id),
+            vehicleId: String(value.vehicleId),
+            value: String(value.value ?? ""),
+            createdAt: dateOrNull(value.createdAt) ?? new Date(),
+            updatedAt: dateOrNull(value.updatedAt) ?? new Date(),
+          },
+        });
+      }
+    }
+
     for (const item of wishlistItems) {
       await tx.wishlistItem.create({
         data: {
@@ -675,6 +755,8 @@ export async function importUserBackup(userId: string, backup: unknown) {
     documents: documents.length,
     notes: notes.length,
     wishlistItems: wishlistItems.length,
+    odometerLogs: odometerLogs.length,
+    customFields: customFields.length,
   };
 }
 

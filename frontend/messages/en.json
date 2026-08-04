@@ -25,7 +25,8 @@
       "overview": "Overview",
       "fleet": "Fleet",
       "finance": "Finance"
-    }
+    },
+    "odometer": "Odometer"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -76,11 +77,11 @@
       "hint": "Date is automatically set to today.",
       "vehicle": "Vehicle",
       "amount": "Amount",
-      "pricePerLiter": "Price/L",
-      "liters": "Liters",
       "save": "Log fill-up",
       "saving": "Saving…",
-      "saved": "Fill-up saved"
+      "saved": "Fill-up saved",
+      "pricePerVolume": "Price / {unit}",
+      "volume": "Volume ({unit})"
     },
     "dueSoon": {
       "title": "Due within 30 days",
@@ -141,7 +142,8 @@
         "notifications": "Notifications",
         "regional": "Regional",
         "data": "Data & export",
-        "catalog": "Catalog"
+        "catalog": "Catalog",
+        "vehicleFields": "Vehicle fields"
       },
       "general": {
         "title": "General",
@@ -256,7 +258,13 @@
         "distanceUnits": {
           "km": "Kilometers",
           "mi": "Miles"
-        }
+        },
+        "volumeUnit": "Volume",
+        "volumeUnits": {
+          "l": "Litres (L)",
+          "gal": "Gallons (US gal)"
+        },
+        "unitsHint": "Values are always stored metric and converted for display, so switching units never changes your data."
       },
       "future": {
         "title": "More settings",
@@ -364,6 +372,16 @@
           "SA": "Sat",
           "SU": "Sun"
         }
+      },
+      "vehicleFields": {
+        "title": "Vehicle fields",
+        "description": "Choose which fields you see, and add your own.",
+        "visibilityTitle": "Built-in fields",
+        "visibilityDescription": "Switch off anything that does not apply to you. Hiding a field never deletes data that is already stored.",
+        "customTitle": "Custom fields",
+        "customDescription": "Your own fields, shown on every vehicle.",
+        "hint": "Checked fields are shown on the vehicle form and detail page.",
+        "toggleLabel": "Show {field}"
       }
     }
   },
@@ -548,7 +566,6 @@
     "odometer": "Odometer",
     "cost": "Cost",
     "vendor": "Workshop",
-    "liters": "Liters",
     "eventTypes": {
       "maintenance": "Maintenance",
       "fuel": "Fill-up",
@@ -564,7 +581,8 @@
       "fromDate": "From",
       "toDate": "To",
       "clearFilters": "Clear filters"
-    }
+    },
+    "volume": "Volume ({unit})"
   },
   "notes": {
     "title": "Notes",
@@ -635,7 +653,7 @@
     }
   },
   "documents": {
-    "title": "Documents",
+    "title": "Title",
     "subtitle": "Invoices, reports, and vehicle files",
     "uploadTitle": "Upload document",
     "uploadHint": "PDF and images are stored on disk and survive container restarts when UPLOAD_DIR is mounted.",
@@ -646,7 +664,6 @@
     "selectVehicle": "Select vehicle",
     "category": "Category",
     "categoryOptional": "Optional",
-    "title": "Title",
     "titlePlaceholder": "e.g. HU report 2026",
     "file": "File",
     "fileHint": "PDF, JPEG, PNG, WebP, or GIF — max 25 MB (configurable via MAX_UPLOAD_SIZE_MB)",
@@ -816,7 +833,8 @@
         "identity": "Make & model",
         "registration": "Registration",
         "technical": "Technical data",
-        "image": "Photo"
+        "image": "Photo",
+        "customFields": "Your fields"
       },
       "entryMode": "How to add vehicle",
       "entryModeCatalog": "From catalog",
@@ -891,7 +909,11 @@
       "noImage": "No photo selected",
       "notes": "Notes",
       "cancel": "Cancel",
-      "saving": "Saving…"
+      "saving": "Saving…",
+      "displacementCc": "Displacement",
+      "yearMissingHint": "Your model year is not in the catalog? Some models only list their newest year.",
+      "yearMissingAction": "Enter this vehicle manually instead",
+      "carriedOverFromCatalog": "Make and model were taken from your catalog selection — adjust them if needed."
     },
     "fuelTypes": {
       "PETROL": "Petrol",
@@ -932,7 +954,10 @@
       "edit": "Edit",
       "cancel": "Cancel",
       "remove": "Remove",
-      "types": { "HU": "Main inspection (HU/TÜV)", "AU": "Emissions test (AU)" },
+      "types": {
+        "HU": "Main inspection (HU/TÜV)",
+        "AU": "Emissions test (AU)"
+      },
       "errors": {
         "invalidType": "Invalid inspection type.",
         "invalidDate": "Enter a valid date.",
@@ -983,7 +1008,10 @@
       "share": "Share",
       "sharing": "Sharing…",
       "remove": "Remove",
-      "roles": { "VIEWER": "View only", "EDITOR": "Can edit" },
+      "roles": {
+        "VIEWER": "View only",
+        "EDITOR": "Can edit"
+      },
       "errors": {
         "vehicleNotFound": "Vehicle not found.",
         "userNotFound": "User not found.",
@@ -1055,8 +1083,13 @@
       "passwordTooShort": "Password must be at least 8 characters",
       "usernameTaken": "Username already taken",
       "invalidCredentials": "Invalid username or password",
-      "failed": "Action failed"
-    }
+      "failed": "Action failed",
+      "oidc": "Single sign-on failed. Please try again or use your username and password.",
+      "accountDisabled": "This account is disabled. Ask an administrator to re-enable it.",
+      "oidcSignupDisabled": "No account is linked to this identity, and automatic sign-up is switched off."
+    },
+    "or": "or",
+    "signInWith": "Sign in with {provider}"
   },
   "expenses": {
     "title": "Expenses",
@@ -1090,10 +1123,9 @@
     "title": "Fuel",
     "subtitle": "Fill-ups and fuel costs",
     "addTitle": "Log fill-up",
-    "addHint": "Liters, cost and odometer are optional.",
+    "addHint": "Volume, cost and odometer are optional.",
     "vehicle": "Vehicle",
     "date": "Date",
-    "liters": "Liters",
     "amount": "Cost",
     "odometer": "Odometer",
     "station": "Station",
@@ -1113,18 +1145,19 @@
       "projectedAnnual": "Projected annual use",
       "projectedAnnualCost": "≈ {cost} fuel cost/year",
       "projectedAnnualKm": "≈ {km}/year estimated",
-      "avgPrice": "Avg. price/L",
+      "avgPrice": "Avg. price / {unit}",
       "totalCost": "Total cost",
-      "totalLiters": "{liters} L filled",
-      "costPer100Km": "Cost / 100 km",
       "distanceTracked": "{km} tracked",
       "basedOnSegments": "from {count} fill segments",
       "needsOdometer": "Odometer readings needed on fill-ups",
       "needsMoreData": "More entries with liters needed",
-      "priceChart": "Price per liter",
-      "consumptionChart": "Consumption (L/100 km)",
-      "costChart": "Monthly fuel cost"
-    }
+      "priceChart": "Price per {unit}",
+      "consumptionChart": "Consumption ({unit})",
+      "costChart": "Monthly fuel cost",
+      "totalVolume": "{volume} {unit} total",
+      "costPerDistance": "Cost / 100 {unit}"
+    },
+    "volume": "Volume ({unit})"
   },
   "reminders": {
     "title": "Reminders",
@@ -1250,5 +1283,74 @@
     "reload": "Try again",
     "goHome": "Go to dashboard",
     "sessionExpiredDescription": "Your session is no longer valid. Redirecting you to sign in…"
+  },
+  "customFields": {
+    "hint": "Add your own fields — they appear on every vehicle, next to the built-in ones.",
+    "empty": "No custom fields yet.",
+    "addTitle": "Add a field",
+    "editTitle": "Edit field",
+    "deleteTitle": "Delete field",
+    "deleteWarning": "Delete “{label}” and its values on all vehicles? This cannot be undone.",
+    "label": "Name",
+    "labelPlaceholder": "e.g. Tire size",
+    "type": "Type",
+    "unit": "Unit",
+    "unitPlaceholder": "e.g. psi",
+    "add": "Add field",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "limitReached": "You have reached the maximum of {max} custom fields.",
+    "notSet": "Not set",
+    "yes": "Yes",
+    "no": "No",
+    "types": {
+      "TEXT": "Text",
+      "NUMBER": "Number",
+      "DATE": "Date",
+      "BOOLEAN": "Yes / No"
+    },
+    "errors": {
+      "labelRequired": "Please enter a name for the field.",
+      "labelTooLong": "That name is too long.",
+      "tooManyFields": "You already have the maximum number of custom fields.",
+      "notFound": "That field no longer exists.",
+      "failed": "Could not save the field. Please try again."
+    }
+  },
+  "odometer": {
+    "title": "Odometer",
+    "subtitle": "Log readings and see how much you actually drive.",
+    "addTitle": "Log a reading",
+    "addHint": "Add a reading whenever you like — back-dated entries are kept in the history and never lower the current reading.",
+    "vehicle": "Vehicle",
+    "date": "Date",
+    "reading": "Odometer",
+    "note": "Note",
+    "save": "Save reading",
+    "saving": "Saving…",
+    "added": "Reading saved.",
+    "deleted": "Reading deleted.",
+    "delete": "Delete",
+    "listTitle": "Readings",
+    "empty": "No readings logged yet.",
+    "errors": {
+      "failed": "Could not save the reading. Please check the values."
+    },
+    "stats": {
+      "latest": "Latest reading",
+      "tracked": "Distance tracked",
+      "trackedDetail": "From {count} readings",
+      "perMonth": "Per month",
+      "perDay": "{distance} per day",
+      "projectedAnnual": "Projected per year",
+      "needsMore": "Log at least two readings"
+    },
+    "charts": {
+      "readings": "Odometer over time",
+      "monthlyDistance": "Distance per month"
+    }
   }
 }

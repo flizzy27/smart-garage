@@ -25,7 +25,8 @@
       "overview": "Überblick",
       "fleet": "Fuhrpark",
       "finance": "Finanzen"
-    }
+    },
+    "odometer": "Kilometerstand"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -76,11 +77,11 @@
       "hint": "Datum wird automatisch auf heute gesetzt.",
       "vehicle": "Fahrzeug",
       "amount": "Betrag",
-      "pricePerLiter": "Preis/L",
-      "liters": "Liter",
       "save": "Erfassen",
       "saving": "Speichern…",
-      "saved": "Tankvorgang gespeichert"
+      "saved": "Tankvorgang gespeichert",
+      "pricePerVolume": "Preis / {unit}",
+      "volume": "Menge ({unit})"
     },
     "dueSoon": {
       "title": "Fällig in 30 Tagen",
@@ -141,7 +142,8 @@
         "notifications": "Benachrichtigungen",
         "regional": "Regional",
         "data": "Daten & Export",
-        "catalog": "Katalog"
+        "catalog": "Katalog",
+        "vehicleFields": "Fahrzeugfelder"
       },
       "general": {
         "title": "Allgemein",
@@ -256,7 +258,13 @@
         "distanceUnits": {
           "km": "Kilometer",
           "mi": "Meilen"
-        }
+        },
+        "volumeUnit": "Volumen",
+        "volumeUnits": {
+          "l": "Liter (L)",
+          "gal": "Gallonen (US gal)"
+        },
+        "unitsHint": "Werte werden immer metrisch gespeichert und nur zur Anzeige umgerechnet — ein Wechsel der Einheit ändert deine Daten nicht."
       },
       "future": {
         "title": "Weitere Einstellungen",
@@ -364,6 +372,16 @@
           "SA": "Sa",
           "SU": "So"
         }
+      },
+      "vehicleFields": {
+        "title": "Fahrzeugfelder",
+        "description": "Wähle, welche Felder du siehst, und lege eigene an.",
+        "visibilityTitle": "Vorgegebene Felder",
+        "visibilityDescription": "Schalte aus, was auf dich nicht zutrifft. Ausblenden löscht niemals bereits gespeicherte Daten.",
+        "customTitle": "Eigene Felder",
+        "customDescription": "Deine eigenen Felder, sichtbar bei jedem Fahrzeug.",
+        "hint": "Angehakte Felder erscheinen im Fahrzeugformular und in der Detailansicht.",
+        "toggleLabel": "{field} anzeigen"
       }
     }
   },
@@ -548,7 +566,6 @@
     "odometer": "Kilometerstand",
     "cost": "Kosten",
     "vendor": "Werkstatt",
-    "liters": "Liter",
     "eventTypes": {
       "maintenance": "Wartung",
       "fuel": "Getankt",
@@ -564,7 +581,8 @@
       "fromDate": "Von",
       "toDate": "Bis",
       "clearFilters": "Filter zurücksetzen"
-    }
+    },
+    "volume": "Menge ({unit})"
   },
   "notes": {
     "title": "Notizen",
@@ -635,7 +653,7 @@
     }
   },
   "documents": {
-    "title": "Dokumente",
+    "title": "Titel",
     "subtitle": "Rechnungen, Berichte und Fahrzeugdateien",
     "uploadTitle": "Dokument hochladen",
     "uploadHint": "PDF und Bilder werden auf der Festplatte gespeichert und bleiben bei gemountetem UPLOAD_DIR auch nach Container-Neustart erhalten.",
@@ -646,7 +664,6 @@
     "selectVehicle": "Fahrzeug wählen",
     "category": "Kategorie",
     "categoryOptional": "Optional",
-    "title": "Titel",
     "titlePlaceholder": "z.B. HU-Bericht 2026",
     "file": "Datei",
     "fileHint": "PDF, JPEG, PNG, WebP oder GIF — max. 25 MB (über MAX_UPLOAD_SIZE_MB konfigurierbar)",
@@ -816,7 +833,8 @@
         "identity": "Marke & Modell",
         "registration": "Zulassung",
         "technical": "Technische Daten",
-        "image": "Foto"
+        "image": "Foto",
+        "customFields": "Eigene Felder"
       },
       "entryMode": "Fahrzeug erfassen",
       "entryModeCatalog": "Aus Katalog",
@@ -891,7 +909,11 @@
       "noImage": "Kein Foto ausgewählt",
       "notes": "Notizen",
       "cancel": "Abbrechen",
-      "saving": "Speichern…"
+      "saving": "Speichern…",
+      "displacementCc": "Hubraum",
+      "yearMissingHint": "Dein Baujahr fehlt im Katalog? Bei manchen Modellen ist nur das neueste Jahr hinterlegt.",
+      "yearMissingAction": "Fahrzeug stattdessen manuell eintragen",
+      "carriedOverFromCatalog": "Marke und Modell wurden aus deiner Katalogauswahl übernommen — bei Bedarf anpassen."
     },
     "fuelTypes": {
       "PETROL": "Benzin",
@@ -932,7 +954,10 @@
       "edit": "Bearbeiten",
       "cancel": "Abbrechen",
       "remove": "Entfernen",
-      "types": { "HU": "Hauptuntersuchung (HU/TÜV)", "AU": "Abgasuntersuchung (AU)" },
+      "types": {
+        "HU": "Hauptuntersuchung (HU/TÜV)",
+        "AU": "Abgasuntersuchung (AU)"
+      },
       "errors": {
         "invalidType": "Ungültige Prüfungsart.",
         "invalidDate": "Bitte gültiges Datum eingeben.",
@@ -983,7 +1008,10 @@
       "share": "Teilen",
       "sharing": "Teilen…",
       "remove": "Entfernen",
-      "roles": { "VIEWER": "Nur ansehen", "EDITOR": "Darf bearbeiten" },
+      "roles": {
+        "VIEWER": "Nur ansehen",
+        "EDITOR": "Darf bearbeiten"
+      },
       "errors": {
         "vehicleNotFound": "Fahrzeug nicht gefunden.",
         "userNotFound": "Benutzer nicht gefunden.",
@@ -1055,8 +1083,13 @@
       "passwordTooShort": "Passwort muss mindestens 8 Zeichen haben",
       "usernameTaken": "Benutzername bereits vergeben",
       "invalidCredentials": "Benutzername oder Passwort falsch",
-      "failed": "Aktion fehlgeschlagen"
-    }
+      "failed": "Aktion fehlgeschlagen",
+      "oidc": "Die Single-Sign-on-Anmeldung ist fehlgeschlagen. Bitte erneut versuchen oder Benutzername und Passwort verwenden.",
+      "accountDisabled": "Dieses Konto ist deaktiviert. Bitte einen Administrator um Freischaltung.",
+      "oidcSignupDisabled": "Zu dieser Identität gehört kein Konto, und die automatische Kontoerstellung ist deaktiviert."
+    },
+    "or": "oder",
+    "signInWith": "Mit {provider} anmelden"
   },
   "expenses": {
     "title": "Ausgaben",
@@ -1090,10 +1123,9 @@
     "title": "Kraftstoff",
     "subtitle": "Tankvorgänge und Kraftstoffkosten",
     "addTitle": "Tankvorgang erfassen",
-    "addHint": "Liter, Kosten und Kilometerstand optional.",
+    "addHint": "Menge, Kosten und Kilometerstand sind optional.",
     "vehicle": "Fahrzeug",
     "date": "Datum",
-    "liters": "Liter",
     "amount": "Kosten",
     "odometer": "Kilometerstand",
     "station": "Tankstelle",
@@ -1113,18 +1145,19 @@
       "projectedAnnual": "Vorauss. Jahresverbrauch",
       "projectedAnnualCost": "≈ {cost} Kraftstoffkosten/Jahr",
       "projectedAnnualKm": "≈ {km}/Jahr geschätzt",
-      "avgPrice": "Ø Preis/L",
+      "avgPrice": "Ø Preis / {unit}",
       "totalCost": "Gesamtkosten",
-      "totalLiters": "{liters} L getankt",
-      "costPer100Km": "Kosten / 100 km",
       "distanceTracked": "{km} erfasst",
       "basedOnSegments": "aus {count} Tankstrecken",
       "needsOdometer": "Kilometerstand bei Tankvorgängen nötig",
       "needsMoreData": "Mehr Einträge mit Literangabe nötig",
-      "priceChart": "Preis pro Liter",
-      "consumptionChart": "Verbrauch (L/100 km)",
-      "costChart": "Tankkosten pro Monat"
-    }
+      "priceChart": "Preis pro {unit}",
+      "consumptionChart": "Verbrauch ({unit})",
+      "costChart": "Tankkosten pro Monat",
+      "totalVolume": "{volume} {unit} gesamt",
+      "costPerDistance": "Kosten / 100 {unit}"
+    },
+    "volume": "Menge ({unit})"
   },
   "reminders": {
     "title": "Erinnerungen",
@@ -1250,5 +1283,74 @@
     "reload": "Erneut versuchen",
     "goHome": "Zum Dashboard",
     "sessionExpiredDescription": "Ihre Sitzung ist nicht mehr gültig. Sie werden zur Anmeldung weitergeleitet…"
+  },
+  "customFields": {
+    "hint": "Lege eigene Felder an — sie erscheinen bei jedem Fahrzeug neben den festen Feldern.",
+    "empty": "Noch keine eigenen Felder angelegt.",
+    "addTitle": "Feld hinzufügen",
+    "editTitle": "Feld bearbeiten",
+    "deleteTitle": "Feld löschen",
+    "deleteWarning": "„{label}“ und alle zugehörigen Werte bei allen Fahrzeugen löschen? Das lässt sich nicht rückgängig machen.",
+    "label": "Name",
+    "labelPlaceholder": "z. B. Reifengröße",
+    "type": "Typ",
+    "unit": "Einheit",
+    "unitPlaceholder": "z. B. bar",
+    "add": "Feld hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "cancel": "Abbrechen",
+    "limitReached": "Du hast das Maximum von {max} eigenen Feldern erreicht.",
+    "notSet": "Nicht gesetzt",
+    "yes": "Ja",
+    "no": "Nein",
+    "types": {
+      "TEXT": "Text",
+      "NUMBER": "Zahl",
+      "DATE": "Datum",
+      "BOOLEAN": "Ja / Nein"
+    },
+    "errors": {
+      "labelRequired": "Bitte einen Namen für das Feld eingeben.",
+      "labelTooLong": "Dieser Name ist zu lang.",
+      "tooManyFields": "Du hast bereits die maximale Anzahl eigener Felder.",
+      "notFound": "Dieses Feld existiert nicht mehr.",
+      "failed": "Das Feld konnte nicht gespeichert werden. Bitte erneut versuchen."
+    }
+  },
+  "odometer": {
+    "title": "Kilometerstand",
+    "subtitle": "Stände erfassen und sehen, wie viel du tatsächlich fährst.",
+    "addTitle": "Stand erfassen",
+    "addHint": "Erfasse den Stand, wann immer du magst — rückdatierte Einträge landen in der Historie und setzen den aktuellen Stand nie herab.",
+    "vehicle": "Fahrzeug",
+    "date": "Datum",
+    "reading": "Kilometerstand",
+    "note": "Notiz",
+    "save": "Stand speichern",
+    "saving": "Wird gespeichert…",
+    "added": "Stand gespeichert.",
+    "deleted": "Stand gelöscht.",
+    "delete": "Löschen",
+    "listTitle": "Erfasste Stände",
+    "empty": "Noch keine Stände erfasst.",
+    "errors": {
+      "failed": "Der Stand konnte nicht gespeichert werden. Bitte Werte prüfen."
+    },
+    "stats": {
+      "latest": "Letzter Stand",
+      "tracked": "Erfasste Strecke",
+      "trackedDetail": "Aus {count} Ständen",
+      "perMonth": "Pro Monat",
+      "perDay": "{distance} pro Tag",
+      "projectedAnnual": "Hochrechnung pro Jahr",
+      "needsMore": "Mindestens zwei Stände erfassen"
+    },
+    "charts": {
+      "readings": "Kilometerstand im Zeitverlauf",
+      "monthlyDistance": "Strecke pro Monat"
+    }
   }
 }

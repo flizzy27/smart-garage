@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { dedupeManufacturersByName } from "@/lib/catalog/dedup-catalog";
 import {
-  groupCatalogYearsByConfiguration,
+  listCatalogYearOptions,
   preferDetailedCatalogRows,
 } from "@/lib/catalog/year-options";
 
@@ -242,11 +242,9 @@ export async function searchCatalogYearsForSeries(
     },
   });
 
-  return groupCatalogYearsByConfiguration(rows)
+  return listCatalogYearOptions(rows)
     .filter((option) =>
-      yearFilter && !Number.isNaN(yearFilter)
-        ? option.yearFrom <= yearFilter && option.yearTo >= yearFilter
-        : true,
+      yearFilter && !Number.isNaN(yearFilter) ? option.year === yearFilter : true,
     )
     .slice(0, take);
 }

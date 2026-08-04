@@ -6,6 +6,8 @@ export type ThemeMode = "light" | "dark" | "system";
 
 export type CurrencyCode = "EUR" | "USD" | "GBP" | "CHF";
 export type DistanceUnit = "km" | "mi";
+/** "gal" is the US liquid gallon — see `lib/regional/volume.ts`. */
+export type VolumeUnit = "l" | "gal";
 
 export type UserSettings = {
   theme: ThemeMode;
@@ -13,6 +15,8 @@ export type UserSettings = {
   timezone: string;
   currency: CurrencyCode;
   distanceUnit: DistanceUnit;
+  volumeUnit: VolumeUnit;
+  hiddenVehicleFields: string[];
   designPreset: DesignPresetId;
   backgroundBlurPx: number;
   quickFuelEnabled: boolean;
@@ -29,6 +33,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   timezone: "Europe/Berlin",
   currency: "EUR",
   distanceUnit: "km",
+  volumeUnit: "l",
+  hiddenVehicleFields: [],
   designPreset: DEFAULT_DESIGN_PRESET,
   backgroundBlurPx: DEFAULT_BACKGROUND_BLUR_PX,
   quickFuelEnabled: true,
@@ -66,3 +72,41 @@ export const TIMEZONE_OPTIONS = [
 export const CURRENCY_OPTIONS: CurrencyCode[] = ["EUR", "USD", "GBP", "CHF"];
 
 export const DISTANCE_UNIT_OPTIONS: DistanceUnit[] = ["km", "mi"];
+
+export const VOLUME_UNIT_OPTIONS: VolumeUnit[] = ["l", "gal"];
+
+/**
+ * Optional vehicle fields a user may hide (e.g. HSN/TSN are German type-approval
+ * numbers and meaningless outside Germany).
+ *
+ * Only fields that are already optional in `vehicleFormSchema` may appear here —
+ * hiding a required field would make the form unsubmittable. Hiding never
+ * deletes stored data: an existing value stays in the database and reappears
+ * as soon as the field is shown again.
+ */
+export const HIDEABLE_VEHICLE_FIELDS = [
+  "vin",
+  "hsn",
+  "tsn",
+  "licensePlate",
+  "color",
+  "engineCode",
+  "engineDescription",
+  "powerPs",
+  "powerKw",
+  "torqueNm",
+  "displacementCc",
+  "fuelType",
+  "bodyType",
+  "driveType",
+  "notes",
+] as const;
+
+export type HideableVehicleField = (typeof HIDEABLE_VEHICLE_FIELDS)[number];
+
+export function isFieldHidden(
+  hidden: readonly string[],
+  field: HideableVehicleField,
+): boolean {
+  return hidden.includes(field);
+}

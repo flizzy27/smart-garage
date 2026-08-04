@@ -21,6 +21,18 @@ Install **Smart Garage** from the Community Applications store — no `docker co
 | AppData | `/mnt/user/appdata/smart-garage` | Auto-created |
 | Max upload (MB) | 25 | PDFs, receipts |
 | Max image (MB) | 10 | Vehicle photos |
+| SSO settings | empty | Optional OpenID Connect login — see [OIDC.md](./OIDC.md). Shown under **Advanced**. |
+
+## Units
+
+Smart Garage stores everything metric and converts for display. Under
+**Settings → Regional** you can pick kilometres or **miles** and litres or
+**US gallons** — with miles and gallons selected, fuel economy is shown as
+**MPG**. Switching units never changes your stored data.
+
+Under **Settings → Vehicle fields** you can switch off fields that do not apply
+to you (HSN and TSN are German type-approval numbers, for example) and add your
+own fields such as tire size.
 
 ## Updates
 
@@ -39,6 +51,7 @@ Copy `/mnt/user/appdata/smart-garage` (entire folder), or use **Settings → Dat
 | App not in **Apps** search | Update Community Applications, then search again |
 | Pull error | Ensure GHCR package is public (GitHub → Packages) |
 | Port conflict | Use 3001 or another free port in the template |
-| Container exits on start | Update to latest via **Force Update** (`v0.4.4+`) |
+| Container exits on start | Update to latest via **Force Update** |
+| Notifications not arriving | Check **Settings → Notifications**: provider enabled, credentials saved, quiet hours not active. Delivery runs in the container — the browser does not need to be open. |
 
 More: [INSTALL.md](./INSTALL.md)

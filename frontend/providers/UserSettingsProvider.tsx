@@ -29,6 +29,8 @@ type UserSettingsContextValue = {
   setTimezone: (timezone: string) => void;
   setCurrency: (currency: CurrencyCode) => void;
   setDistanceUnit: (distanceUnit: UserSettings["distanceUnit"]) => void;
+  setVolumeUnit: (volumeUnit: UserSettings["volumeUnit"]) => void;
+  setHiddenVehicleFields: (fields: UserSettings["hiddenVehicleFields"]) => void;
   setQuickFuelEnabled: (enabled: boolean) => void;
   setMaintenanceDueSoonKm: (km: number) => void;
   setMaintenanceDueSoonDays: (days: number) => void;
@@ -119,6 +121,20 @@ export function UserSettingsProvider({
     [persist],
   );
 
+  const setVolumeUnit = useCallback(
+    (volumeUnit: UserSettings["volumeUnit"]) => {
+      persist({ ...readSettings(), volumeUnit });
+    },
+    [persist],
+  );
+
+  const setHiddenVehicleFields = useCallback(
+    (hiddenVehicleFields: UserSettings["hiddenVehicleFields"]) => {
+      persist({ ...readSettings(), hiddenVehicleFields });
+    },
+    [persist],
+  );
+
   const setQuickFuelEnabled = useCallback(
     (quickFuelEnabled: boolean) => {
       persist({ ...readSettings(), quickFuelEnabled });
@@ -148,6 +164,8 @@ export function UserSettingsProvider({
       setTimezone,
       setCurrency,
       setDistanceUnit,
+      setVolumeUnit,
+      setHiddenVehicleFields,
       setQuickFuelEnabled,
       setMaintenanceDueSoonKm,
       setMaintenanceDueSoonDays,
@@ -159,6 +177,8 @@ export function UserSettingsProvider({
       setTimezone,
       setCurrency,
       setDistanceUnit,
+      setVolumeUnit,
+      setHiddenVehicleFields,
       setQuickFuelEnabled,
       setMaintenanceDueSoonKm,
       setMaintenanceDueSoonDays,

@@ -12,12 +12,17 @@
   <Description>
 &#xA;&#xA;**Smart Garage** helps you manage your cars from your own NAS — no cloud, no subscription.&#xA;&#xA;
 **Features**&#xA;
-- Vehicle profiles with photos and odometer tracking&#xA;
-- Maintenance schedules, service log, due/overdue dashboard&#xA;
+- Vehicle profiles with photos, specs, modifications and odometer tracking&#xA;
+- Maintenance schedules, service log with parts and fluids, due/overdue dashboard&#xA;
 - Fuel log with consumption charts and projected annual usage&#xA;
-- Expenses, document storage (PDF/receipts), reminders&#xA;
-- Dark/light theme, English and German UI&#xA;
-- Open local registration (first user becomes admin)&#xA;&#xA;
+- Expenses, document storage (PDF/receipts), notes and reminders&#xA;
+- Push notifications via Pushover or Telegram (background delivery)&#xA;
+- Share vehicles with family members; JSON backup with restore&#xA;
+- Installable as an app (PWA) on phone, tablet and desktop&#xA;
+- Dark/light theme, 9 design presets, English and German UI&#xA;
+- Metric or imperial: km or miles, litres or US gallons (L/100km or MPG)&#xA;
+- Hide fields you don't need and add your own custom fields&#xA;
+- Open local registration (first user becomes admin), optional OIDC single sign-on&#xA;&#xA;
 **First run**&#xA;
 1. Install and start the container&#xA;
 2. Open the WebUI&#xA;
@@ -32,6 +37,50 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
   <Changes>
+### 2026-08-04 — v0.10.0
+- Gallons and MPG: pick your volume unit next to the distance unit
+- New Odometer page: log readings, see distance per month and a yearly projection
+- Hide fields you don't need (HSN/TSN and others) and add your own custom fields
+- Optional single sign-on (OIDC) for Pocket ID, Authentik, Keycloak and others
+- Vehicle catalog fix: models offer their full production range again, and every year is selectable individually
+- Fixed fuel cost per 100 km being shown 100x too low
+- Backups now include odometer history and custom fields
+- Catalog updates run in the background — no long wait after Force Update
+
+### 2026-07-04 — v0.9.6
+- Dialogs and modals always render above the UI again (portal-based overlays)
+- Save/Cancel buttons stay reachable on long forms; leak-proof scroll locking
+- Keyboard focus stays inside open dialogs
+
+### 2026-07-04 — v0.9.5
+- New maintenance intervals no longer overwrite your service history
+- One combined history timeline: services, fill-ups and odometer updates
+- Editable insurance policies, compact HU/AU and insurance panels
+- Dashboard vehicle status card (next inspection, insurance, recent fill-ups)
+
+### 2026-07-03 — v0.9.4
+- Back-dating an older service no longer marks an item as overdue
+- Entering "last performed" when creating an interval now records real history
+
+### 2026-07-03 — v0.9.3
+- Blur slider in 0.5px steps; sticky save button on mobile
+- More reliable settings saves under database lock contention
+
+### 2026-07-03 — v0.9.2
+- Maintenance alerts are delivered by a background worker — no open browser tab needed, no duplicate alerts
+
+### 2026-07-02 — v0.9.1
+- Miles instead of kilometres, preferred currency
+- Full backup restore, odometer reminders
+
+### 2026-07-01 — v0.9.0
+- Expanded bundled vehicle catalog autofill
+
+### 2026-06-30 — v0.8.0
+- Maintenance: delete records, parts/fluids autocomplete, priority sorting
+- Design presets, quick fuel widget, modification fixes
+- QR codes removed
+
 ### 2026-06-19 — v0.4.6
 - Service anpassen on maintenance detail pages (interval, last service, km)
 - Vehicle catalog: pick individual production years after model selection
@@ -66,4 +115,10 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <Config Name="Database URL" Target="DATABASE_URL" Default="file:/data/smart-garage.db" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">file:/data/smart-garage.db</Config>
   <Config Name="Upload directory" Target="UPLOAD_DIR" Default="/data/uploads" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">/data/uploads</Config>
   <Config Name="Node environment" Target="NODE_ENV" Default="production" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">production</Config>
+  <Config Name="SSO: issuer URL" Target="OIDC_ISSUER" Default="" Mode="" Description="Optional single sign-on. Base URL of your OpenID Connect provider, e.g. https://id.example.com (Pocket ID, Authentik, Keycloak, Authelia). Leave empty to keep username/password login only. Guide: https://github.com/flizzy27/smart-garage/blob/main/docs/OIDC.md" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SSO: client ID" Target="OIDC_CLIENT_ID" Default="" Mode="" Description="Optional single sign-on. Client ID registered with your provider." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SSO: client secret" Target="OIDC_CLIENT_SECRET" Default="" Mode="" Description="Optional single sign-on. Client secret registered with your provider." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="SSO: button label" Target="OIDC_BUTTON_LABEL" Default="" Mode="" Description="Optional. Text on the login button, e.g. 'Pocket ID'. Defaults to 'Single Sign-On'." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SSO: redirect URI" Target="OIDC_REDIRECT_URI" Default="" Mode="" Description="Optional. Only needed behind a reverse proxy that does not forward X-Forwarded-Proto/Host. Example: https://garage.example.com/api/auth/oidc/callback" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="SSO: allow account creation" Target="OIDC_ALLOW_SIGNUP" Default="" Mode="" Description="Optional. 'false' only lets people sign in who already have an account here. Default is 'true'." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
 </Container>

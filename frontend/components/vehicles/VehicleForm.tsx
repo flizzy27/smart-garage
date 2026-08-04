@@ -13,6 +13,8 @@ import {
   type ComboboxOption,
 } from "@/components/ui/SearchCombobox";
 import { Textarea } from "@/components/ui/Textarea";
+import { CustomFieldInput } from "@/components/vehicles/CustomFieldInput";
+import type { SerializedCustomField } from "@/lib/domain/custom-fields";
 import type { VehicleActionResult } from "@/lib/services/vehicles";
 import type { SerializedVehicle } from "@/lib/vehicles/serialize";
 import { getVehicleImageUrl } from "@/lib/vehicles/serialize";
@@ -22,6 +24,7 @@ import {
   formDistanceValue,
 } from "@/lib/regional/distance";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
+import type { HideableVehicleField } from "@/lib/settings/types";
 
 const FUEL_TYPES = Object.values(FuelType);
 const BODY_TYPES = Object.values(BodyType);
@@ -77,6 +80,10 @@ type VehicleFormProps = {
   ) => Promise<VehicleActionResult | null>;
   cancelHref: string;
   submitLabel: string;
+  /** User-defined extra fields (issue #7); empty when none are configured. */
+  customFields?: SerializedCustomField[];
+  /** Existing values for those fields, keyed by field id. */
+  customFieldValues?: Record<string, string>;
 };
 
 async function fetchCatalog<T>(
@@ -248,6 +255,8 @@ export function VehicleForm({
   action,
   cancelHref,
   submitLabel,
+  customFields = [],
+  customFieldValues = {},
 }: VehicleFormProps) {
   const t = useTranslations("vehicles.form");
   const tFuel = useTranslations("vehicles.fuelTypes");
@@ -257,6 +266,19 @@ export function VehicleForm({
   const { settings } = useUserSettings();
   const distanceUnit = settings.distanceUnit;
   const router = useRouter();
+
+  // Issue #8: fields the user switched off in settings are not rendered.
+  // Nothing is submitted for them, and because every hideable field is optional
+  // in `vehicleFormSchema`, an existing stored value simply stays untouched.
+  const isVisible = useCallback(
+    (field: HideableVehicleField) => !settings.hiddenVehicleFields.includes(field),
+    [settings.hiddenVehicleFields],
+  );
+  // Drop the whole section heading once every field inside it is switched off,
+  // instead of leaving an empty "Registration" header behind.
+  const registrationVisible = (["vin", "hsn", "tsn", "licensePlate"] as const).some(
+    isVisible,
+  );
 
   const [state, formAction, pending] = useActionState<
     VehicleActionResult | null,
@@ -269,6 +291,20 @@ export function VehicleForm({
   const [entryMode, setEntryMode] = useState<"catalog" | "manual">(
     isManualVehicle ? "manual" : "catalog",
   );
+
+  // What the user already picked in the catalog, as plain text. The catalog
+  // cannot know every trim/year combination, so switching to manual entry must
+  // hand this over instead of making the user type it all again (issue #9).
+  const [carriedMake, setCarriedMake] = useState<string>(
+    initialSelections.manufacturer?.label ?? "",
+  );
+  const [carriedModel, setCarriedModel] = useState<string>(
+    initialSelections.series?.label ?? "",
+  );
+
+  const switchToManual = useCallback(() => {
+    setEntryMode("manual");
+  }, []);
 
   const [manufacturerId, setManufacturerId] = useState<string | null>(
     initialSelections.manufacturer?.id ?? initialVehicle?.manufacturerId ?? null,
@@ -465,6 +501,7 @@ export function VehicleForm({
             initialOption={initialSelections.manufacturer ?? null}
             onValueChange={(option) => {
               setManufacturerId(option?.id ?? null);
+              setCarriedMake(option?.label ?? "");
               resetBelow("manufacturer");
             }}
           />
@@ -484,6 +521,7 @@ export function VehicleForm({
             initialOption={initialSelections.series ?? null}
             onValueChange={(option) => {
               setSeriesId(option?.id ?? null);
+              setCarriedModel(option?.label ?? "");
               resetBelow("series");
             }}
           />
@@ -639,6 +677,20 @@ export function VehicleForm({
                   }
                 }}
               />
+              {seriesId ? (
+                <div className="sm:col-span-2 rounded-lg border border-dashed border-border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">
+                    {t("yearMissingHint")}
+                  </p>
+                  <button
+                    type="button"
+                    className="mt-1 text-xs font-medium text-primary underline-offset-2 hover:underline"
+                    onClick={switchToManual}
+                  >
+                    {t("yearMissingAction")}
+                  </button>
+                </div>
+              ) : null}
               {selectedYear && configsLoading && (
                 <div className="sm:col-span-2">
                   <p className="text-xs text-muted-foreground">{t("loadingConfigs")}</p>
@@ -690,6 +742,11 @@ export function VehicleForm({
             </>
           ) : (
             <>
+              {carriedMake || carriedModel ? (
+                <p className="sm:col-span-2 text-xs text-muted-foreground">
+                  {t("carriedOverFromCatalog")}
+                </p>
+              ) : null}
               <div className="space-y-2">
                 <Label htmlFor="make" required>
                   {t("make")}
@@ -698,7 +755,11 @@ export function VehicleForm({
                   id="make"
                   name="make"
                   required
-                  defaultValue={initialVehicle?.make ?? ""}
+                  // Remount when the carried-over value changes so a catalog
+                  // pick lands in the field instead of being ignored by React's
+                  // "defaultValue only applies on mount" rule.
+                  key={`make-${initialVehicle?.make ?? carriedMake}`}
+                  defaultValue={initialVehicle?.make ?? carriedMake}
                   placeholder={t("makePlaceholder")}
                 />
               </div>
@@ -710,7 +771,8 @@ export function VehicleForm({
                   id="model"
                   name="model"
                   required
-                  defaultValue={initialVehicle?.model ?? ""}
+                  key={`model-${initialVehicle?.model ?? carriedModel}`}
+                  defaultValue={initialVehicle?.model ?? carriedModel}
                   placeholder={t("modelPlaceholder")}
                 />
               </div>
@@ -733,23 +795,27 @@ export function VehicleForm({
                   min={1900}
                   max={new Date().getFullYear() + 1}
                   required
+                  key={`year-${initialVehicle?.productionYear ?? selectedYear ?? "now"}`}
                   defaultValue={
                     initialVehicle?.productionYear ??
+                    selectedYear ??
                     new Date().getFullYear()
                   }
                 />
               </div>
             </>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="color">{t("color")}</Label>
-            <Input
-              id="color"
-              name="color"
-              defaultValue={initialVehicle?.color ?? ""}
-              placeholder={t("colorPlaceholder")}
-            />
-          </div>
+          {isVisible("color") ? (
+            <div className="space-y-2">
+              <Label htmlFor="color">{t("color")}</Label>
+              <Input
+                id="color"
+                name="color"
+                defaultValue={initialVehicle?.color ?? ""}
+                placeholder={t("colorPlaceholder")}
+              />
+            </div>
+          ) : null}
         </div>
         {specLoading ? (
           <p className="text-sm text-muted-foreground">{t("loadingSpecs")}</p>
@@ -758,49 +824,59 @@ export function VehicleForm({
         ) : null}
       </section>
 
-      <section className="space-y-4">
-        <h2 className="text-sm font-semibold text-foreground">
-          {t("sections.registration")}
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="vin">{t("vin")}</Label>
-            <Input
-              id="vin"
-              name="vin"
-              maxLength={17}
-              defaultValue={initialVehicle?.vin ?? ""}
-              placeholder="WVWZZZ1JZYW000000"
-            />
+      {registrationVisible ? (
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("sections.registration")}
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {isVisible("vin") ? (
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="vin">{t("vin")}</Label>
+                <Input
+                  id="vin"
+                  name="vin"
+                  maxLength={17}
+                  defaultValue={initialVehicle?.vin ?? ""}
+                  placeholder="WVWZZZ1JZYW000000"
+                />
+              </div>
+            ) : null}
+            {isVisible("hsn") ? (
+              <div className="space-y-2">
+                <Label htmlFor="hsn">{t("hsn")}</Label>
+                <Input
+                  id="hsn"
+                  name="hsn"
+                  maxLength={4}
+                  defaultValue={initialVehicle?.hsn ?? ""}
+                />
+              </div>
+            ) : null}
+            {isVisible("tsn") ? (
+              <div className="space-y-2">
+                <Label htmlFor="tsn">{t("tsn")}</Label>
+                <Input
+                  id="tsn"
+                  name="tsn"
+                  maxLength={3}
+                  defaultValue={initialVehicle?.tsn ?? ""}
+                />
+              </div>
+            ) : null}
+            {isVisible("licensePlate") ? (
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="licensePlate">{t("licensePlate")}</Label>
+                <Input
+                  id="licensePlate"
+                  name="licensePlate"
+                  defaultValue={initialVehicle?.licensePlate ?? ""}
+                />
+              </div>
+            ) : null}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="hsn">{t("hsn")}</Label>
-            <Input
-              id="hsn"
-              name="hsn"
-              maxLength={4}
-              defaultValue={initialVehicle?.hsn ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="tsn">{t("tsn")}</Label>
-            <Input
-              id="tsn"
-              name="tsn"
-              maxLength={3}
-              defaultValue={initialVehicle?.tsn ?? ""}
-            />
-          </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="licensePlate">{t("licensePlate")}</Label>
-            <Input
-              id="licensePlate"
-              name="licensePlate"
-              defaultValue={initialVehicle?.licensePlate ?? ""}
-            />
-          </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <section className="space-y-4">
         <h2 className="text-sm font-semibold text-foreground">
@@ -817,122 +893,140 @@ export function VehicleForm({
           />
         ) : null}
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="engineCode">{t("engineCode")}</Label>
-            <Input
-              id="engineCode"
-              name="engineCode"
-              key={`engineCode-${spec?.engineCode ?? "empty"}`}
-              defaultValue={current?.engineCode ?? spec?.engineCode ?? ""}
-            />
-          </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="engineDescription">{t("engineDescription")}</Label>
-            <Input
-              id="engineDescription"
-              name="engineDescription"
-              key={`engineDesc-${spec?.engineDescription ?? "empty"}`}
-              defaultValue={
-                current?.engineDescription ?? spec?.engineDescription ?? ""
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="powerPs">{t("powerPs")}</Label>
-            <Input
-              id="powerPs"
-              name="powerPs"
-              type="number"
-              min={0}
-              max={3000}
-              key={`powerPs-${spec?.powerPs ?? "empty"}`}
-              defaultValue={current?.powerPs ?? spec?.powerPs ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="powerKw">{t("powerKw")}</Label>
-            <Input
-              id="powerKw"
-              name="powerKw"
-              type="number"
-              min={0}
-              max={2000}
-              key={`powerKw-${spec?.powerKw ?? "empty"}`}
-              defaultValue={current?.powerKw ?? spec?.powerKw ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="torqueNm">{t("torqueNm")}</Label>
-            <Input
-              id="torqueNm"
-              name="torqueNm"
-              type="number"
-              min={0}
-              max={5000}
-              key={`torque-${spec?.torqueNm ?? "empty"}`}
-              defaultValue={current?.torqueNm ?? spec?.torqueNm ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="displacementCc">{t("displacement")}</Label>
-            <Input
-              id="displacementCc"
-              name="displacementCc"
-              type="number"
-              min={0}
-              max={20000}
-              key={`disp-${spec?.displacementCc ?? "empty"}`}
-              defaultValue={current?.displacementCc ?? spec?.displacementCc ?? ""}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="fuelType">{t("fuelType")}</Label>
-            <Select
-              id="fuelType"
-              name="fuelType"
-              key={`fuel-${spec?.fuelType ?? "empty"}`}
-              defaultValue={current?.fuelType ?? spec?.fuelType ?? ""}
-            >
-              <option value="">{t("selectFuelType")}</option>
-              {FUEL_TYPES.map((fuel) => (
-                <option key={fuel} value={fuel}>
-                  {tFuel(fuel)}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="bodyType">{t("bodyType")}</Label>
-            <Select
-              id="bodyType"
-              name="bodyType"
-              key={`body-${spec?.bodyType ?? "empty"}`}
-              defaultValue={current?.bodyType ?? spec?.bodyType ?? ""}
-            >
-              <option value="">{t("selectBodyType")}</option>
-              {BODY_TYPES.map((body) => (
-                <option key={body} value={body}>
-                  {tBody(body)}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="driveType">{t("driveType")}</Label>
-            <Select
-              id="driveType"
-              name="driveType"
-              key={`drive-${spec?.driveType ?? "empty"}`}
-              defaultValue={current?.driveType ?? spec?.driveType ?? ""}
-            >
-              <option value="">{t("selectDriveType")}</option>
-              {DRIVE_TYPES.map((drive) => (
-                <option key={drive} value={drive}>
-                  {tDrive(drive)}
-                </option>
-              ))}
-            </Select>
-          </div>
+          {isVisible("engineCode") ? (
+            <div className="space-y-2">
+              <Label htmlFor="engineCode">{t("engineCode")}</Label>
+              <Input
+                id="engineCode"
+                name="engineCode"
+                key={`engineCode-${spec?.engineCode ?? "empty"}`}
+                defaultValue={current?.engineCode ?? spec?.engineCode ?? ""}
+              />
+            </div>
+          ) : null}
+          {isVisible("engineDescription") ? (
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="engineDescription">{t("engineDescription")}</Label>
+              <Input
+                id="engineDescription"
+                name="engineDescription"
+                key={`engineDesc-${spec?.engineDescription ?? "empty"}`}
+                defaultValue={
+                  current?.engineDescription ?? spec?.engineDescription ?? ""
+                }
+              />
+            </div>
+          ) : null}
+          {isVisible("powerPs") ? (
+            <div className="space-y-2">
+              <Label htmlFor="powerPs">{t("powerPs")}</Label>
+              <Input
+                id="powerPs"
+                name="powerPs"
+                type="number"
+                min={0}
+                max={3000}
+                key={`powerPs-${spec?.powerPs ?? "empty"}`}
+                defaultValue={current?.powerPs ?? spec?.powerPs ?? ""}
+              />
+            </div>
+          ) : null}
+          {isVisible("powerKw") ? (
+            <div className="space-y-2">
+              <Label htmlFor="powerKw">{t("powerKw")}</Label>
+              <Input
+                id="powerKw"
+                name="powerKw"
+                type="number"
+                min={0}
+                max={2000}
+                key={`powerKw-${spec?.powerKw ?? "empty"}`}
+                defaultValue={current?.powerKw ?? spec?.powerKw ?? ""}
+              />
+            </div>
+          ) : null}
+          {isVisible("torqueNm") ? (
+            <div className="space-y-2">
+              <Label htmlFor="torqueNm">{t("torqueNm")}</Label>
+              <Input
+                id="torqueNm"
+                name="torqueNm"
+                type="number"
+                min={0}
+                max={5000}
+                key={`torque-${spec?.torqueNm ?? "empty"}`}
+                defaultValue={current?.torqueNm ?? spec?.torqueNm ?? ""}
+              />
+            </div>
+          ) : null}
+          {isVisible("displacementCc") ? (
+            <div className="space-y-2">
+              <Label htmlFor="displacementCc">{t("displacement")}</Label>
+              <Input
+                id="displacementCc"
+                name="displacementCc"
+                type="number"
+                min={0}
+                max={20000}
+                key={`disp-${spec?.displacementCc ?? "empty"}`}
+                defaultValue={current?.displacementCc ?? spec?.displacementCc ?? ""}
+              />
+            </div>
+          ) : null}
+          {isVisible("fuelType") ? (
+            <div className="space-y-2">
+              <Label htmlFor="fuelType">{t("fuelType")}</Label>
+              <Select
+                id="fuelType"
+                name="fuelType"
+                key={`fuel-${spec?.fuelType ?? "empty"}`}
+                defaultValue={current?.fuelType ?? spec?.fuelType ?? ""}
+              >
+                <option value="">{t("selectFuelType")}</option>
+                {FUEL_TYPES.map((fuel) => (
+                  <option key={fuel} value={fuel}>
+                    {tFuel(fuel)}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          ) : null}
+          {isVisible("bodyType") ? (
+            <div className="space-y-2">
+              <Label htmlFor="bodyType">{t("bodyType")}</Label>
+              <Select
+                id="bodyType"
+                name="bodyType"
+                key={`body-${spec?.bodyType ?? "empty"}`}
+                defaultValue={current?.bodyType ?? spec?.bodyType ?? ""}
+              >
+                <option value="">{t("selectBodyType")}</option>
+                {BODY_TYPES.map((body) => (
+                  <option key={body} value={body}>
+                    {tBody(body)}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          ) : null}
+          {isVisible("driveType") ? (
+            <div className="space-y-2">
+              <Label htmlFor="driveType">{t("driveType")}</Label>
+              <Select
+                id="driveType"
+                name="driveType"
+                key={`drive-${spec?.driveType ?? "empty"}`}
+                defaultValue={current?.driveType ?? spec?.driveType ?? ""}
+              >
+                <option value="">{t("selectDriveType")}</option>
+                {DRIVE_TYPES.map((drive) => (
+                  <option key={drive} value={drive}>
+                    {tDrive(drive)}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          ) : null}
           <div className="space-y-2">
             <Label htmlFor="currentOdometerKm" required>
               {t("mileage")} ({distanceUnitLabel(distanceUnit)})
@@ -994,14 +1088,33 @@ export function VehicleForm({
         </div>
       </section>
 
-      <section className="space-y-2">
-        <Label htmlFor="notes">{t("notes")}</Label>
-        <Textarea
-          id="notes"
-          name="notes"
-          defaultValue={initialVehicle?.notes ?? ""}
-        />
-      </section>
+      {customFields.length > 0 ? (
+        <section className="space-y-4">
+          <h2 className="text-sm font-semibold text-foreground">
+            {t("sections.customFields")}
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {customFields.map((field) => (
+              <CustomFieldInput
+                key={field.id}
+                field={field}
+                value={customFieldValues[field.id] ?? ""}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {isVisible("notes") ? (
+        <section className="space-y-2">
+          <Label htmlFor="notes">{t("notes")}</Label>
+          <Textarea
+            id="notes"
+            name="notes"
+            defaultValue={initialVehicle?.notes ?? ""}
+          />
+        </section>
+      ) : null}
 
       <div className="flex flex-col-reverse gap-2 border-t border-border pt-6 sm:flex-row sm:justify-end">
         <Link
