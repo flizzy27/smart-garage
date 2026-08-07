@@ -262,6 +262,16 @@ model UserPreferences {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+/// Instance-wide key/value configuration, set in the app instead of an
+/// environment variable. Used for credentials that belong to the whole
+/// installation rather than to one person — a Tankerkönig API key is issued
+/// per application, so every household member shares it.
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
 model UserNotificationSettings {
   userId                  String    @id
   pushoverEnabled         Boolean   @default(false)

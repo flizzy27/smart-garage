@@ -34,16 +34,44 @@ calculator** page works everywhere and needs no key at all.
 
 ## Getting a key
 
-1. Go to **<https://creativecommons.tankerkoenig.de>** and request a key. It is
-   free, and normally arrives within a few minutes.
+1. Go to **<https://onboarding.tankerkoenig.de/>** and fill in the form: name,
+   email, and a category (for a self-hosted garage, *home automation* or
+   *website* fits).
 2. Keys are personal. Petroleum companies, filling stations and their IT
    providers are excluded by Tankerkönig's terms.
+
+> ### ⏳ Expect to wait
+>
+> **Every registration is reviewed by hand** to keep the free service clean.
+> The key is sent **by email after that review** — often a few days, and up to
+> about a week.
+>
+> Nothing is wrong in the meantime. The Fuel prices page will keep showing the
+> setup instructions until a key is entered; come back and paste it in when the
+> email arrives.
 
 ---
 
 ## Adding the key
 
-### Unraid
+There are two ways, and **either one works**. If both are set, the one entered
+in the app wins — so you can override a container-level key without editing the
+container.
+
+### In the app (no restart)
+
+1. **Settings** → **Fuel prices**.
+2. Paste the key and **Save**.
+
+This is the easier route when the key arrives days later: no container edit, no
+restart, and it takes effect immediately.
+
+The key applies to the whole installation — a Tankerkönig key is issued per
+application, not per person — so **only an administrator can change it**. On a
+single-user install that is the account that registered first. Everyone else
+sees the status but not the field.
+
+### Unraid template
 
 1. **Docker** → **smart-garage** → **Edit**.
 2. Find **Fuel prices: Tankerkönig API key** and paste your key.
@@ -100,7 +128,29 @@ because the pump prices are euro and relabelling them would be wrong.
   account, no device id, nothing identifying.
 - Address search uses OpenStreetMap's Nominatim, proxied through your server so
   your browser never contacts it directly.
-- Nothing about the lookup is written to the database.
+- Nothing about the lookup is written to the database. The only thing stored is
+  the API key itself, when you enter it in the app.
+- The key is never sent to the browser. The settings page only ever shows a
+  masked form of it (`abcd••••••••wxyz`).
+
+---
+
+## Route planner (fuel calculator)
+
+The **Fuel calculator** page has a *Plan a route* section that uses the same
+address search, plus road distances from the public
+[OSRM](https://project-osrm.org/) demo server. It needs **no key** and works
+outside Germany.
+
+- Start from your device location (one tap) or type it, with suggestions as you
+  type.
+- The resulting distance can be dropped straight into the trip calculation.
+- If the routing service is unreachable, the straight-line distance is shown
+  and **labelled as such** — a straight line is typically 20–30% shorter than
+  the road, so it is never passed off as a driving distance.
+
+OSRM's demo server is best-effort and rate-limited, so routes are cached for an
+hour and the address search is debounced.
 
 ---
 
@@ -108,8 +158,11 @@ because the pump prices are euro and relabelling them would be wrong.
 
 | Symptom | Cause / fix |
 |---------|-------------|
-| Page shows the setup instructions | `TANKERKOENIG_API_KEY` is empty. Add it and restart the container. |
+| Page shows the setup instructions | No key yet. Add it under Settings → Fuel prices, or set `TANKERKOENIG_API_KEY` and restart the container. |
+| No key has arrived yet | Normal — registrations are reviewed by hand, which takes days. See the notice above. |
 | "The API key was rejected" | Typo, or the key was revoked. Check it at Tankerkönig. |
+| "That does not look like a Tankerkönig key" | The field expects the UUID on its own, e.g. `00000000-0000-0000-0000-000000000002` — not the whole line from the email. |
+| The field is not editable | Only an administrator can change an installation-wide key. |
 | **Use my location** says HTTPS is required | Browsers only hand out GPS on a secure origin. Reaching the app over `http://<nas-ip>:3000` blocks it — use the address search, or put the app behind HTTPS. |
 | "Too many requests" | Tankerkönig's rate limit. Wait a minute; repeated refreshes within a minute are served from the local cache anyway. |
 | No stations at all | Outside Germany, or the radius is too small. Try 25 km. |

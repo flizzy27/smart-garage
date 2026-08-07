@@ -53,6 +53,13 @@ export type StationsResult = {
   cached: boolean;
 };
 
+/**
+ * Where a personal API key is requested. Registrations are reviewed by hand,
+ * so the key arrives by email some days later — the UI says so, because an
+ * unexplained wait reads like something is broken.
+ */
+export const TANKERKOENIG_SIGNUP_URL = "https://onboarding.tankerkoenig.de/";
+
 /** Attribution required by the CC BY 4.0 licence of the price data. */
 export const FUEL_PRICE_ATTRIBUTION = {
   name: "Tankerkönig",

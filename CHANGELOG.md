@@ -9,6 +9,50 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.13.0] - 2026-08-07
+
+### Added
+
+- **Enter the fuel price API key in the app** — **Settings → Fuel prices** now
+  has a field for the Tankerkönig key. It takes effect immediately, with no
+  container edit and no restart, which matters because the key arrives days
+  after you ask for it.
+
+  The container variable `TANKERKOENIG_API_KEY` still works exactly as before.
+  Both are supported; if both are set, the one entered in the app is used. The
+  settings page says which of the two is currently active.
+
+  The key belongs to the whole installation — Tankerkönig issues one per
+  application, not per person — so only an administrator can change it. It is
+  never sent to the browser: the page only ever shows a masked form
+  (`abcd••••••••wxyz`).
+
+- **Route planner in the fuel calculator** — a new *Plan a route* section.
+  Tap **Use my location** for your starting point, or type it; type where you
+  are going and pick from suggestions as you type (typing "zand" offers
+  "Zandvoort"). The road distance then drops straight into the trip
+  calculation with one tap.
+
+  If the routing service cannot be reached, the straight-line distance is shown
+  and clearly labelled as such — a straight line is typically 20–30% shorter
+  than the road, so it is never presented as a driving distance. Needs no API
+  key and works outside Germany.
+
+### Changed
+
+- **Registration link now points at the actual signup form**
+  (`onboarding.tankerkoenig.de`) instead of the project homepage.
+- **The wait is now explained everywhere it matters.** Tankerkönig reviews
+  every registration by hand and sends the key by email afterwards — often a
+  few days, up to about a week. The setup panel, the settings page, the Unraid
+  template and the docs all say so, so a quiet week does not look like
+  something is broken.
+
+### Database
+
+- New `AppSetting` table for installation-wide settings. Purely additive — it
+  is created on container start and nothing existing is touched.
+
 ## [0.12.0] - 2026-08-07
 
 ### Added

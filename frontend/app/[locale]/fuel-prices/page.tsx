@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { MainContentWidth } from "@/components/layout/MainContentWidth";
 import { FuelStationFinder } from "@/components/fuel/FuelStationFinder";
-import { isFuelPriceLookupConfigured } from "@/lib/fuel-prices/tankerkoenig";
+import { isFuelPriceLookupConfigured } from "@/lib/services/fuel-price-config";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ export default async function FuelPricesPage({ params }: Props) {
 
   // Checked on the server so the API key never has to reach the browser, not
   // even as a boolean derived from it.
-  const configured = isFuelPriceLookupConfigured();
+  const configured = await isFuelPriceLookupConfigured();
 
   return (
     <MainContentWidth className="space-y-6">

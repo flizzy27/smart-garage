@@ -145,7 +145,8 @@
         "regional": "Regional",
         "data": "Daten & Export",
         "catalog": "Katalog",
-        "vehicleFields": "Fahrzeugfelder"
+        "vehicleFields": "Fahrzeugfelder",
+        "fuelPrices": "Spritpreise"
       },
       "general": {
         "title": "Allgemein",
@@ -384,6 +385,44 @@
         "customDescription": "Deine eigenen Felder, sichtbar bei jedem Fahrzeug.",
         "hint": "Angehakte Felder erscheinen im Fahrzeugformular und in der Detailansicht.",
         "toggleLabel": "{field} anzeigen"
+      },
+      "fuelPrices": {
+        "title": "Spritpreise",
+        "description": "Dein Tankerkönig-API-Schlüssel für die Spritpreis-Seite. Er gilt für die ganze Installation — alle hier nutzen denselben.",
+        "section": {
+          "title": "Tankerkönig-API-Schlüssel",
+          "description": "Trag den Schlüssel hier ein oder setz TANKERKOENIG_API_KEY im Container — beides funktioniert. Ein hier eingetragener Schlüssel wirkt sofort, ohne Neustart."
+        },
+        "status": {
+          "label": "Aktueller Status",
+          "fromApp": "Hier in der App hinterlegt ({key})",
+          "fromEnv": "Über TANKERKOENIG_API_KEY im Container gesetzt ({key})",
+          "missing": "Kein Schlüssel hinterlegt — die Spritpreis-Seite zeigt die Einrichtung.",
+          "appOverridesEnv": "Im Container ist ebenfalls ein Schlüssel gesetzt; verwendet wird der hier eingetragene."
+        },
+        "howTo": {
+          "title": "So bekommst du einen Schlüssel",
+          "step1": "Das Tankerkönig-Anmeldeformular öffnen und Name und E-Mail eintragen.",
+          "step2": "Eine Kategorie wählen — für eine selbst gehostete Garage passt „Hausautomatisierung“ oder „Webseite“.",
+          "step3": "Die Prüfung abwarten und den per E-Mail zugesendeten Schlüssel unten eintragen.",
+          "reviewNotice": "Tankerkönig prüft jede Registrierung von Hand, um den kostenlosen Dienst sauber zu halten. Rechne mit Wartezeit — oft ein paar Tage, bis zu etwa einer Woche — bis der Schlüssel per E-Mail kommt. In der Zwischenzeit ist nichts kaputt: komm einfach zurück und trag ihn hier ein, sobald er da ist.",
+          "cta": "Anmeldeformular öffnen"
+        },
+        "field": {
+          "label": "API-Schlüssel",
+          "placeholder": "00000000-0000-0000-0000-000000000000",
+          "hint": "Ein Schlüssel sieht aus wie eine UUID. Feld leeren und speichern entfernt den hinterlegten Schlüssel."
+        },
+        "save": "Schlüssel speichern",
+        "saving": "Wird gespeichert…",
+        "saved": "API-Schlüssel gespeichert.",
+        "remove": "Schlüssel entfernen",
+        "adminOnly": "Nur ein Administrator kann den API-Schlüssel ändern, weil er für die ganze Installation gilt.",
+        "errors": {
+          "forbidden": "Nur ein Administrator kann das ändern.",
+          "invalid": "Das sieht nicht nach einem Tankerkönig-Schlüssel aus. Erwartet wird eine UUID wie 00000000-0000-0000-0000-000000000000.",
+          "failed": "Der Schlüssel konnte nicht gespeichert werden. Bitte erneut versuchen."
+        }
       }
     }
   },
@@ -1492,6 +1531,35 @@
         "fuelCost": "Spritkosten",
         "difference": "Differenz",
         "breakEven": "Ausgeglichen bei {rate} pro {unit}"
+      },
+      "route": {
+        "title": "Route planen",
+        "hint": "Die Strecke aus einer echten Route übernehmen, statt sie zu schätzen.",
+        "from": "Von",
+        "to": "Nach",
+        "placeholder": "Dein Startpunkt",
+        "placeholderTo": "Wo willst du hin?",
+        "useGps": "Meinen Standort verwenden",
+        "locating": "Standort wird ermittelt…",
+        "currentLocation": "Aktueller Standort",
+        "swap": "Tauschen",
+        "searching": "Suche…",
+        "noResults": "Nichts gefunden. Versuch eine andere Schreibweise oder ergänze das Land.",
+        "calculate": "Strecke berechnen",
+        "calculating": "Wird berechnet…",
+        "result": "Strecke",
+        "viaRoad": "Über die Straße",
+        "viaRoadWithTime": "Über die Straße · etwa {minutes} Min. Fahrzeit",
+        "viaLine": "Luftlinie — der Routendienst war nicht erreichbar, die echte Fahrt wird länger.",
+        "apply": "Als Fahrtstrecke übernehmen",
+        "applied": "Übernommen",
+        "errors": {
+          "denied": "Der Standortzugriff wurde abgelehnt. Erlaube ihn im Browser oder tipp einen Startpunkt ein.",
+          "unavailable": "Dein Standort konnte nicht ermittelt werden. Tipp bitte einen Startpunkt ein.",
+          "unsupported": "Dieser Browser kann keinen Standort liefern. Tipp bitte einen Startpunkt ein.",
+          "insecure": "Browser geben den Standort nur über HTTPS heraus. Über einfaches http:// aufgerufen — tipp bitte einen Startpunkt ein.",
+          "failed": "Die Strecke konnte nicht berechnet werden. Bitte erneut versuchen."
+        }
       }
     }
   },
@@ -1529,10 +1597,12 @@
     "setup": {
       "title": "Einmalige Einrichtung nötig",
       "body": "Die Spritpreise kommen von Tankerkönig — dort werden die Preise veröffentlicht, die jede deutsche Tankstelle an das Bundeskartellamt melden muss. Der Dienst ist kostenlos, braucht aber einen eigenen persönlichen API-Schlüssel.",
-      "step1": "Kostenlosen API-Schlüssel auf creativecommons.tankerkoenig.de anfordern (dauert eine Minute).",
-      "step2": "In Unraid: Docker → smart-garage → Bearbeiten → Variable TANKERKOENIG_API_KEY auf deinen Schlüssel setzen.",
-      "step3": "Übernehmen und Container neu starten — danach funktioniert diese Seite sofort.",
-      "cta": "Kostenlosen API-Schlüssel holen"
+      "step1": "Kostenlosen API-Schlüssel auf onboarding.tankerkoenig.de anfordern (das Formular dauert eine Minute).",
+      "step2": "Die Prüfung durch Tankerkönig abwarten — der Schlüssel kommt dann per E-Mail.",
+      "step3": "Schlüssel unter Einstellungen → Spritpreise eintragen oder TANKERKOENIG_API_KEY im Container setzen.",
+      "cta": "Anmeldeformular öffnen",
+      "reviewNotice": "Tankerkönig prüft jede Registrierung von Hand, um den kostenlosen Dienst sauber zu halten. Rechne mit Wartezeit — oft ein paar Tage, bis zu etwa einer Woche — bis der Schlüssel per E-Mail kommt. In der Zwischenzeit ist nichts kaputt: komm einfach zurück und trag ihn hier ein, sobald er da ist.",
+      "enterKey": "Schlüssel in den Einstellungen eintragen"
     },
     "sections": {
       "location": {

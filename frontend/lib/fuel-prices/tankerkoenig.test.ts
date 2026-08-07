@@ -3,11 +3,12 @@ import {
   FuelPriceError,
   clampRadiusKm,
   clearStationCache,
-  isFuelPriceLookupConfigured,
   listStationsNearby,
 } from "@/lib/fuel-prices/tankerkoenig";
 
 const SEARCH = { lat: 50.9413, lng: 6.9583, radiusKm: 5 };
+/** Where the key comes from is `fuel-price-config`'s job; here it is a given. */
+const KEY = "test-key";
 
 function jsonResponse(body: unknown, status = 200): Response {
   return {
@@ -41,31 +42,18 @@ let fetchMock: ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   clearStationCache();
-  process.env.TANKERKOENIG_API_KEY = "test-key";
   fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
-  delete process.env.TANKERKOENIG_API_KEY;
   clearStationCache();
 });
 
 describe("configuration", () => {
-  it("is off without a key", () => {
-    delete process.env.TANKERKOENIG_API_KEY;
-    expect(isFuelPriceLookupConfigured()).toBe(false);
-  });
-
-  it("treats a blank key as no key", () => {
-    process.env.TANKERKOENIG_API_KEY = "   ";
-    expect(isFuelPriceLookupConfigured()).toBe(false);
-  });
-
   it("refuses to call upstream without a key", async () => {
-    delete process.env.TANKERKOENIG_API_KEY;
-    await expect(listStationsNearby(SEARCH)).rejects.toMatchObject({
+    await expect(listStationsNearby(SEARCH, null)).rejects.toMatchObject({
       reason: "not-configured",
     });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -84,7 +72,7 @@ describe("listStationsNearby", () => {
   it("requests every grade in one call and sends the key", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ok: true, stations: [station()] }));
 
-    await listStationsNearby(SEARCH);
+    await listStationsNearby(SEARCH, KEY);
 
     const url = fetchMock.mock.calls[0][0] as URL;
     expect(url.searchParams.get("type")).toBe("all");
@@ -96,7 +84,7 @@ describe("listStationsNearby", () => {
   it("normalises a station", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ok: true, stations: [station()] }));
 
-    const result = await listStationsNearby(SEARCH);
+    const result = await listStationsNearby(SEARCH, KEY);
     const [entry] = result.stations;
 
     expect(entry.id).toBe("abc-1");
@@ -117,7 +105,7 @@ describe("listStationsNearby", () => {
       }),
     );
 
-    const [entry] = (await listStationsNearby(SEARCH)).stations;
+    const [entry] = (await listStationsNearby(SEARCH, KEY)).stations;
     expect(entry.prices.e5).toBeNull();
     expect(entry.prices.e10).toBeNull();
     // A numeric string is still a real price.
@@ -128,7 +116,7 @@ describe("listStationsNearby", () => {
     fetchMock.mockResolvedValue(
       jsonResponse({ ok: true, stations: [station({ isOpen: "yes" })] }),
     );
-    expect((await listStationsNearby(SEARCH)).stations[0].isOpen).toBe(false);
+    expect((await listStationsNearby(SEARCH, KEY)).stations[0].isOpen).toBe(false);
   });
 
   it("drops rows that cannot be placed on a map", async () => {
@@ -144,13 +132,13 @@ describe("listStationsNearby", () => {
       }),
     );
 
-    const result = await listStationsNearby(SEARCH);
+    const result = await listStationsNearby(SEARCH, KEY);
     expect(result.stations.map((entry) => entry.id)).toEqual(["abc-1"]);
   });
 
   it("survives a response without a stations array", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ok: true }));
-    await expect(listStationsNearby(SEARCH)).resolves.toMatchObject({
+    await expect(listStationsNearby(SEARCH, KEY)).resolves.toMatchObject({
       stations: [],
     });
   });
@@ -162,7 +150,7 @@ describe("error mapping", () => {
       jsonResponse({ ok: false, message: "apikey nicht korrekt" }),
     );
 
-    await expect(listStationsNearby(SEARCH)).rejects.toMatchObject({
+    await expect(listStationsNearby(SEARCH, KEY)).rejects.toMatchObject({
       reason: "invalid-key",
     });
   });
@@ -172,14 +160,14 @@ describe("error mapping", () => {
       jsonResponse({ ok: false, message: "service unavailable" }),
     );
 
-    await expect(listStationsNearby(SEARCH)).rejects.toMatchObject({
+    await expect(listStationsNearby(SEARCH, KEY)).rejects.toMatchObject({
       reason: "upstream",
     });
   });
 
   it("maps HTTP 429 to a rate limit", async () => {
     fetchMock.mockResolvedValue(jsonResponse({}, 429));
-    await expect(listStationsNearby(SEARCH)).rejects.toMatchObject({
+    await expect(listStationsNearby(SEARCH, KEY)).rejects.toMatchObject({
       reason: "rate-limited",
     });
   });
@@ -189,14 +177,14 @@ describe("error mapping", () => {
     timeout.name = "TimeoutError";
     fetchMock.mockRejectedValue(timeout);
 
-    await expect(listStationsNearby(SEARCH)).rejects.toMatchObject({
+    await expect(listStationsNearby(SEARCH, KEY)).rejects.toMatchObject({
       reason: "timeout",
     });
   });
 
   it("maps a network failure to upstream", async () => {
     fetchMock.mockRejectedValue(new Error("ECONNREFUSED"));
-    const error = await listStationsNearby(SEARCH).catch((e) => e);
+    const error = await listStationsNearby(SEARCH, KEY).catch((e) => e);
     expect(error).toBeInstanceOf(FuelPriceError);
     expect(error.reason).toBe("upstream");
   });
@@ -206,8 +194,8 @@ describe("caching", () => {
   it("answers a repeated search from cache instead of calling upstream again", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ok: true, stations: [station()] }));
 
-    const first = await listStationsNearby(SEARCH);
-    const second = await listStationsNearby(SEARCH);
+    const first = await listStationsNearby(SEARCH, KEY);
+    const second = await listStationsNearby(SEARCH, KEY);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(first.cached).toBe(false);
@@ -219,8 +207,8 @@ describe("caching", () => {
   it("shares a cache entry between callers a few metres apart", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ok: true, stations: [station()] }));
 
-    await listStationsNearby(SEARCH);
-    await listStationsNearby({ ...SEARCH, lat: SEARCH.lat + 0.0001 });
+    await listStationsNearby(SEARCH, KEY);
+    await listStationsNearby({ ...SEARCH, lat: SEARCH.lat + 0.0001 }, KEY);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
@@ -228,8 +216,8 @@ describe("caching", () => {
   it("treats a different radius as a different search", async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ok: true, stations: [station()] }));
 
-    await listStationsNearby(SEARCH);
-    await listStationsNearby({ ...SEARCH, radiusKm: 20 });
+    await listStationsNearby(SEARCH, KEY);
+    await listStationsNearby({ ...SEARCH, radiusKm: 20 }, KEY);
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
@@ -246,8 +234,8 @@ describe("caching", () => {
     );
 
     const [a, b] = await Promise.all([
-      listStationsNearby(SEARCH),
-      listStationsNearby(SEARCH),
+      listStationsNearby(SEARCH, KEY),
+      listStationsNearby(SEARCH, KEY),
     ]);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -257,14 +245,14 @@ describe("caching", () => {
 
   it("does not cache a failure", async () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({}, 500));
-    await expect(listStationsNearby(SEARCH)).rejects.toBeInstanceOf(
+    await expect(listStationsNearby(SEARCH, KEY)).rejects.toBeInstanceOf(
       FuelPriceError,
     );
 
     fetchMock.mockResolvedValueOnce(
       jsonResponse({ ok: true, stations: [station()] }),
     );
-    await expect(listStationsNearby(SEARCH)).resolves.toMatchObject({
+    await expect(listStationsNearby(SEARCH, KEY)).resolves.toMatchObject({
       cached: false,
     });
     expect(fetchMock).toHaveBeenCalledTimes(2);

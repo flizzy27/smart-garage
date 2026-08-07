@@ -48,6 +48,7 @@ import {
 } from "@/lib/fuel/calculator-storage";
 import type { CalculatorVehiclePreset } from "@/lib/services/fuel-calculator";
 import { CalculatorSection } from "./CalculatorSection";
+import { RoutePlanner } from "./RoutePlanner";
 import {
   FieldGrid,
   NumberField,
@@ -81,6 +82,8 @@ function Icon({ path }: { path: string }) {
 
 const SECTION_ICON_PATHS: Record<CalculatorSectionId, string> = {
   vehicle: "M8 17h8M5 11l1.5-4.5h11L19 11M5 11v6h14v-6",
+  route:
+    "M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z",
   trip: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7",
   split: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
   tank: "M4 6a2 2 0 012-2h6a2 2 0 012 2v14H4V6zm10 5h2a2 2 0 012 2v4a2 2 0 104 0V9l-3-3M4 12h10",
@@ -509,6 +512,20 @@ export function FuelCostCalculator({ vehicles }: Props) {
               })}
             </div>
           )}
+        </CalculatorSection>
+
+        {/* --- Route planner --------------------------------------------- */}
+        <CalculatorSection
+          title={t("sections.route.title")}
+          hint={t("sections.route.hint")}
+          icon={<Icon path={SECTION_ICON_PATHS.route} />}
+          open={sections.route}
+          onToggle={() => toggleSection("route")}
+        >
+          <RoutePlanner
+            distanceUnit={distanceUnit}
+            onDistance={(value) => setValue("distance", value)}
+          />
         </CalculatorSection>
 
         {/* --- Trip ------------------------------------------------------ */}

@@ -37,6 +37,13 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
   <Changes>
+### 2026-08-07 — v0.13.0
+- The Tankerkönig API key can now be entered in the app under Settings → Fuel prices — no container edit, no restart
+- The container variable still works; if both are set, the one entered in the app wins
+- Heads up: Tankerkönig reviews every registration by hand, so the key arrives by email after a few days, up to about a week
+- Registration now links to the real signup form (onboarding.tankerkoenig.de)
+- New route planner in the fuel calculator: use your location or search an address with live suggestions, get the road distance
+
 ### 2026-08-07 — v0.12.0
 - New Fuel prices page: live pump prices around you, by GPS or address
 - Radius slider up to 25 km, pick Super E5 / E10 / Diesel as your grade
@@ -129,7 +136,7 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <Config Name="Database URL" Target="DATABASE_URL" Default="file:/data/smart-garage.db" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">file:/data/smart-garage.db</Config>
   <Config Name="Upload directory" Target="UPLOAD_DIR" Default="/data/uploads" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">/data/uploads</Config>
   <Config Name="Node environment" Target="NODE_ENV" Default="production" Mode="" Description="" Type="Variable" Display="advanced-hide" Required="true" Mask="false">production</Config>
-  <Config Name="Fuel prices: Tankerkönig API key" Target="TANKERKOENIG_API_KEY" Default="" Mode="" Description="Optional. Enables the live fuel price page (German filling stations). Request a free key at https://creativecommons.tankerkoenig.de and paste it here. Left empty, the Fuel prices page just explains how to get a key. Guide: https://github.com/flizzy27/smart-garage/blob/main/docs/FUEL-PRICES.md" Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="Fuel prices: Tankerkönig API key" Target="TANKERKOENIG_API_KEY" Default="" Mode="" Description="Optional. Enables the live fuel price page (German filling stations). Request a free key at https://onboarding.tankerkoenig.de/ — registrations are reviewed by hand, so the key arrives by email after a few days, up to about a week. You can paste it here, or enter it later under Settings -> Fuel prices in the app (no container restart needed). Left empty, the Fuel prices page just explains how to get a key. Guide: https://github.com/flizzy27/smart-garage/blob/main/docs/FUEL-PRICES.md" Type="Variable" Display="always" Required="false" Mask="true"></Config>
   <Config Name="SSO: issuer URL" Target="OIDC_ISSUER" Default="" Mode="" Description="Optional single sign-on. Base URL of your OpenID Connect provider, e.g. https://id.example.com (Pocket ID, Authentik, Keycloak, Authelia). Leave empty to keep username/password login only. Guide: https://github.com/flizzy27/smart-garage/blob/main/docs/OIDC.md" Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
   <Config Name="SSO: client ID" Target="OIDC_CLIENT_ID" Default="" Mode="" Description="Optional single sign-on. Client ID registered with your provider." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
   <Config Name="SSO: client secret" Target="OIDC_CLIENT_SECRET" Default="" Mode="" Description="Optional single sign-on. Client secret registered with your provider." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>

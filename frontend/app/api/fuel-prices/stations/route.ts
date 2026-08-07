@@ -3,9 +3,9 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import {
   FuelPriceError,
   clampRadiusKm,
-  isFuelPriceLookupConfigured,
   listStationsNearby,
 } from "@/lib/fuel-prices/tankerkoenig";
+import { getFuelPriceConfig } from "@/lib/services/fuel-price-config";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
-  if (!isFuelPriceLookupConfigured()) {
+  const { apiKey } = await getFuelPriceConfig();
+  if (!apiKey) {
     return NextResponse.json(
       { ok: false, reason: "not-configured" },
       { status: 503 },
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await listStationsNearby({ lat, lng, radiusKm });
+    const result = await listStationsNearby({ lat, lng, radiusKm }, apiKey);
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     if (error instanceof FuelPriceError) {

@@ -145,7 +145,8 @@
         "regional": "Regional",
         "data": "Data & export",
         "catalog": "Catalog",
-        "vehicleFields": "Vehicle fields"
+        "vehicleFields": "Vehicle fields",
+        "fuelPrices": "Fuel prices"
       },
       "general": {
         "title": "General",
@@ -384,6 +385,44 @@
         "customDescription": "Your own fields, shown on every vehicle.",
         "hint": "Checked fields are shown on the vehicle form and detail page.",
         "toggleLabel": "Show {field}"
+      },
+      "fuelPrices": {
+        "title": "Fuel prices",
+        "description": "Your Tankerkönig API key for the live fuel price page. It belongs to the whole installation, so everyone here shares it.",
+        "section": {
+          "title": "Tankerkönig API key",
+          "description": "Enter the key here, or set TANKERKOENIG_API_KEY in the container — either works. A key entered here takes effect immediately, without restarting."
+        },
+        "status": {
+          "label": "Current status",
+          "fromApp": "Set here in the app ({key})",
+          "fromEnv": "Set via TANKERKOENIG_API_KEY in the container ({key})",
+          "missing": "No key configured — the fuel price page shows setup instructions.",
+          "appOverridesEnv": "A key is also set in the container; the one entered here is the one being used."
+        },
+        "howTo": {
+          "title": "How to get a key",
+          "step1": "Open the Tankerkönig onboarding form and fill in your name and email.",
+          "step2": "Pick a category — for a self-hosted garage, \"home automation\" or \"website\" fits.",
+          "step3": "Wait for the review, then paste the key you receive by email into the field below.",
+          "reviewNotice": "Tankerkönig reviews every registration by hand to keep the free service clean. Expect a wait — often a few days, and up to about a week — before your key arrives by email. Nothing is broken in the meantime; come back here and paste it in when it turns up.",
+          "cta": "Open the registration form"
+        },
+        "field": {
+          "label": "API key",
+          "placeholder": "00000000-0000-0000-0000-000000000000",
+          "hint": "A key looks like a UUID. Leave empty and save to remove the stored key."
+        },
+        "save": "Save key",
+        "saving": "Saving…",
+        "saved": "API key saved.",
+        "remove": "Remove key",
+        "adminOnly": "Only an administrator can change the API key, because it applies to the whole installation.",
+        "errors": {
+          "forbidden": "Only an administrator can change this.",
+          "invalid": "That does not look like a Tankerkönig key. It should be a UUID like 00000000-0000-0000-0000-000000000000.",
+          "failed": "The key could not be saved. Please try again."
+        }
       }
     }
   },
@@ -1492,6 +1531,35 @@
         "fuelCost": "Fuel cost",
         "difference": "Difference",
         "breakEven": "Breaks even at {rate} per {unit}"
+      },
+      "route": {
+        "title": "Plan a route",
+        "hint": "Take the distance from a real route instead of guessing it.",
+        "from": "From",
+        "to": "To",
+        "placeholder": "Your starting point",
+        "placeholderTo": "Where are you going?",
+        "useGps": "Use my location",
+        "locating": "Locating…",
+        "currentLocation": "Current location",
+        "swap": "Swap",
+        "searching": "Searching…",
+        "noResults": "Nothing found. Try a different spelling or add the country.",
+        "calculate": "Calculate distance",
+        "calculating": "Calculating…",
+        "result": "Distance",
+        "viaRoad": "By road",
+        "viaRoadWithTime": "By road · about {minutes} min driving",
+        "viaLine": "Straight-line distance — the routing service was unreachable, so the real drive will be longer.",
+        "apply": "Use as trip distance",
+        "applied": "Taken over",
+        "errors": {
+          "denied": "Location access was denied. Allow it in your browser, or type a starting point instead.",
+          "unavailable": "Your location could not be determined. Please type a starting point instead.",
+          "unsupported": "This browser cannot provide a location. Please type a starting point instead.",
+          "insecure": "Browsers only share your location over HTTPS. Reached over plain http://, type a starting point instead.",
+          "failed": "The distance could not be calculated. Please try again."
+        }
       }
     }
   },
@@ -1529,10 +1597,12 @@
     "setup": {
       "title": "One-time setup needed",
       "body": "Live fuel prices come from Tankerkönig, which publishes the prices every German filling station has to report to the Federal Cartel Office. The service is free but needs your own personal API key.",
-      "step1": "Request a free API key at creativecommons.tankerkoenig.de (takes a minute).",
-      "step2": "In Unraid: Docker → smart-garage → Edit → set the variable TANKERKOENIG_API_KEY to your key.",
-      "step3": "Apply and restart the container — this page then works right away.",
-      "cta": "Get a free API key"
+      "step1": "Request a free API key at onboarding.tankerkoenig.de (the form takes a minute).",
+      "step2": "Wait for Tankerkönig to review it — the key then arrives by email.",
+      "step3": "Paste the key into Settings → Fuel prices, or set TANKERKOENIG_API_KEY in the container.",
+      "cta": "Open the registration form",
+      "reviewNotice": "Tankerkönig reviews every registration by hand to keep the free service clean. Expect a wait — often a few days, and up to about a week — before your key arrives by email. Nothing is broken in the meantime; come back here and paste it in when it turns up.",
+      "enterKey": "Enter key in settings"
     },
     "sections": {
       "location": {

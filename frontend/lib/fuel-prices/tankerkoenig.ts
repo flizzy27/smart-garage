@@ -11,12 +11,14 @@ import {
 /**
  * Client for the Tankerkönig radius search.
  *
- * Configuration is a single environment variable, `TANKERKOENIG_API_KEY`,
- * following the same "set it in the Unraid template, no admin screen" approach
- * as the optional OIDC login. Without a key the feature is simply off — the
- * page explains where to get one instead of failing.
+ * The API key is resolved by `lib/services/fuel-price-config.ts` (in-app
+ * setting first, `TANKERKOENIG_API_KEY` as fallback) and passed in, so this
+ * module stays a pure HTTP client with no opinion about where credentials
+ * live. Without a key the feature is simply off — the page explains how to get
+ * one instead of failing.
  *
- * Keys are free but personal: https://creativecommons.tankerkoenig.de
+ * Keys are free but personal, and issued after a manual review:
+ * https://onboarding.tankerkoenig.de/
  */
 
 const ENDPOINT = "https://creativecommons.tankerkoenig.de/json/list.php";
@@ -45,15 +47,6 @@ export class FuelPriceError extends Error {
     super(message);
     this.name = "FuelPriceError";
   }
-}
-
-export function getTankerkoenigApiKey(): string | null {
-  const value = process.env.TANKERKOENIG_API_KEY;
-  return value && value.trim().length > 0 ? value.trim() : null;
-}
-
-export function isFuelPriceLookupConfigured(): boolean {
-  return getTankerkoenigApiKey() !== null;
 }
 
 export function clampRadiusKm(value: number): number {
@@ -113,12 +106,10 @@ function normalizeStation(raw: unknown): FuelStation | null {
   };
 }
 
-async function fetchStations(search: StationSearch): Promise<StationsResult> {
-  const apikey = getTankerkoenigApiKey();
-  if (!apikey) {
-    throw new FuelPriceError("TANKERKOENIG_API_KEY is not set", "not-configured");
-  }
-
+async function fetchStations(
+  search: StationSearch,
+  apikey: string,
+): Promise<StationsResult> {
   const url = new URL(ENDPOINT);
   url.searchParams.set("lat", search.lat.toFixed(6));
   url.searchParams.set("lng", search.lng.toFixed(6));
@@ -193,9 +184,14 @@ function cacheKey(search: StationSearch): string {
 
 export async function listStationsNearby(
   search: StationSearch,
+  apiKey: string | null,
 ): Promise<StationsResult> {
+  if (!apiKey) {
+    throw new FuelPriceError("No Tankerkönig API key configured", "not-configured");
+  }
+
   const { value, cached } = await cache.resolve(cacheKey(search), () =>
-    fetchStations(search),
+    fetchStations(search, apiKey),
   );
   return { ...value, cached };
 }

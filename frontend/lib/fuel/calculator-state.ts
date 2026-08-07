@@ -319,6 +319,7 @@ export function sanitizeCalculatorValues(
 
 export const CALCULATOR_SECTIONS = [
   "vehicle",
+  "route",
   "trip",
   "split",
   "tank",
@@ -339,6 +340,7 @@ export type CalculatorSectionState = Record<CalculatorSectionId, boolean>;
  */
 export const DEFAULT_SECTION_STATE: CalculatorSectionState = {
   vehicle: false,
+  route: false,
   trip: true,
   split: false,
   tank: false,

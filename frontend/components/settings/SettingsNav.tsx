@@ -8,6 +8,7 @@ const sections = [
   { href: "/settings/notifications", key: "notifications" as const },
   { href: "/settings/regional", key: "regional" as const },
   { href: "/settings/vehicle-fields", key: "vehicleFields" as const },
+  { href: "/settings/fuel-prices", key: "fuelPrices" as const },
   { href: "/settings/data", key: "data" as const },
   { href: "/settings/catalog", key: "catalog" as const },
 ];

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/lib/i18n/navigation";
 import { useUserSettings } from "@/providers/UserSettingsProvider";
 import {
   distanceUnitLabel,
@@ -21,6 +22,7 @@ import {
   FUEL_PRICE_ATTRIBUTION,
   MAX_RADIUS_KM,
   MIN_RADIUS_KM,
+  TANKERKOENIG_SIGNUP_URL,
   type FuelKind,
   type FuelStation,
 } from "@/lib/fuel-prices/types";
@@ -517,14 +519,27 @@ export function FuelStationFinder({ configured }: Props) {
           <li>{t("setup.step2")}</li>
           <li>{t("setup.step3")}</li>
         </ol>
-        <a
-          href="https://creativecommons.tankerkoenig.de"
-          target="_blank"
-          rel="noreferrer noopener"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
-        >
-          {t("setup.cta")}
-        </a>
+        {/* The manual review is the reason nothing happens for days. Saying so
+            up front stops it looking like a broken signup. */}
+        <p className="mt-3 rounded-lg border border-warning/30 bg-card/60 px-3.5 py-2.5 text-xs leading-relaxed text-foreground">
+          {t("setup.reviewNotice")}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <a
+            href={TANKERKOENIG_SIGNUP_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+          >
+            {t("setup.cta")}
+          </a>
+          <Link
+            href="/settings/fuel-prices"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            {t("setup.enterKey")}
+          </Link>
+        </div>
       </div>
     );
   }
