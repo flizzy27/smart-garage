@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import {
+  IconCalculator,
   IconDashboard,
   IconDocuments,
   IconExpenses,
@@ -23,6 +24,7 @@ export type NavItem = {
     | "expenses"
     | "costs"
     | "fuel"
+    | "fuelCalculator"
     | "odometer"
     | "wishlist"
     | "reminders"
@@ -57,6 +59,11 @@ export const navGroups: NavGroup[] = [
       { href: "/costs", labelKey: "costs", icon: IconExpenses },
       { href: "/expenses", labelKey: "expenses", icon: IconExpenses },
       { href: "/fuel", labelKey: "fuel", icon: IconExpenses },
+      {
+        href: "/fuel-calculator",
+        labelKey: "fuelCalculator",
+        icon: IconCalculator,
+      },
       { href: "/wishlist", labelKey: "wishlist", icon: IconVehicles },
       { href: "/reminders", labelKey: "reminders", icon: IconReminders },
     ],

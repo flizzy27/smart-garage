@@ -26,7 +26,8 @@
       "fleet": "Fuhrpark",
       "finance": "Finanzen"
     },
-    "odometer": "Kilometerstand"
+    "odometer": "Kilometerstand",
+    "fuelCalculator": "Spritrechner"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1361,6 +1362,136 @@
     "charts": {
       "readings": "Kilometerstand im Zeitverlauf",
       "monthlyDistance": "Strecke pro Monat"
+    }
+  },
+  "fuelCalculator": {
+    "title": "Spritkostenrechner",
+    "subtitle": "Rechne aus, was eine Fahrt, eine Tankfüllung oder ein ganzes Autojahr wirklich kostet. Es wird nichts in deiner Garage gespeichert — die Zahlen bleiben auf diesem Gerät.",
+    "actions": {
+      "reset": "Zurücksetzen",
+      "expandAll": "Alle ausklappen",
+      "collapseAll": "Alle einklappen"
+    },
+    "hero": {
+      "total": "Fahrtkosten",
+      "summary": "{distance} · {volume}",
+      "empty": "Gib Strecke, Verbrauch und Spritpreis ein.",
+      "perDistance": "Pro {unit}",
+      "volume": "Sprit",
+      "perPerson": "Pro Person"
+    },
+    "sections": {
+      "vehicle": {
+        "title": "Werte aus meinen Fahrzeugen",
+        "hint": "Übernimmt Durchschnittsverbrauch und letzten Spritpreis aus deinen Tankvorgängen.",
+        "summary": "{count} Fahrzeuge mit Daten",
+        "apply": "Übernehmen",
+        "applied": "Übernommen",
+        "noData": "Noch keine auswertbaren Tankvorgänge. Trage ein paar Tankfüllungen mit Kilometerstand ein, dann erscheint hier dein echter Verbrauch.",
+        "noConsumption": "Noch kein Verbrauch"
+      },
+      "trip": {
+        "title": "Fahrt",
+        "hint": "Die Basis für alles Weitere: Strecke, Verbrauch und Spritpreis.",
+        "distance": "Strecke",
+        "consumption": "Verbrauch",
+        "price": "Spritpreis",
+        "extraCost": "Zusatzkosten",
+        "extraCostHint": "Maut, Parken, Fähre …",
+        "roundTrip": "Hin und zurück",
+        "roundTripHint": "Rechnet den Rückweg mit",
+        "fuelCost": "Sprit",
+        "total": "Gesamt",
+        "perDistance": "Kosten pro {unit}"
+      },
+      "split": {
+        "title": "Kosten teilen",
+        "hint": "Die Fahrt auf alle im Auto aufteilen.",
+        "summary": "{amount} pro Person ({people})",
+        "passengers": "Personen im Auto",
+        "decrease": "Eine Person weniger",
+        "increase": "Eine Person mehr",
+        "perPerson": "Pro Person",
+        "total": "Gesamt"
+      },
+      "tank": {
+        "title": "Tank & Reichweite",
+        "hint": "Was das Volltanken kostet und wie weit der Tank reicht.",
+        "size": "Tankgröße",
+        "level": "Aktueller Füllstand",
+        "levelSlider": "Füllstand schieben",
+        "refillCost": "Kosten zum Volltanken",
+        "fullCost": "Volltanken von leer",
+        "rangeLeft": "Restreichweite",
+        "rangeFull": "Reichweite voll"
+      },
+      "budget": {
+        "title": "Was bekomme ich für mein Geld?",
+        "hint": "Aus einem Betrag Sprit und Strecke machen.",
+        "amount": "Betrag",
+        "volume": "Sprit",
+        "distance": "Strecke"
+      },
+      "commute": {
+        "title": "Pendeln & regelmäßige Fahrten",
+        "hint": "Dieselbe Strecke immer wieder — pro Tag, Monat und Jahr.",
+        "summary": "{amount} pro Monat",
+        "distance": "Strecke einfach",
+        "days": "Tage pro Woche",
+        "weeks": "Wochen pro Jahr",
+        "weeksHint": "46 lässt Platz für Urlaub",
+        "return": "Hin und zurück",
+        "perDay": "Pro Tag",
+        "perWeek": "Pro Woche",
+        "perMonth": "Pro Monat",
+        "perYear": "Pro Jahr",
+        "perYearDetail": "{distance} · {volume}"
+      },
+      "compare": {
+        "title": "Mit anderem Fahrzeug vergleichen",
+        "hint": "Zweitwagen, andere Spritsorte, sparsamerer Motor — was macht der Wechsel im Jahr aus?",
+        "summarySaves": "Spart {amount} pro Jahr",
+        "summaryCosts": "Kostet {amount} mehr pro Jahr",
+        "annualDistance": "Strecke pro Jahr",
+        "consumption": "Verbrauch der Alternative",
+        "price": "Spritpreis der Alternative",
+        "switchCost": "Einmalige Kosten",
+        "switchCostHint": "Höherer Kaufpreis, Umrüstung …",
+        "currentCost": "Aktuell, pro Jahr",
+        "alternativeCost": "Alternative, pro Jahr",
+        "savingPerYear": "Du sparst pro Jahr",
+        "extraPerYear": "Du zahlst mehr pro Jahr",
+        "perMonth": "{amount} pro Monat",
+        "breakEven": "Rechnet sich nach",
+        "breakEvenYears": "etwa {years} Jahren",
+        "breakEvenNone": "Keine einmaligen Kosten zu amortisieren"
+      },
+      "detour": {
+        "title": "Lohnt sich die günstigere Tankstelle?",
+        "hint": "Vergleicht die Ersparnis an der Zapfsäule mit dem Sprit, den der Umweg kostet.",
+        "summaryWorth": "Lohnt sich — {amount}",
+        "summaryNotWorth": "Umweg lohnt sich nicht",
+        "volume": "Tankmenge",
+        "price": "Preis an der anderen Tankstelle",
+        "priceHint": "Dein Preis: {price}",
+        "distance": "Umweg einfach",
+        "return": "Und wieder zurück",
+        "grossSaving": "Ersparnis an der Säule",
+        "detourCost": "Kosten des Umwegs",
+        "netSaving": "Bleibt übrig",
+        "worthIt": "Der Umweg lohnt sich.",
+        "notWorthIt": "Der Umweg kostet mehr, als er spart."
+      },
+      "reimbursement": {
+        "title": "Kilometergeld",
+        "hint": "Vergleicht einen Satz pro Strecke mit dem, was die Fahrt oben an Sprit kostet.",
+        "rate": "Satz",
+        "distanceHint": "Nutzt die Strecke der Fahrt: {distance}",
+        "payout": "Du bekommst",
+        "fuelCost": "Spritkosten",
+        "difference": "Differenz",
+        "breakEven": "Ausgeglichen bei {rate} pro {unit}"
+      }
     }
   }
 }

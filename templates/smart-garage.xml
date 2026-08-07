@@ -37,6 +37,13 @@ Docs: https://github.com/flizzy27/smart-garage/blob/main/docs/UNRAID.md
   <TemplateURL>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/smart-garage.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/flizzy27/smart-garage/main/templates/icon.png</Icon>
   <Changes>
+### 2026-08-07 — v0.11.0
+- New Fuel calculator in the sidebar: trip cost, cost per person, tank and range, commute per month and year
+- Compare a second vehicle, check whether a detour to the cheaper station pays off, and check mileage reimbursement against real fuel cost
+- Pulls your actual average consumption and last fuel price from your logged fill-ups
+- Every tool is a collapsible card; open cards and entered values are remembered per device
+- Works fully in miles, US gallons and MPG
+
 ### 2026-08-04 — v0.10.0
 - Gallons and MPG: pick your volume unit next to the distance unit
 - New Odometer page: log readings, see distance per month and a yearly projection

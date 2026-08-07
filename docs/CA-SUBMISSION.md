@@ -35,7 +35,7 @@ Everything needed to submit **Smart Garage** to the Unraid Community Application
 |-------|-------|
 | **Registry** | GitHub Container Registry |
 | **Image** | `ghcr.io/flizzy27/smart-garage:latest` |
-| **Also tagged** | `ghcr.io/flizzy27/smart-garage:v0.10.0` (and all release tags) |
+| **Also tagged** | `ghcr.io/flizzy27/smart-garage:v0.11.0` (and all release tags) |
 | **Published by** | GitHub Actions [docker-publish.yml](../.github/workflows/docker-publish.yml) |
 | **Visibility** | Must be **Public** (GitHub → Packages → smart-garage → Package settings) |
 

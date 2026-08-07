@@ -115,6 +115,27 @@ export function convertConsumption(
   };
 }
 
+/**
+ * Inverse of {@link convertConsumption} — turns a figure the user typed in
+ * their own unit pair back into the metric storage unit. Needed wherever
+ * consumption is an *input* (fuel cost calculator) rather than a read-out.
+ */
+export function consumptionToLPer100Km(
+  value: number,
+  distanceUnit: DistanceUnit,
+  volumeUnit: VolumeUnit,
+): number {
+  if (!Number.isFinite(value) || value <= 0) return 0;
+
+  if (volumeUnit === "gal" && distanceUnit === "mi") {
+    return MPG_FACTOR / value;
+  }
+
+  const liters = preferredToLiters(value, volumeUnit);
+  const kmPer100Units = distanceUnit === "mi" ? 100 * KM_PER_MILE : 100;
+  return (liters / kmPer100Units) * 100;
+}
+
 export function formatConsumption(
   litersPer100Km: number,
   locale: string,
@@ -135,4 +156,12 @@ export function pricePerVolumeUnit(
   unit: VolumeUnit,
 ): number {
   return unit === "gal" ? pricePerLiter * LITERS_PER_US_GALLON : pricePerLiter;
+}
+
+/** Price per preferred volume unit → price per litre (same currency). */
+export function pricePerVolumeUnitToPerLiter(
+  price: number,
+  unit: VolumeUnit,
+): number {
+  return unit === "gal" ? price / LITERS_PER_US_GALLON : price;
 }

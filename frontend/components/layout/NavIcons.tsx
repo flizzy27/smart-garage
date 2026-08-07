@@ -43,6 +43,15 @@ export function IconExpenses({ className = "h-5 w-5" }: NavIconProps) {
   );
 }
 
+export function IconCalculator({ className = "h-5 w-5" }: NavIconProps) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75} aria-hidden>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" />
+    </svg>
+  );
+}
+
 export function IconReminders({ className = "h-5 w-5" }: NavIconProps) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75} aria-hidden>

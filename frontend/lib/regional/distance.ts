@@ -18,6 +18,18 @@ export function roundDistanceForStorage(value: number, unit: DistanceUnit): numb
   return Math.max(0, Math.round(preferredToKm(value, unit)));
 }
 
+/**
+ * A *rate* per distance (mileage reimbursement, cost per km) scales the other
+ * way round from a distance: 0.30 €/km is 0.48 €/mi, not 0.19.
+ */
+export function ratePerDistanceToPerKm(rate: number, unit: DistanceUnit): number {
+  return unit === "mi" ? rate / KM_PER_MILE : rate;
+}
+
+export function ratePerKmToPerDistance(rate: number, unit: DistanceUnit): number {
+  return unit === "mi" ? rate * KM_PER_MILE : rate;
+}
+
 export function formatDistanceValue(
   km: number,
   locale: string,

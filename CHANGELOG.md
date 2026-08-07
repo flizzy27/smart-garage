@@ -9,6 +9,46 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.11.0] - 2026-08-07
+
+### Added
+
+- **Fuel cost calculator** — a new **Fuel calculator** entry in the sidebar
+  (`/fuel-calculator`). It answers the questions a fill-up log cannot: what a
+  trip costs, what is left when you split it between four people, what the
+  commute adds up to over a year, and whether the cheaper station two
+  kilometres away is actually cheaper once you have driven there.
+
+  Nine tools, each in its own collapsible card so the page stays a single
+  readable column on a phone:
+
+  - **Use one of my vehicles** — takes your real average consumption and your
+    most recent fuel price straight from your logged fill-ups.
+  - **Trip** — distance, consumption, price, extra costs like tolls or parking,
+    and a round-trip switch.
+  - **Split the cost** — divide the trip between everyone in the car.
+  - **Tank & range** — what a fill-up costs from the current level, and how far
+    the tank takes you.
+  - **What do I get for my money?** — an amount turned into fuel and distance.
+  - **Commute & regular trips** — per day, week, month and year.
+  - **Compare with another vehicle** — yearly difference against a second car
+    or fuel grade, including when a one-off extra cost pays for itself.
+  - **Is the cheaper station worth it?** — the saving at the pump minus the fuel
+    the detour burns.
+  - **Mileage reimbursement** — a per-distance rate against what the trip really
+    costs you.
+
+  The running total stays pinned at the top of the page while you scroll, and a
+  collapsed card still shows its own headline figure.
+
+  Which cards you leave open and every number you type are remembered on the
+  device — reopen the page tomorrow and it is exactly as you left it. Nothing is
+  written to your garage: the calculator is a scratchpad, not vehicle data.
+
+  Units follow your settings throughout. Miles, US gallons and MPG all work, and
+  switching a unit rewrites the numbers already on screen instead of silently
+  reinterpreting them.
+
 ## [0.10.0] - 2026-08-04
 
 This release closes every open issue reported on GitHub. Most of them came from

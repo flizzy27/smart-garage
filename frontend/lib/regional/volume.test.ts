@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   LITERS_PER_US_GALLON,
+  consumptionToLPer100Km,
   consumptionUnitLabel,
   convertConsumption,
   formVolumeValue,
@@ -8,6 +9,7 @@ import {
   parseFormVolumeToLiters,
   preferredToLiters,
   pricePerVolumeUnit,
+  pricePerVolumeUnitToPerLiter,
   volumeUnitLabel,
 } from "@/lib/regional/volume";
 
@@ -89,9 +91,46 @@ describe("fuel economy", () => {
   });
 });
 
+describe("consumptionToLPer100Km", () => {
+  it("inverts convertConsumption for every unit pair", () => {
+    for (const [distanceUnit, volumeUnit] of [
+      ["km", "l"],
+      ["mi", "gal"],
+      ["mi", "l"],
+      ["km", "gal"],
+    ] as const) {
+      const displayed = convertConsumption(7.5, distanceUnit, volumeUnit).value;
+      expect(
+        consumptionToLPer100Km(displayed, distanceUnit, volumeUnit),
+      ).toBeCloseTo(7.5, 8);
+    }
+  });
+
+  it("reads a typed MPG figure as the metric equivalent", () => {
+    expect(consumptionToLPer100Km(25, "mi", "gal")).toBeCloseTo(9.41, 2);
+  });
+
+  it("treats a missing or nonsensical entry as unknown, not as infinite", () => {
+    expect(consumptionToLPer100Km(0, "mi", "gal")).toBe(0);
+    expect(consumptionToLPer100Km(-3, "km", "l")).toBe(0);
+    expect(consumptionToLPer100Km(Number.NaN, "km", "l")).toBe(0);
+  });
+});
+
 describe("pricePerVolumeUnit", () => {
   it("scales a per-litre price to a per-gallon price", () => {
     expect(pricePerVolumeUnit(1, "gal")).toBeCloseTo(LITERS_PER_US_GALLON, 10);
     expect(pricePerVolumeUnit(1.8, "l")).toBe(1.8);
+  });
+
+  it("converts a per-gallon price the user typed back to per litre", () => {
+    expect(pricePerVolumeUnitToPerLiter(LITERS_PER_US_GALLON, "gal")).toBeCloseTo(
+      1,
+      10,
+    );
+    expect(pricePerVolumeUnitToPerLiter(1.8, "l")).toBe(1.8);
+    expect(
+      pricePerVolumeUnitToPerLiter(pricePerVolumeUnit(1.75, "gal"), "gal"),
+    ).toBeCloseTo(1.75, 10);
   });
 });

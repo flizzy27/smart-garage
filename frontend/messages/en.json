@@ -26,7 +26,8 @@
       "fleet": "Fleet",
       "finance": "Finance"
     },
-    "odometer": "Odometer"
+    "odometer": "Odometer",
+    "fuelCalculator": "Fuel calculator"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1361,6 +1362,136 @@
     "charts": {
       "readings": "Odometer over time",
       "monthlyDistance": "Distance per month"
+    }
+  },
+  "fuelCalculator": {
+    "title": "Fuel cost calculator",
+    "subtitle": "Work out what a trip, a tank or a whole year of driving really costs. Nothing is saved to your garage — the numbers stay on this device.",
+    "actions": {
+      "reset": "Reset",
+      "expandAll": "Expand all",
+      "collapseAll": "Collapse all"
+    },
+    "hero": {
+      "total": "Trip cost",
+      "summary": "{distance} · {volume}",
+      "empty": "Enter a distance, a consumption and a price.",
+      "perDistance": "Per {unit}",
+      "volume": "Fuel",
+      "perPerson": "Per person"
+    },
+    "sections": {
+      "vehicle": {
+        "title": "Use one of my vehicles",
+        "hint": "Takes the average consumption and the latest fuel price from your logged fill-ups.",
+        "summary": "{count} vehicles with data",
+        "apply": "Use",
+        "applied": "Applied",
+        "noData": "No fill-ups with usable data yet. Log a few fill-ups with odometer readings and your real consumption will show up here.",
+        "noConsumption": "No consumption yet"
+      },
+      "trip": {
+        "title": "Trip",
+        "hint": "The basis for everything below: distance, consumption and fuel price.",
+        "distance": "Distance",
+        "consumption": "Consumption",
+        "price": "Fuel price",
+        "extraCost": "Extra costs",
+        "extraCostHint": "Tolls, parking, ferry …",
+        "roundTrip": "Round trip",
+        "roundTripHint": "Counts the way back as well",
+        "fuelCost": "Fuel",
+        "total": "Total",
+        "perDistance": "Cost per {unit}"
+      },
+      "split": {
+        "title": "Split the cost",
+        "hint": "Share the trip between everyone in the car.",
+        "summary": "{amount} each ({people})",
+        "passengers": "People in the car",
+        "decrease": "One person fewer",
+        "increase": "One person more",
+        "perPerson": "Per person",
+        "total": "Total"
+      },
+      "tank": {
+        "title": "Tank & range",
+        "hint": "What a fill-up costs and how far the tank takes you.",
+        "size": "Tank size",
+        "level": "Current level",
+        "levelSlider": "Drag to set the level",
+        "refillCost": "Cost to fill up",
+        "fullCost": "Full tank from empty",
+        "rangeLeft": "Range left",
+        "rangeFull": "Range when full"
+      },
+      "budget": {
+        "title": "What do I get for my money?",
+        "hint": "Turn an amount into fuel and distance.",
+        "amount": "Amount",
+        "volume": "Fuel",
+        "distance": "Distance"
+      },
+      "commute": {
+        "title": "Commute & regular trips",
+        "hint": "The same trip, over and over — per day, month and year.",
+        "summary": "{amount} per month",
+        "distance": "Distance one way",
+        "days": "Days per week",
+        "weeks": "Weeks per year",
+        "weeksHint": "46 leaves room for holidays",
+        "return": "There and back",
+        "perDay": "Per day",
+        "perWeek": "Per week",
+        "perMonth": "Per month",
+        "perYear": "Per year",
+        "perYearDetail": "{distance} · {volume}"
+      },
+      "compare": {
+        "title": "Compare with another vehicle",
+        "hint": "Second car, other fuel grade, thriftier engine — what does the switch do to a year of driving?",
+        "summarySaves": "Saves {amount} per year",
+        "summaryCosts": "Costs {amount} more per year",
+        "annualDistance": "Distance per year",
+        "consumption": "Consumption of the alternative",
+        "price": "Fuel price of the alternative",
+        "switchCost": "One-off cost",
+        "switchCostHint": "Higher purchase price, conversion …",
+        "currentCost": "Current, per year",
+        "alternativeCost": "Alternative, per year",
+        "savingPerYear": "You save per year",
+        "extraPerYear": "You pay extra per year",
+        "perMonth": "{amount} per month",
+        "breakEven": "Pays off after",
+        "breakEvenYears": "about {years} years",
+        "breakEvenNone": "No one-off cost to earn back"
+      },
+      "detour": {
+        "title": "Is the cheaper station worth it?",
+        "hint": "Compares what you save at the pump with the fuel the detour burns.",
+        "summaryWorth": "Worth it — {amount}",
+        "summaryNotWorth": "Not worth the detour",
+        "volume": "Amount to fill",
+        "price": "Price at the other station",
+        "priceHint": "Your price: {price}",
+        "distance": "Extra distance one way",
+        "return": "And back again",
+        "grossSaving": "Saved at the pump",
+        "detourCost": "Cost of the detour",
+        "netSaving": "What is left",
+        "worthIt": "The detour pays off.",
+        "notWorthIt": "The detour costs more than it saves."
+      },
+      "reimbursement": {
+        "title": "Mileage reimbursement",
+        "hint": "Compares a per-distance rate with what the trip above actually costs in fuel.",
+        "rate": "Rate",
+        "distanceHint": "Uses the trip distance: {distance}",
+        "payout": "You get paid",
+        "fuelCost": "Fuel cost",
+        "difference": "Difference",
+        "breakEven": "Breaks even at {rate} per {unit}"
+      }
     }
   }
 }
