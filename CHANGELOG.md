@@ -9,6 +9,47 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 _Nothing yet._
 
+## [0.12.0] - 2026-08-07
+
+### Added
+
+- **Live fuel prices** — a new **Fuel prices** entry in the sidebar
+  (`/fuel-prices`) showing what the filling stations around you are charging
+  right now.
+
+  - **Where you are:** one tap for your device location, or type a town,
+    postcode or address. The place you picked is remembered.
+  - **Radius slider** up to 25 km (15 mi), the maximum the price service allows.
+  - **Your grade:** Super E5, Super E10 or Diesel — pick it once and every price
+    on the page is that grade.
+  - **Sorting and filters:** cheapest first or nearest first, hide closed
+    stations, and narrow down to the brands you actually use.
+  - **Refresh button** plus optional **auto-refresh** every 5 to 60 minutes,
+    which pauses while the tab is in the background.
+  - **Overview:** cheapest, average, dearest, the spread between them, and what
+    that spread is worth on one fill-up.
+  - The cheapest station is highlighted, every other one shows how much more it
+    costs, and each station links to a map. **Use in calculator** drops a pump
+    price straight into the fuel calculator.
+
+  Every section collapses, and both the open/closed state and your settings are
+  remembered on the device.
+
+  **Setup:** the page needs a free API key from
+  [Tankerkönig](https://creativecommons.tankerkoenig.de), set as
+  `TANKERKOENIG_API_KEY` (a field in the Unraid template). Without a key the
+  page just explains how to get one — nothing else changes. Full guide in
+  [docs/FUEL-PRICES.md](docs/FUEL-PRICES.md).
+
+  **Coverage:** Germany. The data is what stations must report to the
+  Bundeskartellamt, which covers E5, E10 and Diesel only — Super Plus, LPG and
+  CNG are not reported anywhere and are therefore not offered.
+
+  Requests are cached for a minute and auto-refresh cannot go below five
+  minutes, so a household of users stays well inside what the free service asks
+  for. Your location is never stored in the database and never sent anywhere
+  except your own server.
+
 ## [0.11.0] - 2026-08-07
 
 ### Added

@@ -43,6 +43,7 @@ Or from this repo: `docker compose up -d` (see [docker-compose.yml](../docker-co
 | `NODE_ENV` | `production` | Do not change |
 | `SESSION_COOKIE_SECURE` | unset | Session cookie `Secure` flag — see below |
 | `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` | unset | Optional single sign-on — see [OIDC.md](./OIDC.md) |
+| `TANKERKOENIG_API_KEY` | unset | Optional live fuel prices — see [FUEL-PRICES.md](./FUEL-PRICES.md) |
 
 Set in the Unraid template UI or in `docker-compose.yml`.
 

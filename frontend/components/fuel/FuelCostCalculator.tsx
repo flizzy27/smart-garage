@@ -111,6 +111,8 @@ export function FuelCostCalculator({ vehicles }: Props) {
   const [hydrated, setHydrated] = useState(false);
   const [appliedVehicleId, setAppliedVehicleId] = useState<string | null>(null);
   const unitsRef = useRef(units);
+  /** Set while a unit change has been detected but the values have not caught up. */
+  const migrationPendingRef = useRef(false);
 
   // Restore the saved draft after mount. Reading localStorage during render
   // would mismatch the server-rendered defaults and blow up hydration.
@@ -132,11 +134,20 @@ export function FuelCostCalculator({ vehicles }: Props) {
       return;
     }
     unitsRef.current = units;
+    migrationPendingRef.current = true;
     setValues((current) => migrateCalculatorValues(current, previous, units));
   }, [units]);
 
   useEffect(() => {
     if (!hydrated) return;
+    // The migration above only schedules new values; this effect still runs in
+    // the same commit holding the *old* numbers alongside the *new* units.
+    // Writing that pair would stamp kilometres as miles, so skip one round and
+    // let the re-render with migrated values do the saving.
+    if (migrationPendingRef.current) {
+      migrationPendingRef.current = false;
+      return;
+    }
     writeCalculatorState({ values, sections }, units);
   }, [hydrated, values, sections, units]);
 

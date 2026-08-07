@@ -27,7 +27,8 @@
       "finance": "Finanzen"
     },
     "odometer": "Kilometerstand",
-    "fuelCalculator": "Spritrechner"
+    "fuelCalculator": "Spritrechner",
+    "fuelPrices": "Spritpreise"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1492,6 +1493,117 @@
         "difference": "Differenz",
         "breakEven": "Ausgeglichen bei {rate} pro {unit}"
       }
+    }
+  },
+  "fuelPrices": {
+    "title": "Spritpreise in der Nähe",
+    "subtitle": "Aktuelle Preise der Tankstellen um dich herum. Sorte wählen, Umkreis einstellen und sehen, wer gerade am günstigsten ist.",
+    "fuelKindLabel": "Kraftstoffsorte",
+    "fuelKinds": {
+      "e5": "Super E5",
+      "e10": "Super E10",
+      "diesel": "Diesel"
+    },
+    "sort": {
+      "price": "Günstigste zuerst",
+      "distance": "Nächste zuerst"
+    },
+    "refresh": "Aktualisieren",
+    "refreshNow": "Jetzt aktualisieren",
+    "refreshing": "Wird aktualisiert…",
+    "tryAgain": "Erneut versuchen",
+    "updatedJustNow": "Gerade aktualisiert",
+    "updatedAgo": "Vor {minutes} Min. aktualisiert",
+    "autoRefreshOn": "Auto-Aktualisierung alle {minutes} Min.",
+    "minutesShort": "{minutes} Min.",
+    "coordinates": "{lat}, {lng}",
+    "cheapest": "Günstigste",
+    "closed": "Geschlossen",
+    "perVolume": "pro {unit}",
+    "moreThanCheapest": "{amount} teurer",
+    "openMap": "Auf Karte zeigen",
+    "useInCalculator": "In den Rechner",
+    "priceTransferred": "Preis übernommen",
+    "noPricesYet": "Noch keine Preise geladen.",
+    "attribution": "Preisdaten:",
+    "setup": {
+      "title": "Einmalige Einrichtung nötig",
+      "body": "Die Spritpreise kommen von Tankerkönig — dort werden die Preise veröffentlicht, die jede deutsche Tankstelle an das Bundeskartellamt melden muss. Der Dienst ist kostenlos, braucht aber einen eigenen persönlichen API-Schlüssel.",
+      "step1": "Kostenlosen API-Schlüssel auf creativecommons.tankerkoenig.de anfordern (dauert eine Minute).",
+      "step2": "In Unraid: Docker → smart-garage → Bearbeiten → Variable TANKERKOENIG_API_KEY auf deinen Schlüssel setzen.",
+      "step3": "Übernehmen und Container neu starten — danach funktioniert diese Seite sofort.",
+      "cta": "Kostenlosen API-Schlüssel holen"
+    },
+    "sections": {
+      "location": {
+        "title": "Standort & Umkreis",
+        "hint": "Standort des Geräts verwenden oder Ort, PLZ bzw. Adresse eingeben.",
+        "summary": "{place} · {radius}",
+        "useGps": "Meinen Standort verwenden",
+        "locating": "Standort wird ermittelt…",
+        "searchLabel": "Ort, PLZ oder Adresse",
+        "searchPlaceholder": "z. B. Köln oder 50667",
+        "search": "Suchen",
+        "searching": "Suche…",
+        "radius": "Umkreis",
+        "radiusHint": "Der Preisdienst erlaubt maximal {max}."
+      },
+      "filters": {
+        "title": "Filter & Sortierung",
+        "hint": "Die Liste auf die Tankstellen eingrenzen, die du wirklich anfahren würdest.",
+        "summary": "{sort} · {count} Tankstellen",
+        "sort": "Sortieren nach",
+        "onlyOpen": "Nur geöffnete Tankstellen",
+        "onlyOpenHint": "Blendet alles aus, was gerade zu hat",
+        "brands": "Marken",
+        "allBrands": "Alle anzeigen"
+      },
+      "refresh": {
+        "title": "Aktualisierung",
+        "hint": "Von Hand aktualisieren oder die Seite sich selbst aktualisieren lassen.",
+        "manualOnly": "Nur manuell",
+        "auto": "Auto-Aktualisierung",
+        "autoHint": "Pausiert, solange der Tab im Hintergrund ist",
+        "interval": "Intervall",
+        "fairUse": "Tankerkönig ist ein kostenloser Dienst und bittet darum, nicht öfter als alle fünf Minuten abzufragen. Mehrfaches Aktualisieren innerhalb einer Minute wird aus dem lokalen Zwischenspeicher beantwortet."
+      },
+      "stats": {
+        "title": "Überblick",
+        "hint": "Was der Unterschied zwischen den Zapfsäulen tatsächlich wert ist.",
+        "summary": "ab {price}",
+        "cheapest": "Günstigste",
+        "average": "Durchschnitt",
+        "mostExpensive": "Teuerste",
+        "spread": "Spanne",
+        "fillVolume": "Tankmenge",
+        "savingPerFill": "Ersparnis pro Tankfüllung",
+        "savingHint": "Günstigste statt teuerste, bei {volume}",
+        "coverage": "{withPrice} von {total} Tankstellen führen {fuel}, davon haben {open} geöffnet."
+      }
+    },
+    "empty": {
+      "noLocation": "Standort festlegen, um Preise in der Nähe zu sehen.",
+      "loading": "Preise werden geladen…",
+      "noStations": "Keine Tankstellen in diesem Umkreis gefunden. Versuch es mit einem größeren Umkreis.",
+      "filteredOut": "Keine Tankstelle passt zu deinen Filtern."
+    },
+    "locationErrors": {
+      "denied": "Der Standortzugriff wurde abgelehnt. Erlaube ihn im Browser oder such stattdessen nach einem Ort.",
+      "unavailable": "Dein Standort konnte nicht ermittelt werden. Such stattdessen nach einem Ort.",
+      "unsupported": "Dieser Browser kann keinen Standort liefern. Such stattdessen nach einem Ort.",
+      "insecure": "Browser geben den Standort nur über HTTPS heraus. Über einfaches http:// aufgerufen — nutz bitte die Suche unten.",
+      "no-results": "Dazu wurde nichts gefunden. Versuch eine PLZ oder einen größeren Ort.",
+      "search-failed": "Die Adresssuche ist gerade nicht erreichbar."
+    },
+    "errors": {
+      "not-configured": "Auf dem Server ist kein API-Schlüssel hinterlegt.",
+      "invalid-key": "Der API-Schlüssel wurde abgelehnt. Bitte TANKERKOENIG_API_KEY prüfen.",
+      "rate-limited": "Zu viele Anfragen. Bitte kurz warten und erneut aktualisieren.",
+      "invalid-location": "Dieser Standort ist ungültig.",
+      "timeout": "Der Preisdienst hat nicht rechtzeitig geantwortet.",
+      "upstream": "Der Preisdienst ist gerade nicht erreichbar.",
+      "network": "Keine Verbindung zum Server.",
+      "unauthorized": "Deine Sitzung ist abgelaufen. Bitte melde dich neu an."
     }
   }
 }

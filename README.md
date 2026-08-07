@@ -34,6 +34,7 @@ Built for people who want a clean garage dashboard without handing their data to
 | ⛽ **Fuel** | Quick fill-up, consumption analytics (L/100 km **or MPG**), projected annual usage, charts |
 | 🧭 **Odometer** | Log readings over time, distance per month, yearly projection, charts |
 | 🧮 **Fuel calculator** | Trip cost, split per person, tank & range, commute per month/year, vehicle comparison, "is the cheaper station worth the detour?", mileage reimbursement — collapsible cards that remember what you typed |
+| 📍 **Live fuel prices** | Pump prices around you by GPS or address, radius slider, your grade (E5/E10/Diesel), cheapest-first, brand filter, manual + auto refresh. Germany, via a free [Tankerkönig](https://creativecommons.tankerkoenig.de) key — see [docs/FUEL-PRICES.md](docs/FUEL-PRICES.md) |
 | 💶 **Expenses & costs** | Track costs, monthly overview dashboard, category breakdown |
 | 📋 **Insurance** | Policies, SF class, premiums, renewal tracking |
 | 📄 **Documents** | Store invoices and PDFs per vehicle |
@@ -105,7 +106,7 @@ Full ops guide: **[docs/INSTALL.md](docs/INSTALL.md)**
 
 | Channel | Image tag | When updated |
 |---------|-----------|--------------|
-| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.11.0`, …) — CI must pass first |
+| **Stable (default)** | `ghcr.io/flizzy27/smart-garage:latest` | Version release tags only (`v0.12.0`, …) — CI must pass first |
 | **Development** | `ghcr.io/flizzy27/smart-garage:development` | Every push to `main` after CI passes |
 
 | Platform | Stable update | Dev preview |
@@ -115,7 +116,7 @@ Full ops guide: **[docs/INSTALL.md](docs/INSTALL.md)**
 
 **Promote to stable:** when a dev build is approved, tag a release (`git tag v0.10.1 && git push origin v0.10.1`). That publishes `:latest`.
 
-Pin a version: `ghcr.io/flizzy27/smart-garage:v0.11.0`
+Pin a version: `ghcr.io/flizzy27/smart-garage:v0.12.0`
 
 ## 💾 Backup
 
@@ -138,6 +139,7 @@ On Unraid: `/mnt/user/appdata/smart-garage`
 | [docs/UNRAID.md](docs/UNRAID.md) | Unraid install & troubleshooting |
 | [docs/INSTALL.md](docs/INSTALL.md) | Backup, restore, updates |
 | [docs/OIDC.md](docs/OIDC.md) | Optional single sign-on (Pocket ID, Authentik, Keycloak…) |
+| [docs/FUEL-PRICES.md](docs/FUEL-PRICES.md) | Optional live fuel prices (Tankerkönig key, coverage, privacy) |
 | [docs/CA-SUBMISSION.md](docs/CA-SUBMISSION.md) | Community Applications submission packet |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [SECURITY.md](SECURITY.md) | Security policy |

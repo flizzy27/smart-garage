@@ -21,6 +21,7 @@ Install **Smart Garage** from the Community Applications store — no `docker co
 | AppData | `/mnt/user/appdata/smart-garage` | Auto-created |
 | Max upload (MB) | 25 | PDFs, receipts |
 | Max image (MB) | 10 | Vehicle photos |
+| Tankerkönig API key | empty | Optional live fuel prices for German filling stations — see [FUEL-PRICES.md](./FUEL-PRICES.md). Free key, no key means the page just explains how to get one. |
 | SSO settings | empty | Optional OpenID Connect login — see [OIDC.md](./OIDC.md). Shown under **Advanced**. |
 
 ## Units

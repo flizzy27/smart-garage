@@ -4,6 +4,7 @@ import {
   IconDashboard,
   IconDocuments,
   IconExpenses,
+  IconFuelPrices,
   IconHistory,
   IconMaintenance,
   IconNotes,
@@ -25,6 +26,7 @@ export type NavItem = {
     | "costs"
     | "fuel"
     | "fuelCalculator"
+    | "fuelPrices"
     | "odometer"
     | "wishlist"
     | "reminders"
@@ -64,6 +66,7 @@ export const navGroups: NavGroup[] = [
         labelKey: "fuelCalculator",
         icon: IconCalculator,
       },
+      { href: "/fuel-prices", labelKey: "fuelPrices", icon: IconFuelPrices },
       { href: "/wishlist", labelKey: "wishlist", icon: IconVehicles },
       { href: "/reminders", labelKey: "reminders", icon: IconReminders },
     ],

@@ -7,6 +7,7 @@ import {
   type CalculatorUnits,
   type CalculatorValues,
 } from "@/lib/fuel/calculator-state";
+import { pricePerVolumeUnit } from "@/lib/regional/volume";
 import {
   DISTANCE_UNIT_OPTIONS,
   VOLUME_UNIT_OPTIONS,
@@ -84,6 +85,40 @@ export function writeCalculatorState(
     );
   } catch {
     // Private mode / quota — the calculator still works, it just forgets.
+  }
+}
+
+/**
+ * Drops a live pump price into the calculator's price field, leaving every
+ * other value alone. Used by the station finder's "use in calculator" button.
+ *
+ * `pricePerLiter` is euro per litre — the unit the price data comes in. The
+ * caller is responsible for only offering this when the calculator is actually
+ * working in euro.
+ */
+export function patchCalculatorPrice(
+  pricePerLiter: number,
+  units: CalculatorUnits,
+): boolean {
+  if (typeof window === "undefined") return false;
+  if (!Number.isFinite(pricePerLiter) || pricePerLiter <= 0) return false;
+
+  try {
+    const current = readCalculatorState(units);
+    const price = pricePerVolumeUnit(pricePerLiter, units.volumeUnit);
+    writeCalculatorState(
+      {
+        ...current,
+        values: {
+          ...current.values,
+          price: String(Math.round(price * 1000) / 1000),
+        },
+      },
+      units,
+    );
+    return true;
+  } catch {
+    return false;
   }
 }
 

@@ -12,6 +12,9 @@ services:
       - UPLOAD_DIR=/data/uploads
       - MAX_UPLOAD_SIZE_MB=${MAX_UPLOAD_SIZE_MB:-25}
       - MAX_IMAGE_SIZE_MB=${MAX_IMAGE_SIZE_MB:-10}
+      # Optional: free key from https://creativecommons.tankerkoenig.de
+      # enables the live fuel price page. See docs/FUEL-PRICES.md.
+      - TANKERKOENIG_API_KEY=${TANKERKOENIG_API_KEY:-}
       - NODE_ENV=production
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/api/health"]

@@ -27,7 +27,8 @@
       "finance": "Finance"
     },
     "odometer": "Odometer",
-    "fuelCalculator": "Fuel calculator"
+    "fuelCalculator": "Fuel calculator",
+    "fuelPrices": "Fuel prices"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -1492,6 +1493,117 @@
         "difference": "Difference",
         "breakEven": "Breaks even at {rate} per {unit}"
       }
+    }
+  },
+  "fuelPrices": {
+    "title": "Fuel prices nearby",
+    "subtitle": "Live pump prices from filling stations around you. Pick your grade, set a radius and see who is cheapest right now.",
+    "fuelKindLabel": "Fuel grade",
+    "fuelKinds": {
+      "e5": "Super E5",
+      "e10": "Super E10",
+      "diesel": "Diesel"
+    },
+    "sort": {
+      "price": "Cheapest first",
+      "distance": "Nearest first"
+    },
+    "refresh": "Refresh",
+    "refreshNow": "Refresh now",
+    "refreshing": "Refreshing…",
+    "tryAgain": "Try again",
+    "updatedJustNow": "Updated just now",
+    "updatedAgo": "Updated {minutes} min ago",
+    "autoRefreshOn": "Auto-refresh every {minutes} min",
+    "minutesShort": "{minutes} min",
+    "coordinates": "{lat}, {lng}",
+    "cheapest": "Cheapest",
+    "closed": "Closed",
+    "perVolume": "per {unit}",
+    "moreThanCheapest": "{amount} more",
+    "openMap": "Show on map",
+    "useInCalculator": "Use in calculator",
+    "priceTransferred": "Price taken over",
+    "noPricesYet": "No prices loaded yet.",
+    "attribution": "Price data:",
+    "setup": {
+      "title": "One-time setup needed",
+      "body": "Live fuel prices come from Tankerkönig, which publishes the prices every German filling station has to report to the Federal Cartel Office. The service is free but needs your own personal API key.",
+      "step1": "Request a free API key at creativecommons.tankerkoenig.de (takes a minute).",
+      "step2": "In Unraid: Docker → smart-garage → Edit → set the variable TANKERKOENIG_API_KEY to your key.",
+      "step3": "Apply and restart the container — this page then works right away.",
+      "cta": "Get a free API key"
+    },
+    "sections": {
+      "location": {
+        "title": "Location & radius",
+        "hint": "Use your device location or type a town, postcode or address.",
+        "summary": "{place} · {radius}",
+        "useGps": "Use my location",
+        "locating": "Locating…",
+        "searchLabel": "Town, postcode or address",
+        "searchPlaceholder": "e.g. Cologne or 50667",
+        "search": "Search",
+        "searching": "Searching…",
+        "radius": "Radius",
+        "radiusHint": "The price service allows a maximum of {max}."
+      },
+      "filters": {
+        "title": "Filter & sorting",
+        "hint": "Narrow the list down to the stations you would actually drive to.",
+        "summary": "{sort} · {count} stations",
+        "sort": "Sort by",
+        "onlyOpen": "Only open stations",
+        "onlyOpenHint": "Hides everything that is closed right now",
+        "brands": "Brands",
+        "allBrands": "Show all"
+      },
+      "refresh": {
+        "title": "Refreshing",
+        "hint": "Refresh by hand, or let the page update itself while it is open.",
+        "manualOnly": "Manual only",
+        "auto": "Auto-refresh",
+        "autoHint": "Pauses while the tab is in the background",
+        "interval": "Interval",
+        "fairUse": "Tankerkönig is a free service and asks not to be queried more often than every five minutes. Repeated refreshes within a minute are answered from the local cache."
+      },
+      "stats": {
+        "title": "Overview",
+        "hint": "What the spread between the pumps is actually worth.",
+        "summary": "from {price}",
+        "cheapest": "Cheapest",
+        "average": "Average",
+        "mostExpensive": "Dearest",
+        "spread": "Spread",
+        "fillVolume": "Fill-up size",
+        "savingPerFill": "Saving per fill-up",
+        "savingHint": "Cheapest instead of dearest, for {volume}",
+        "coverage": "{withPrice} of {total} stations sell {fuel}, {open} of them are open."
+      }
+    },
+    "empty": {
+      "noLocation": "Set a location to see prices around you.",
+      "loading": "Loading prices…",
+      "noStations": "No filling stations found in this radius. Try a larger radius.",
+      "filteredOut": "No station matches your filters."
+    },
+    "locationErrors": {
+      "denied": "Location access was denied. Allow it in your browser, or search for a town instead.",
+      "unavailable": "Your location could not be determined. Please search for a town instead.",
+      "unsupported": "This browser cannot provide a location. Please search for a town instead.",
+      "insecure": "Browsers only share your location over HTTPS. Reached over plain http://, use the search below instead.",
+      "no-results": "Nothing found for that. Try a postcode or a larger town.",
+      "search-failed": "The address search is not reachable right now."
+    },
+    "errors": {
+      "not-configured": "No API key configured on the server.",
+      "invalid-key": "The API key was rejected. Please check TANKERKOENIG_API_KEY.",
+      "rate-limited": "Too many requests. Please wait a moment before refreshing.",
+      "invalid-location": "That location is not valid.",
+      "timeout": "The price service did not respond in time.",
+      "upstream": "The price service is not reachable right now.",
+      "network": "No connection to the server.",
+      "unauthorized": "Your session has expired. Please sign in again."
     }
   }
 }
